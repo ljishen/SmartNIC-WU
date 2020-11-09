@@ -20,7 +20,7 @@ function warn() {
 }
 
 function info() {
-  if [[ -n "$VERBOSE" ]]; then
+  if [[ "${VERBOSE:-yes}" == "yes" ]]; then
     echo "INFO : $*" >&2
   fi
 }
