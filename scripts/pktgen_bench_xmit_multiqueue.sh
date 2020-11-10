@@ -24,11 +24,9 @@ DELAY="0"        # Zero means max speed
 UDP_SRC_MIN=9
 UDP_SRC_MAX=109
 
-# (example of setting default params in your script)
-if [[ -n "$DEST_IP" ]]; then
-  validate_addr"$IP6" "$DEST_IP"
-  read -r DST_MIN DST_MAX <<< "$(parse_addr"$IP6" "$DEST_IP")"
-fi
+validate_addr"$IP6" "$DEST_IP"
+read -r DST_MIN DST_MAX <<< "$(parse_addr"$IP6" "$DEST_IP")"
+
 if [[ -n "$DST_PORT" ]]; then
   read -r UDP_DST_MIN UDP_DST_MAX <<< "$(parse_ports "$DST_PORT")"
   validate_ports "$UDP_DST_MIN" "$UDP_DST_MAX"
