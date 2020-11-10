@@ -68,10 +68,10 @@ function proc_cmd() {
 
   local proc_ctrl="$PROC_DIR/$proc_file"
   if [[ ! -e "$proc_ctrl" ]]; then
-    err 3 "proc file:$proc_ctrl does not exists (dev added to thread?)"
+    err 3 "proc file: $proc_ctrl does not exists (num CPU cores: $(nproc))"
   else
     if [[ ! -w "$proc_ctrl" ]]; then
-      err 4 "proc file:$proc_ctrl not writable, not root?!"
+      err 4 "proc file: $proc_ctrl not writable, not root?!"
     fi
   fi
 
@@ -125,6 +125,7 @@ function cleanup() {
   if [[ "${DEBUG:-false}" == true ]]; then
     echo  # separate from the output of the customized traps
   fi
+  PS4='\033[0D[CLEANUP] '
   pg_ctrl "reset"
 }
 [[ $EUID -eq 0 ]] && trap cleanup EXIT

@@ -95,42 +95,51 @@ function stop_and_print_results() {
 
 # start_run
 echo
-echo "Running... ctrl^C to stop"
+printf "Running... ctrl^C to stop. "
+if (( INTERVAL > 0 )); then
+  printf "Output device summary every %d seconds." "$INTERVAL"
+fi
+echo
 pg_ctrl "start" &
 trap_exit_funcs+=(stop_and_print_results)
 
-while :; do
-  sleep "$INTERVAL"
-  echo
-  for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
-    dev=$(get_thread_dev $thread)
-    awk -v dev="$dev" -v thread="$thread" -v F_THREAD="$F_THREAD" '
-      BEGIN { in_current = 0 }
-      $0 ~ /^Result:/ { exit }
-      $0 ~ /^Current:/ {
-        in_current = 1
-        next
-      }
-      in_current == 1 {
-        num = split($0, arr, " ")
-        for (i = 1; i <= num; i+=2) {
-          key = sub(/:$/, "", arr[i])
-          data[arr[i]] = arr[i + 1]
+if (( INTERVAL > 0 )); then
+  while :; do
+    sleep "$INTERVAL"
+    echo
+    for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
+      dev=$(get_thread_dev $thread)
+      awk -v dev="$dev" -v thread="$thread" -v F_THREAD="$F_THREAD" '
+        BEGIN { in_current = 0 }
+        $0 ~ /^Result:/ { exit }
+        $0 ~ /^Current:/ {
+          in_current = 1
+          next
         }
-      }
-      END {
-        if (thread == F_THREAD) {
-          printf "IFNAME "
+        in_current == 1 {
+          num = split($0, arr, " ")
+          for (i = 1; i <= num; i+=2) {
+            # remove the ending colon
+            key = substr(arr[i], 1, length(arr[i]) - 1)
+            data[key] = arr[i + 1]
+          }
+        }
+        END {
+          if (thread == F_THREAD) {
+            printf "IFNAME "
+            for (key in data)
+              printf "%s ", toupper(key)
+            print ""
+          }
+
+          printf "%s ", dev
           for (key in data)
-            printf "%s ", toupper(key)
+            printf "%s ", data[key]
           print ""
         }
-
-        printf "%s ", dev
-        for (key in data)
-          printf "%s ", data[key]
-        print ""
-      }
-    ' "$PROC_DIR/$dev"
-  done | column -t
-done
+      ' "$PROC_DIR/$dev"
+    done | column -t
+  done
+else
+  sleep 99999999
+fi
