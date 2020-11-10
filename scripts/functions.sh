@@ -27,6 +27,9 @@ function info() {
   fi
 }
 
+## -- Pktgen proc config commands -- ##
+export PROC_DIR=/proc/net/pktgen
+#
 # Three different shell functions for configuring the different
 # components of pktgen:
 #   pg_ctrl(), pg_thread() and pg_set().
@@ -63,7 +66,7 @@ function proc_cmd() {
   # after shift, the remaining args are contained in $@
   shift
 
-  local proc_ctrl=/proc/net/pktgen/$proc_file
+  local proc_ctrl="$PROC_DIR/$proc_file"
   if [[ ! -e "$proc_ctrl" ]]; then
     err 3 "proc file:$proc_ctrl does not exists (dev added to thread?)"
   else

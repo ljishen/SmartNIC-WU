@@ -89,7 +89,7 @@ function stop_and_print_results() {
   printf -- "\\n-------------------- RESULTS --------------------\\n"
   for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
     dev=$(get_thread_dev $thread)
-    grep -A2 "Result:" /proc/net/pktgen/"$dev" 2>&1 | sed "s/^/[DEVICE: $dev] /"
+    grep -A2 "Result:" "$PROC_DIR/$dev" 2>&1 | sed "s/^/[IFNAME: $dev] /"
   done
 }
 
@@ -98,4 +98,39 @@ echo
 echo "Running... ctrl^C to stop"
 pg_ctrl "start" &
 trap_exit_funcs+=(stop_and_print_results)
-sleep 99999999
+
+while :; do
+  sleep "$INTERVAL"
+  echo
+  for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
+    dev=$(get_thread_dev $thread)
+    awk -v dev="$dev" -v thread="$thread" -v F_THREAD="$F_THREAD" '
+      BEGIN { in_current = 0 }
+      $0 ~ /^Result:/ { exit }
+      $0 ~ /^Current:/ {
+        in_current = 1
+        next
+      }
+      in_current == 1 {
+        num = split($0, arr, " ")
+        for (i = 1; i <= num; i+=2) {
+          key = sub(/:$/, "", arr[i])
+          data[arr[i]] = arr[i + 1]
+        }
+      }
+      END {
+        if (thread == F_THREAD) {
+          printf "IFNAME "
+          for (key in data)
+            printf "%s ", toupper(key)
+          print ""
+        }
+
+        printf "%s ", dev
+        for (key in data)
+          printf "%s ", data[key]
+        print ""
+      }
+    ' "$PROC_DIR/$dev" | column -t
+  done
+done
