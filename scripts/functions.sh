@@ -1,33 +1,32 @@
 #!/usr/bin/env bash
 # Common functions used by pktgen scripts
-#  - Depending on bash 3 (or higher) syntax
-#
-# Author: Jesper Dangaaard Brouer
-# License: GPL
+#  - Depending on bash 4.2 (or higher) syntax
 
 set -euo pipefail
+
+# https://stackoverflow.com/a/51548669
+shopt -s expand_aliases
+alias trace_on='if [[ "${DEBUG:-false}" == true ]]; then set -x; fi'
+alias trace_off='{ set +x; } 2>/dev/null'
 
 ## -- General shell logging cmds --
 function err() {
   local exitcode=$1
   shift
-  echo "ERROR: $*" >&2
+  echo "[ERROR] $*" >&2
   exit "$exitcode"
 }
 
 function warn() {
-  echo "WARN : $*" >&2
+  echo "[WARN] $*" >&2
 }
 
 function info() {
-  if [[ "${VERBOSE:-yes}" == "yes" ]]; then
-    echo "INFO : $*" >&2
+  if [[ "${VERBOSE:-true}" == true ]]; then
+    echo "[INFO] $*"
   fi
 }
 
-## -- Pktgen proc config commands -- ##
-export PROC_DIR=/proc/net/pktgen
-#
 # Three different shell functions for configuring the different
 # components of pktgen:
 #   pg_ctrl(), pg_thread() and pg_set().
@@ -63,7 +62,8 @@ function proc_cmd() {
   local status=0
   # after shift, the remaining args are contained in $@
   shift
-  local proc_ctrl=${PROC_DIR}/$proc_file
+
+  local proc_ctrl=/proc/net/pktgen/$proc_file
   if [[ ! -e "$proc_ctrl" ]]; then
     err 3 "proc file:$proc_ctrl does not exists (dev added to thread?)"
   else
@@ -72,11 +72,10 @@ function proc_cmd() {
     fi
   fi
 
-  if [[ "$DEBUG" == "yes" ]]; then
-    echo "cmd: $* > $proc_ctrl"
-  fi
   # Quoting of "$@" is important for space expansion
-  echo "$@" > "$proc_ctrl" || status=$?
+  trace_on
+  echo "$@" | tee "$proc_ctrl" >/dev/null || status=$?
+  trace_off
 
   if [[ "$proc_file" != "pgctrl" ]]; then
     result=$(grep "Result: OK:" "$proc_ctrl") || true
@@ -92,12 +91,11 @@ function proc_cmd() {
 # Old obsolete "pgset" function, with slightly improved err handling
 function pgset() {
   local result
+  local status=0
 
-  if [[ "$DEBUG" == "yes" ]]; then
-    echo "cmd: $1 > $PGDEV"
-  fi
-  echo "$1" > "$PGDEV"
-  local status=$?
+  trace_on
+  echo "$1" | tee "$PGDEV" >/dev/null || status=$?
+  trace_off
 
   result="$(grep "Result: OK:" "$PGDEV")"
   if [[ "$result" == "" ]]; then
@@ -108,10 +106,27 @@ function pgset() {
   fi
 }
 
-[[ $EUID -eq 0 ]] && trap 'pg_ctrl "reset"' EXIT
+export trap_exit_funcs=()
+function run_traps() {
+  for func in "${trap_exit_funcs[@]}"; do
+    $func
+  done
+}
+
+function cleanup() {
+  trace_off
+  echo  # start a new line after the "^C" character
+
+  run_traps
+
+  if [[ "${DEBUG:-false}" == true ]]; then
+    echo  # separate from the output of the customized traps
+  fi
+  pg_ctrl "reset"
+}
+[[ $EUID -eq 0 ]] && trap cleanup EXIT
 
 ## -- General shell tricks --
-
 function root_check_run_with_sudo() {
   # Trick so, program can be run as normal user, will just use "sudo"
   #  call as root_check_run_as_sudo "$@"

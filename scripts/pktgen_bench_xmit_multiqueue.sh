@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# SPDX-License-Identifier: GPL-2.0
 #
 # Multiqueue: Using pktgen threads for sending on multiple CPUs
 #  * adding devices to kernel threads
@@ -15,7 +14,6 @@ basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source "${basedir}"/functions.sh
 root_check_run_with_sudo "$@"
 
-# Required param: -i dev in $DEV
 # shellcheck source=/dev/null
 source "${basedir}"/parameters.sh
 
@@ -28,8 +26,8 @@ UDP_SRC_MAX=109
 
 # (example of setting default params in your script)
 if [[ -n "$DEST_IP" ]]; then
-  validate_addr"${IP6}" "$DEST_IP"
-  read -r DST_MIN DST_MAX <<< "$(parse_addr"${IP6}" "$DEST_IP")"
+  validate_addr"$IP6" "$DEST_IP"
+  read -r DST_MIN DST_MAX <<< "$(parse_addr"$IP6" "$DEST_IP")"
 fi
 if [[ -n "$DST_PORT" ]]; then
   read -r UDP_DST_MIN UDP_DST_MAX <<< "$(parse_ports "$DST_PORT")"
@@ -39,11 +37,16 @@ fi
 # General cleanup everything since last run
 pg_ctrl "reset"
 
+# The device name is extended with @name, using thread number to
+# make then unique, but any name will do.
+function get_thread_dev() {
+  local thread=$1
+  echo "$DEV@$thread"
+}
+
 # Threads are specified with parameter -t value in $THREADS
 for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
-  # The device name is extended with @name, using thread number to
-  # make then unique, but any name will do.
-  dev=${DEV}@${thread}
+  dev=$(get_thread_dev $thread)
 
   # Add remove all other devices and add_device $dev to thread
   pg_thread $thread "rem_device_all"
@@ -81,14 +84,18 @@ for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
   pg_set "$dev" "udp_src_max $UDP_SRC_MAX"
 done
 
-# start_run
-echo "Running... ctrl^C to stop" >&2
-pg_ctrl "start"
-echo "Done" >&2
+function stop_and_print_results() {
+  pg_ctrl "stop"
+  printf -- "\\n-------------------- RESULTS --------------------\\n"
+  for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
+    dev=$(get_thread_dev $thread)
+    grep -A2 "Result:" /proc/net/pktgen/"$dev" 2>&1 | sed "s/^/[DEVICE: $dev] /"
+  done
+}
 
-# Print results
-for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
-  dev=${DEV}@${thread}
-  echo "Device: $dev"
-  grep -A2 "Result:" /proc/net/pktgen/"$dev"
-done
+# start_run
+echo
+echo "Running... ctrl^C to stop"
+pg_ctrl "start" &
+trap_exit_funcs+=(stop_and_print_results)
+sleep 99999999
