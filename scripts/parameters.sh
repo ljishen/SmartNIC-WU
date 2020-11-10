@@ -4,7 +4,7 @@
 set -euo pipefail
 
 function usage() {
-  echo ""
+  echo
   echo "Usage: $0 [-evx6] -i ethX"
   echo "  -i : (\$DEV)       output interface/device (required)"
   echo "  -s : (\$PKT_SIZE)  packet size in bytes (default 60)"
@@ -15,16 +15,15 @@ function usage() {
   echo "  -f : (\$F_THREAD)  index of first thread (zero indexed CPU number)"
   echo "  -c : (\$CLONE_SKB) SKB clones send before alloc new SKB (default 0)"
   echo "  -n : (\$COUNT)     num messages to send per thread, 0 means indefinitely"
-  echo "  -b : (\$BURST)     HW level bursting of SKBs"
+  echo "  -b : (\$BURST)     HW level bursting of SKBs (>= 1, default 1)"
   echo "  -g : (\$INTERVAL)  interval of device summary in seconds (default 0, disabled)"
   echo "  -v : (\$VERBOSE)   verbose"
   echo "  -x : (\$DEBUG)     debug"
   echo "  -6 : (\$IP6)       IPv6"
-  echo ""
 }
 
 ##  --- Parse command line arguments / parameters ---
-while getopts ":i:s:d:m:p:t:f:c:n:b:g:vx6" option; do
+while getopts ":i:s:d:m:p:t:f:c:n:b:g:vx6h" option; do
   # shellcheck disable=SC2034
   case $option in
     i  ) DEV=$OPTARG ;;
@@ -41,6 +40,10 @@ while getopts ":i:s:d:m:p:t:f:c:n:b:g:vx6" option; do
     v  ) VERBOSE=true ;;
     x  ) DEBUG=true ;;
     6  ) IP6=6 ;;
+    h  )
+      usage
+      exit
+      ;;
     \? )
       usage
       err 2 "Invalid option: -$OPTARG"
@@ -54,7 +57,11 @@ while getopts ":i:s:d:m:p:t:f:c:n:b:g:vx6" option; do
       exit
   esac
 done
-shift $(( OPTIND - 1 ))
+shift "$(( OPTIND - 1 ))"
+
+if [[ "$#" -gt 0 ]]; then
+  warn "Ignore non-option arguments: $*"
+fi
 
 all_params=()
 function add_to_export() {

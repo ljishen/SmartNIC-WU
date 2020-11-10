@@ -77,17 +77,17 @@ function proc_cmd() {
 
   # Quoting of "$@" is important for space expansion
   trace_on
-  echo "$@" | tee "$proc_ctrl" >/dev/null || status=$?
+  echo "$@" | tee "$proc_ctrl" >/dev/null 2>&1 || status=$?
   trace_off
 
   if [[ "$proc_file" != "pgctrl" ]]; then
     result=$(grep "Result: OK:" "$proc_ctrl") || true
-    if [[ "$result" == "" ]]; then
-      grep "Result:" "$proc_ctrl" >&2
+    if [[ -z "$result" ]]; then
+      result=$(grep "Result:" "$proc_ctrl")
     fi
   fi
   if (( "$status" != 0 )); then
-    err 5 "Write error($status) occurred cmd: \"$* > $proc_ctrl\""
+    err 5 "Write error($status) occurred cmd: echo \"$*\" > $proc_ctrl"$'\n\t'"$result"
   fi
 }
 
@@ -97,15 +97,15 @@ function pgset() {
   local status=0
 
   trace_on
-  echo "$1" | tee "$PGDEV" >/dev/null || status=$?
+  echo "$1" | tee "$PGDEV" >/dev/null 2>&1 || status=$?
   trace_off
 
-  result="$(grep "Result: OK:" "$PGDEV")"
-  if [[ "$result" == "" ]]; then
-    grep "Result:" "$PGDEV"
+  result="$(grep "Result: OK:" "$PGDEV")" || true
+  if [[ -z "$result" ]]; then
+    result=$(grep "Result:" "$PGDEV")
   fi
   if (( "$status" != 0 )); then
-    err 5 "Write error($status) occurred cmd: \"$1 > $PGDEV\""
+    err 5 "Write error($status) occurred cmd: echo \"$1\" > $PGDEV"$'\n\t'"$result"
   fi
 }
 
@@ -116,19 +116,19 @@ function run_traps() {
   done
 }
 
-function cleanup() {
+function on_exit() {
   trace_off
   echo  # start a new line after the "^C" character
+  PS4='\033[0D[ON_EXIT] '
 
   run_traps
 
   if [[ "${DEBUG:-false}" == true ]]; then
     echo  # separate from the output of the customized traps
   fi
-  PS4='\033[0D[CLEANUP] '
   pg_ctrl "reset"
 }
-[[ $EUID -eq 0 ]] && trap cleanup EXIT
+[[ $EUID -eq 0 ]] && trap on_exit EXIT
 
 ## -- General shell tricks --
 function root_check_run_with_sudo() {

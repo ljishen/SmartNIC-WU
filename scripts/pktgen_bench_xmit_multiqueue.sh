@@ -82,6 +82,9 @@ for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
   pg_set "$dev" "flag UDPSRC_RND"
   pg_set "$dev" "udp_src_min $UDP_SRC_MIN"
   pg_set "$dev" "udp_src_max $UDP_SRC_MAX"
+
+  # Setup burst
+  pg_set "$dev" "burst $BURST"
 done
 
 function stop_and_print_results() {
