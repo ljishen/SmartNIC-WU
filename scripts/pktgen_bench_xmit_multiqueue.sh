@@ -131,6 +131,6 @@ while :; do
           printf "%s ", data[key]
         print ""
       }
-    ' "$PROC_DIR/$dev" | column -t
-  done
+    ' "$PROC_DIR/$dev"
+  done | column -t
 done
