@@ -22,6 +22,7 @@ function usage() {
   echo "  -v : (\$VERBOSE)   verbose"
   echo "  -x : (\$DEBUG)     debug"
   echo "  -6 : (\$IP6)       IPv6"
+  echo
 }
 
 ##  --- Parse command line arguments / parameters ---
