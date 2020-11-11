@@ -17,9 +17,6 @@ root_check_run_with_sudo "$@"
 # shellcheck source=/dev/null
 source "${basedir}"/parameters.sh
 
-# Base Config
-DELAY="0"        # Zero means max speed
-
 # Flow variation random source port between min and max
 UDP_SRC_MIN=9
 UDP_SRC_MAX=109

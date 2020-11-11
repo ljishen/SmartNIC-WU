@@ -15,6 +15,7 @@ function usage() {
   echo "  -f : (\$F_THREAD)  index of first thread (zero indexed CPU number)"
   echo "  -c : (\$CLONE_SKB) SKB clones send before alloc new SKB (default 0)"
   echo "  -n : (\$COUNT)     num messages to send per thread, 0 means indefinitely"
+  echo "  -l : (\$DELAY)     add delay between packets in nanoseconds (default 0)"
   echo "  -b : (\$BURST)     HW level bursting of SKBs (>= 1, default 1)"
   echo "  -g : (\$INTERVAL)  interval of device summary in seconds (default 0, disabled)"
   echo "  -e : (\$TIMEOUT)   run with a time limit in seconds, 0 means indefinitely"
@@ -24,7 +25,7 @@ function usage() {
 }
 
 ##  --- Parse command line arguments / parameters ---
-while getopts ":i:s:d:m:p:t:f:c:n:b:g:e:vx6h" option; do
+while getopts ":i:s:d:m:p:t:f:c:n:l:b:g:e:vx6h" option; do
   # shellcheck disable=SC2034
   case $option in
     i  ) DEV=$OPTARG ;;
@@ -36,6 +37,7 @@ while getopts ":i:s:d:m:p:t:f:c:n:b:g:e:vx6h" option; do
     f  ) F_THREAD=$OPTARG ;;
     c  ) CLONE_SKB=$OPTARG ;;
     n  ) COUNT=$OPTARG ;;
+    l  ) DELAY=$OPTARG ;;
     b  ) BURST=$OPTARG ;;
     g  ) INTERVAL=$OPTARG ;;
     e  ) TIMEOUT=$OPTARG ;;
@@ -104,6 +106,7 @@ add_to_export L_THREAD "$(( THREADS + F_THREAD - 1 ))"
 
 add_to_export CLONE_SKB 0
 add_to_export COUNT 0
+add_to_export DELAY 0
 add_to_export BURST 1
 add_to_export INTERVAL 0
 add_to_export TIMEOUT 0
@@ -132,6 +135,7 @@ validate_num_params \
   F_THREAD \
   CLONE_SKB \
   COUNT \
+  DELAY \
   BURST \
   INTERVAL \
   TIMEOUT
