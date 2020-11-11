@@ -17,13 +17,14 @@ function usage() {
   echo "  -n : (\$COUNT)     num messages to send per thread, 0 means indefinitely"
   echo "  -b : (\$BURST)     HW level bursting of SKBs (>= 1, default 1)"
   echo "  -g : (\$INTERVAL)  interval of device summary in seconds (default 0, disabled)"
+  echo "  -e : (\$TIMEOUT)   run with a time limit in seconds, 0 means indefinitely"
   echo "  -v : (\$VERBOSE)   verbose"
   echo "  -x : (\$DEBUG)     debug"
   echo "  -6 : (\$IP6)       IPv6"
 }
 
 ##  --- Parse command line arguments / parameters ---
-while getopts ":i:s:d:m:p:t:f:c:n:b:g:vx6h" option; do
+while getopts ":i:s:d:m:p:t:f:c:n:b:g:e:vx6h" option; do
   # shellcheck disable=SC2034
   case $option in
     i  ) DEV=$OPTARG ;;
@@ -37,6 +38,7 @@ while getopts ":i:s:d:m:p:t:f:c:n:b:g:vx6h" option; do
     n  ) COUNT=$OPTARG ;;
     b  ) BURST=$OPTARG ;;
     g  ) INTERVAL=$OPTARG ;;
+    e  ) TIMEOUT=$OPTARG ;;
     v  ) VERBOSE=true ;;
     x  ) DEBUG=true ;;
     6  ) IP6=6 ;;
@@ -104,6 +106,7 @@ add_to_export CLONE_SKB 0
 add_to_export COUNT 0
 add_to_export BURST 1
 add_to_export INTERVAL 0
+add_to_export TIMEOUT 0
 add_to_export VERBOSE false
 add_to_export DEBUG false
 
@@ -130,7 +133,8 @@ validate_num_params \
   CLONE_SKB \
   COUNT \
   BURST \
-  INTERVAL
+  INTERVAL \
+  TIMEOUT
 
 if [[ "$VERBOSE" == true ]]; then
   echo

@@ -42,7 +42,6 @@ function get_thread_dev() {
   echo "$DEV@$thread"
 }
 
-# Threads are specified with parameter -t value in $THREADS
 for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
   dev=$(get_thread_dev $thread)
 
@@ -94,52 +93,71 @@ function stop_and_print_results() {
   done
 }
 
+function print_summary() {
+  echo
+  for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
+    dev=$(get_thread_dev $thread)
+    awk -v dev="$dev" -v thread="$thread" -v F_THREAD="$F_THREAD" '
+      BEGIN { in_current = 0 }
+      $0 ~ /^Result:/ { exit }
+      $0 ~ /^Current:/ {
+        in_current = 1
+        next
+      }
+      in_current == 1 {
+        num = split($0, arr, " ")
+        for (i = 1; i <= num; i+=2) {
+          # remove the ending colon
+          key = substr(arr[i], 1, length(arr[i]) - 1)
+          data[key] = arr[i + 1]
+        }
+      }
+      END {
+        if (thread == F_THREAD) {
+          printf "IFNAME "
+          for (key in data)
+            printf "%s ", toupper(key)
+          print ""
+        }
+
+        printf "%s ", dev
+        for (key in data)
+          printf "%s ", data[key]
+        print ""
+      }
+    ' "$PROC_DIR/$dev"
+  done | column -t
+}
+
+function setup_timeout() {
+  if (( TIMEOUT  > 0 )); then
+    sleep "$TIMEOUT"
+    kill -INT -"$(pgrep \
+      --oldest \
+      --uid "$(id -u "$(logname)")" \
+      --full "$(basename "${BASH_SOURCE[0]}")")"
+  fi
+}
+
 # start_run
 echo
-printf "Running... ctrl^C to stop. "
 if (( INTERVAL > 0 )); then
-  printf "Output device summary every %d seconds." "$INTERVAL"
+  echo "Output device summary every $INTERVAL seconds."
 fi
-echo
+printf "Running (PID=%d)" "$$"
+if (( TIMEOUT > 0 )); then
+  printf " up to %d seconds" "$TIMEOUT"
+fi
+echo "... Ctrl-C to stop."
 pg_ctrl "start" &
 trap_exit_funcs+=(stop_and_print_results)
+
+setup_timeout &
 
 if (( INTERVAL > 0 )); then
   while :; do
     sleep "$INTERVAL"
-    echo
-    for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
-      dev=$(get_thread_dev $thread)
-      awk -v dev="$dev" -v thread="$thread" -v F_THREAD="$F_THREAD" '
-        BEGIN { in_current = 0 }
-        $0 ~ /^Result:/ { exit }
-        $0 ~ /^Current:/ {
-          in_current = 1
-          next
-        }
-        in_current == 1 {
-          num = split($0, arr, " ")
-          for (i = 1; i <= num; i+=2) {
-            # remove the ending colon
-            key = substr(arr[i], 1, length(arr[i]) - 1)
-            data[key] = arr[i + 1]
-          }
-        }
-        END {
-          if (thread == F_THREAD) {
-            printf "IFNAME "
-            for (key in data)
-              printf "%s ", toupper(key)
-            print ""
-          }
-
-          printf "%s ", dev
-          for (key in data)
-            printf "%s ", data[key]
-          print ""
-        }
-      ' "$PROC_DIR/$dev"
-    done | column -t
+    print_summary
   done
 else
   sleep 99999999

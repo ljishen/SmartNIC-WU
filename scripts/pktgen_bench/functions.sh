@@ -9,6 +9,10 @@ shopt -s expand_aliases
 alias trace_on='if [[ "${DEBUG:-false}" == true ]]; then set -x; fi'
 alias trace_off='{ set +x; } 2>/dev/null'
 
+# stop "^C" being printed when Ctrl-C
+#   https://unix.stackexchange.com/a/333804
+stty -echoctl
+
 ## -- General shell logging cmds --
 function err() {
   local exitcode=$1
@@ -118,7 +122,6 @@ function run_traps() {
 
 function on_exit() {
   trace_off
-  echo  # start a new line after the "^C" character
   PS4='\033[0D[ON_EXIT] '
 
   run_traps
@@ -134,7 +137,7 @@ function on_exit() {
 function root_check_run_with_sudo() {
   # Trick so, program can be run as normal user, will just use "sudo"
   #  call as root_check_run_as_sudo "$@"
-  if [ "$EUID" -ne 0 ]; then
+  if [[ "$EUID" -ne 0 ]]; then
     if [[ -x "$0" ]]; then # Directly executable use sudo
       info "Not root, running with sudo"
       sudo "$0" "$@"
@@ -161,11 +164,11 @@ function get_iface_irqs() {
   local queues="${IFACE}-.*TxRx"
 
   irqs=$(grep "$queues" /proc/interrupts | cut -f1 -d:)
-  [ -z "$irqs" ] && irqs=$(grep "$IFACE" /proc/interrupts | cut -f1 -d:)
-  [ -z "$irqs" ] && irqs=$(for i in $(ls -Ux /sys/class/net/"$IFACE"/device/msi_irqs) ;\
+  [[ -z "$irqs" ]] && irqs=$(grep "$IFACE" /proc/interrupts | cut -f1 -d:)
+  [[ -z "$irqs" ]] && irqs=$(for i in $(ls -Ux /sys/class/net/"$IFACE"/device/msi_irqs) ;\
     do grep "$i:.*TxRx" /proc/interrupts | grep -v fdir | cut -f 1 -d : ;\
     done)
-  [ -z "$irqs" ] && err 3 "Could not find interrupts for $IFACE"
+  [[ -z "$irqs" ]] && err 3 "Could not find interrupts for $IFACE"
 
   echo "$irqs"
 }
