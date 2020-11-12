@@ -7,7 +7,7 @@ function usage() {
   echo
   echo "Usage: $0 [-evx6] -i ethX"
   echo "  -i : (\$DEV)       output interface/device (required)"
-  echo "  -s : (\$PKT_SIZE)  packet size in bytes (default 60)"
+  echo "  -s : (\$PKT_SIZE)  packet size in bytes (>= 14 + 20 + 8, default 60)"
   echo "  -d : (\$DEST_IP)   destination IP. CIDR (e.g. 198.18.0.0/15) is also allowed"
   echo "  -m : (\$DST_MAC)   destination MAC-addr"
   echo "  -p : (\$DST_PORT)  destination PORT range (e.g. 433-444) is also allowed"
@@ -81,7 +81,11 @@ if [[ -z "$DEV" ]]; then
   err 2 "Please specify output device"
 fi
 
+# This is Ethernet packet size - 4
 # NIC adds 4 bytes CRC
+# datalen = PKT_SIZE - 14 (Eth) - 20 (IPh) - 8 (UDPh) - MPLS (overhead)
+#   https://networkengineering.stackexchange.com/a/34191
+#   https://github.com/torvalds/linux/blob/v5.9/net/core/pktgen.c#L2793
 add_to_export PKT_SIZE 60
 add_to_export IP6
 
