@@ -52,7 +52,6 @@ for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
 
   # Base config of dev
   pg_set "$dev" "count $COUNT"
-  pg_set "$dev" "clone_skb $CLONE_SKB"
   pg_set "$dev" "pkt_size $PKT_SIZE"
   pg_set "$dev" "delay $DELAY"
 
@@ -65,6 +64,11 @@ for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
   pg_set "$dev" "dst${IP6}_min $DST_MIN"
   pg_set "$dev" "dst${IP6}_max $DST_MAX"
 
+  # Setup random UDP port src range
+  pg_set "$dev" "flag UDPSRC_RND"
+  pg_set "$dev" "udp_src_min $UDP_SRC_MIN"
+  pg_set "$dev" "udp_src_max $UDP_SRC_MAX"
+
   if [[ -n "$DST_PORT" ]]; then
     # Single destination port or random port range
     pg_set "$dev" "flag UDPDST_RND"
@@ -72,13 +76,13 @@ for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
     pg_set "$dev" "udp_dst_max $UDP_DST_MAX"
   fi
 
-  # Setup random UDP port src range
-  pg_set "$dev" "flag UDPSRC_RND"
-  pg_set "$dev" "udp_src_min $UDP_SRC_MIN"
-  pg_set "$dev" "udp_src_max $UDP_SRC_MAX"
+  pg_set "$dev" "xmit_mode $XMIT_MODE"
+  if [[ "$XMIT_MODE" == "$XMIT_MODE_START_XMIT" ]]; then
+    pg_set "$dev" "clone_skb $CLONE_SKB"
 
-  # Setup burst
-  pg_set "$dev" "burst $BURST"
+    # Setup burst
+    pg_set "$dev" "burst $BURST"
+  fi
 done
 
 function stop_and_print_results() {

@@ -3,48 +3,53 @@
 
 set -euo pipefail
 
+export XMIT_MODE_START_XMIT="start_xmit"
+export XMIT_MODE_QUEUE_XMIT="queue_xmit"
+
 function usage() {
   echo
   echo "Usage: $0 [-evx6] -i ethX"
   echo "  -i : (\$DEV)       output interface/device (required)"
-  echo "  -s : (\$PKT_SIZE)  packet size in bytes (>= 14 + 20 + 8, default 60)"
   echo "  -d : (\$DEST_IP)   destination IP. CIDR (e.g. 198.18.0.0/15) is also allowed"
-  echo "  -m : (\$DST_MAC)   destination MAC-addr"
+  echo "  -6 : (\$IP6)       IPv6"
+  echo "  -a : (\$DST_MAC)   destination MAC-addr"
   echo "  -p : (\$DST_PORT)  destination PORT range (e.g. 433-444) is also allowed"
+  echo "  -c : (\$CLONE_SKB) SKB clones send before alloc new SKB (default 0)"
+  echo "  -b : (\$BURST)     HW level bursting of SKBs (>= 1, default 1)"
+  echo "  -m : (\$XMIT_MODE) can be <$XMIT_MODE_START_XMIT|$XMIT_MODE_QUEUE_XMIT> (default $XMIT_MODE_START_XMIT)"
+  echo "  -s : (\$PKT_SIZE)  packet size in bytes (>= 14 + 20 + 8, default 60)"
   echo "  -t : (\$THREADS)   threads to start"
   echo "  -f : (\$F_THREAD)  index of first thread (zero indexed CPU number)"
-  echo "  -c : (\$CLONE_SKB) SKB clones send before alloc new SKB (default 0)"
   echo "  -n : (\$COUNT)     num messages to send per thread, 0 means indefinitely"
   echo "  -l : (\$DELAY)     add delay between packets in nanoseconds (default 0)"
-  echo "  -b : (\$BURST)     HW level bursting of SKBs (>= 1, default 1)"
   echo "  -g : (\$INTERVAL)  interval of device summary in seconds (default 0, disabled)"
   echo "  -e : (\$TIMEOUT)   run with a time limit in seconds, 0 means indefinitely"
   echo "  -v : (\$VERBOSE)   verbose"
   echo "  -x : (\$DEBUG)     debug"
-  echo "  -6 : (\$IP6)       IPv6"
   echo
 }
 
 ##  --- Parse command line arguments / parameters ---
-while getopts ":i:s:d:m:p:t:f:c:n:l:b:g:e:vx6h" option; do
+while getopts ":i:d:6a:p:c:b:m:s:t:f:n:l:g:e:vxh" option; do
   # shellcheck disable=SC2034
   case $option in
     i  ) DEV=$OPTARG ;;
-    s  ) PKT_SIZE=$OPTARG ;;
     d  ) DEST_IP=$OPTARG ;;
-    m  ) DST_MAC=$OPTARG ;;
+    6  ) IP6=6 ;;
+    a  ) DST_MAC=$OPTARG ;;
     p  ) DST_PORT=$OPTARG ;;
+    c  ) CLONE_SKB=$OPTARG ;;
+    b  ) BURST=$OPTARG ;;
+    m  ) XMIT_MODE=$OPTARG ;;
+    s  ) PKT_SIZE=$OPTARG ;;
     t  ) THREADS=$OPTARG ;;
     f  ) F_THREAD=$OPTARG ;;
-    c  ) CLONE_SKB=$OPTARG ;;
     n  ) COUNT=$OPTARG ;;
     l  ) DELAY=$OPTARG ;;
-    b  ) BURST=$OPTARG ;;
     g  ) INTERVAL=$OPTARG ;;
     e  ) TIMEOUT=$OPTARG ;;
     v  ) VERBOSE=true ;;
     x  ) DEBUG=true ;;
-    6  ) IP6=6 ;;
     h  )
       usage
       exit
@@ -64,10 +69,6 @@ while getopts ":i:s:d:m:p:t:f:c:n:l:b:g:e:vx6h" option; do
 done
 shift "$(( OPTIND - 1 ))"
 
-if [[ "$#" -gt 0 ]]; then
-  warn "Ignore non-option arguments: $*"
-fi
-
 all_params=()
 function add_to_export() {
   local def_val="${2:-}"
@@ -81,38 +82,42 @@ if [[ -z "$DEV" ]]; then
   err 2 "Please specify output device"
 fi
 
+add_to_export IP6
+add_to_export DST_PORT
+
+add_to_export CLONE_SKB 0
+add_to_export BURST 1
+add_to_export XMIT_MODE "$XMIT_MODE_START_XMIT"
+
+if [[ "$XMIT_MODE" != "$XMIT_MODE_START_XMIT" ]] \
+  && [[ "$XMIT_MODE" != "$XMIT_MODE_QUEUE_XMIT" ]]; then
+  usage
+  err 2 "XMIT_MODE can only be \"$XMIT_MODE_START_XMIT\" or \"$XMIT_MODE_QUEUE_XMIT\""
+fi
+
+if [[ "$XMIT_MODE" == "$XMIT_MODE_QUEUE_XMIT" ]]; then
+  if [[ "$CLONE_SKB" != "0" ]]; then
+    err 1 "CLONE_SKB not supported for this mode ($XMIT_MODE_QUEUE_XMIT)"
+  fi
+  if [[ "$BURST" != "1" ]]; then
+    err 1  "bursting not supported for this mode ($XMIT_MODE_QUEUE_XMIT)"
+  fi
+fi
+
 # This is Ethernet packet size - 4
 # NIC adds 4 bytes CRC
 # datalen = PKT_SIZE - 14 (Eth) - 20 (IPh) - 8 (UDPh) - MPLS (overhead)
 #   https://networkengineering.stackexchange.com/a/34191
 #   https://github.com/torvalds/linux/blob/v5.9/net/core/pktgen.c#L2793
 add_to_export PKT_SIZE 60
-add_to_export IP6
 
-if [[ -z "${DEST_IP:-}" ]]; then
-  if [[ -z "$IP6" ]]; then
-    add_to_export DEST_IP "198.18.0.42"
-  else
-    add_to_export DEST_IP "FD00::1"
-  fi
-  warn "Missing destination IP address."
-fi
-
-if [[ -z "${DST_MAC:-}" ]]; then
-  add_to_export DST_MAC "90:e2:ba:ff:ff:ff"
-  warn "Missing destination MAC address."
-fi
-
-add_to_export DST_PORT
 add_to_export THREADS 1
+
 # First thread (F_THREAD) reference the zero indexed CPU number
 add_to_export F_THREAD 0
-add_to_export L_THREAD "$(( THREADS + F_THREAD - 1 ))"
 
-add_to_export CLONE_SKB 0
 add_to_export COUNT 0
 add_to_export DELAY 0
-add_to_export BURST 1
 add_to_export INTERVAL 0
 add_to_export TIMEOUT 0
 add_to_export VERBOSE false
@@ -134,16 +139,36 @@ function validate_num_params() {
 }
 
 validate_num_params \
-  PKT_SIZE \
   DST_PORT \
+  CLONE_SKB \
+  BURST \
+  PKT_SIZE \
   THREADS \
   F_THREAD \
-  CLONE_SKB \
   COUNT \
   DELAY \
-  BURST \
   INTERVAL \
   TIMEOUT
+
+add_to_export L_THREAD "$(( THREADS + F_THREAD - 1 ))"
+
+if [[ -z "${DEST_IP:-}" ]]; then
+  if [[ -z "$IP6" ]]; then
+    add_to_export DEST_IP "198.18.0.42"
+  else
+    add_to_export DEST_IP "FD00::1"
+  fi
+  warn "Missing destination IP address."
+fi
+
+if [[ -z "${DST_MAC:-}" ]]; then
+  add_to_export DST_MAC "90:e2:ba:ff:ff:ff"
+  warn "Missing destination MAC address."
+fi
+
+if [[ "$#" -gt 0 ]]; then
+  warn "Ignore non-option arguments: $*"
+fi
 
 if [[ "$VERBOSE" == true ]]; then
   echo
