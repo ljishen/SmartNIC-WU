@@ -151,6 +151,13 @@ validate_num_params \
   INTERVAL \
   TIMEOUT
 
+if (( BURST < 1 )); then
+  err 2 "BURST should be no less then 1"
+fi
+if (( PKT_SIZE < 42 )); then
+  err 2 "PKT_SIZE should be not less then 42 (14 + 20 + 8)"
+fi
+
 add_to_export L_THREAD "$(( THREADS + F_THREAD - 1 ))"
 
 if [[ -z "${DEST_IP:-}" ]]; then
