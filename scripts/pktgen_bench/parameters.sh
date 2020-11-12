@@ -19,7 +19,7 @@ function usage() {
   echo "  -b : (\$BURST)     HW level bursting of SKBs (>= 1, default 1)"
   echo "  -m : (\$XMIT_MODE) can be <$XMIT_MODE_START_XMIT|$XMIT_MODE_QUEUE_XMIT> (default $XMIT_MODE_START_XMIT)"
   echo "  -s : (\$PKT_SIZE)  packet size in bytes (>= 14 + 20 + 8, default 60)"
-  echo "  -t : (\$THREADS)   threads to start"
+  echo "  -t : (\$THREADS)   threads to start (<=$(nproc), default 1)"
   echo "  -f : (\$F_THREAD)  index of first thread (zero indexed CPU number)"
   echo "  -n : (\$COUNT)     num messages to send per thread, 0 means indefinitely"
   echo "  -l : (\$DELAY)     add delay between packets in nanoseconds (default 0)"
@@ -152,10 +152,13 @@ validate_num_params \
   TIMEOUT
 
 if (( BURST < 1 )); then
-  err 2 "BURST should be no less then 1"
+  err 2 "BURST should be >= 1"
 fi
 if (( PKT_SIZE < 42 )); then
-  err 2 "PKT_SIZE should be not less then 42 (14 + 20 + 8)"
+  err 2 "PKT_SIZE should be >= 42 (14 + 20 + 8)"
+fi
+if (( THREADS > "$(nproc)" )); then
+  err 2 "THREADS should be <= $(nproc)"
 fi
 
 add_to_export L_THREAD "$(( THREADS + F_THREAD - 1 ))"
