@@ -18,6 +18,9 @@ root_check_run_with_sudo "$@"
 source "${basedir}"/parameters.sh
 
 # Flow variation random source port between min and max
+# discard protocol on port 9: https://en.wikipedia.org/wiki/Discard_Protocol
+# See the list of well known ports:
+#   https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers#Well-known_ports
 UDP_SRC_MIN=9
 UDP_SRC_MAX=109
 

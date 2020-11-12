@@ -3,12 +3,13 @@
 
 set -euo pipefail
 
-export XMIT_MODE_START_XMIT="start_xmit"
+# https://marc.info/?l=linux-netdev&m=145221897804178&w=2
 export XMIT_MODE_QUEUE_XMIT="queue_xmit"
+export XMIT_MODE_START_XMIT="start_xmit"
 
 function usage() {
   echo
-  echo "Usage: $0 [-evx6] -i ethX"
+  echo "Usage: $0 -i ethX [OPTIONS]"
   echo "  -i : (\$DEV)       output interface/device (required)"
   echo "  -d : (\$DEST_IP)   destination IP. CIDR (e.g. 198.18.0.0/15) is also allowed"
   echo "  -6 : (\$IP6)       IPv6"
