@@ -113,22 +113,27 @@ function pgset() {
   fi
 }
 
-export trap_exit_funcs=()
-function run_traps() {
-  for func in "${trap_exit_funcs[@]}"; do
-    $func
-  done
+function newline_for_debug_output() {
+  if [[ "${DEBUG:-false}" == true ]]; then
+    echo  # separate from the output of the customized traps
+  fi
 }
+
+export exit_trap_funcs=()
 
 function on_exit() {
   trace_off
   PS4='\033[0D[ON_EXIT] '
 
-  run_traps
+  newline_for_debug_output
+  pg_ctrl "stop"
 
-  if [[ "${DEBUG:-false}" == true ]]; then
-    echo  # separate from the output of the customized traps
-  fi
+  # run customized trap functions
+  for func in "${exit_trap_funcs[@]}"; do
+    $func
+  done
+
+  newline_for_debug_output
   pg_ctrl "reset"
 }
 [[ $EUID -eq 0 ]] && trap on_exit EXIT

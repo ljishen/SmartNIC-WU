@@ -8,14 +8,14 @@
 
 set -euo pipefail
 
-basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # shellcheck source=/dev/null
-source "${basedir}"/functions.sh
+source "${SCRIPT_DIR}"/functions.sh
 root_check_run_with_sudo "$@"
 
 # shellcheck source=/dev/null
-source "${basedir}"/parameters.sh
+source "${SCRIPT_DIR}"/parameters.sh
 
 # Flow variation random source port between min and max
 # discard protocol on port 9: https://en.wikipedia.org/wiki/Discard_Protocol
@@ -33,6 +33,7 @@ if [[ -n "$DST_PORT" ]]; then
 fi
 
 # General cleanup everything since last run
+newline_for_debug_output
 pg_ctrl "reset"
 
 # The device name is extended with @name, using thread number to
@@ -88,8 +89,7 @@ for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
   fi
 done
 
-function stop_and_print_results() {
-  pg_ctrl "stop"
+function print_results() {
   printf -- "\\n-------------------- RESULTS --------------------\\n"
   for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
     dev=$(get_thread_dev $thread)
@@ -153,8 +153,10 @@ if (( TIMEOUT > 0 )); then
   printf " up to %d seconds" "$TIMEOUT"
 fi
 echo "... Ctrl-C to stop."
+
+newline_for_debug_output
 pg_ctrl "start" &
-trap_exit_funcs+=(stop_and_print_results)
+exit_trap_funcs+=(print_results)
 
 setup_timeout &
 
