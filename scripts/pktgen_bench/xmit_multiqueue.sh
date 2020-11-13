@@ -136,10 +136,11 @@ function print_summary() {
 function setup_timeout() {
   if (( TIMEOUT  > 0 )); then
     sleep "$TIMEOUT"
-    kill -INT -"$(pgrep \
-      --oldest \
-      --uid "$(id -u "$(logname)")" \
-      --full "$(basename "${BASH_SOURCE[0]}")")"
+
+    # the first kill can be futile if at the same time a new
+    # sleep interval is brought up.
+    pkill -INT --parent "$$"
+    pkill -INT --parent "$$"
   fi
 }
 

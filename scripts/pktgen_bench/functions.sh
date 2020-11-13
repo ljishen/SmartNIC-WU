@@ -135,6 +135,9 @@ function on_exit() {
 
   newline_for_debug_output
   pg_ctrl "reset"
+
+  # Exit with 0 if the program is self-terminated
+  exit 0
 }
 [[ $EUID -eq 0 ]] && trap on_exit EXIT
 
