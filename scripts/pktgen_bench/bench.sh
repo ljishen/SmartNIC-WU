@@ -26,7 +26,7 @@ got_device_info=false
 printf "# Network Device Information" > "$OUTPUT_FILE"
 
 if command -v lshw >/dev/null 2>&1; then
-  printf " (via lshw)\\n#\\n" >> "$OUTPUT_FILE"
+  printf ' (via lshw)\n#\n' >> "$OUTPUT_FILE"
   sudo lshw -class network \
     | awk -v ifname="$IFNAME" '
         BEGIN { FS="\n"; RS="\*-network:[[:digit:]]" }
@@ -39,19 +39,19 @@ fi
 
 if [[ "$got_device_info" != true ]] \
   && command -v ethtool >/dev/null 2>&1; then
-  printf " (via ethtool)\\n#\\n" >> "$OUTPUT_FILE"
+  printf ' (via ethtool)\n#\n' >> "$OUTPUT_FILE"
   sudo ethtool "$IFNAME" | sed 's/^/# /' >> "$OUTPUT_FILE"
   got_device_info=true
 fi
 
 if [[ "$got_device_info" != true ]]; then
-  printf " (not available)\\n#\\n" >> "$OUTPUT_FILE"
+  printf ' (not available)\n#\n' >> "$OUTPUT_FILE"
   echo "[WARN] need either \"lshw\" or \"ethtool\" to get network device information" >&2
 fi
 
 echo >> "$OUTPUT_FILE"
 
-printf "CLONE_SKB\\tBURST\\tTHREADS\\tTHROUGHT (Mb/sec)\\n" >> "$OUTPUT_FILE"
+printf 'CLONE_SKB\tBURST\tTHREADS\tTHROUGHT (Mb/sec)\tSTD\n' >> "$OUTPUT_FILE"
 
 for c in "${ARR_CLONE_SKB[@]}"; do
   for b in "${ARR_BURST[@]}"; do
@@ -61,7 +61,7 @@ for c in "${ARR_CLONE_SKB[@]}"; do
            "BURST=$b (${ARR_BURST[0]}..${ARR_BURST[-1]})," \
            "THREADS=$t (${ARR_THREADS[0]}..${ARR_THREADS[-1]})"
 
-      res_total=0
+      records=()
       for _ in $(seq "$ROUNDS_PER_TEST"); do
         res=$(
           "$SCRIPT_DIR"/xmit_multiqueue.sh \
@@ -74,17 +74,26 @@ for c in "${ARR_CLONE_SKB[@]}"; do
               | grep -oP "\d+(?=Mb/sec)" \
               | awk '{ sum += $1 } END { print sum }'
           )
-          (( res_total += res ))
+        records+=("$res")
       done
 
-      awk \
+      printf '%s\n' "${records[@]}" | awk \
         -v c="$c" \
         -v b="$b" \
         -v t="$t" \
-        -v res_total="$res_total" \
-        -v rounds="$ROUNDS_PER_TEST" \
-        ' BEGIN { printf("%s\t%s\t%s\t%s\n", c, b, t, res_total / rounds) } ' \
-        >> "$OUTPUT_FILE"
+        '
+          {
+            sum += $0
+            sum_sq += $0 ^ 2
+          }
+
+          END {
+            printf("%d\t%d\t%d\t%.2f\t%.2f\n",
+              c, b, t,
+              sum / NR,
+              sqrt(sum_sq / NR - (sum / NR) ^ 2))
+          }
+        ' >> "$OUTPUT_FILE"
     done
   done
 done
