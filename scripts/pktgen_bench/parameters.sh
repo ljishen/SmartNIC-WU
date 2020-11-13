@@ -184,11 +184,11 @@ fi
 if [[ "$VERBOSE" == true ]]; then
   echo
   (
-    printf -- "--------- | -----\\n"
-    printf "PARAMETER | VALUE\\n"
-    printf -- "--------- | -----\\n"
+    printf -- '--------- | -----\n'
+    printf 'PARAMETER | VALUE\n'
+    printf -- '--------- | -----\n'
     for param in "${all_params[@]}"; do
-      printf "%s | %s\\n" "$param" "${!param:-\"\"}"
+      printf '%s | %s\n' "$param" "${!param:-\"\"}"
     done
   ) | column -t | sed 's/^/[VERBOSE] /'
 fi

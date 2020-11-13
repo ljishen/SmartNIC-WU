@@ -90,7 +90,7 @@ for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
 done
 
 function print_results() {
-  printf -- "\\n-------------------- RESULTS --------------------\\n"
+  printf -- '\n-------------------- RESULTS --------------------\n'
   for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
     dev=$(get_thread_dev $thread)
     grep -A2 "Result:" "$PROC_DIR/$dev" 2>&1 | sed "s/^/[IFNAME: $dev] /"
