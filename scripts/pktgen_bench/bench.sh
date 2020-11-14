@@ -51,7 +51,7 @@ fi
 
 OUTPUT_FILE="${OUTPUT_DIR}/pkt_size_${PKT_SIZE}bytes.data"
 if [[ -f "$OUTPUT_FILE" ]]; then
-  echo "[ERROR] we don't want to overwrite the existing file $OUTPUT_FILE." >&2
+  echo "[ERROR] we don't want to overwrite the existing file $OUTPUT_FILE" >&2
   exit 2
 else
   mkdir -p "$OUTPUT_DIR"
@@ -61,13 +61,18 @@ function get_date() {
   date --iso-8601=seconds
 }
 
+function print_separator() {
+  echo "# ========================================"
+}
+
 got_device_info=false
 
-printf "# Network Device Information" > "$OUTPUT_FILE"
+printf '# Network Device Information' > "$OUTPUT_FILE"
 
 if command -v lshw >/dev/null 2>&1; then
   {
-    printf ' (via lshw)\n#\n'
+    echo " (via lshw)"
+    print_separator
     sudo lshw -class network \
       | awk -v ifname="$IFNAME" '
           BEGIN { FS="\n"; RS="\*-network:[[:digit:]]*" }
@@ -83,7 +88,8 @@ fi
 if [[ "$got_device_info" != true ]] \
   && command -v ethtool >/dev/null 2>&1; then
   {
-    printf ' (via ethtool)\n#\n'
+    echo " (via ethtool)"
+    print_separator
     sudo ethtool "$IFNAME" | sed 's/^/# /'
     echo "#"
   } >> "$OUTPUT_FILE"
@@ -91,16 +97,43 @@ if [[ "$got_device_info" != true ]] \
 fi
 
 if [[ "$got_device_info" != true ]]; then
-  printf '\n#\n' >> "$OUTPUT_FILE"
+  {
+    echo
+    print_separator
+  } >> "$OUTPUT_FILE"
   echo '[WARN] need either "lshw" or "ethtool" to get better device information.' >&2
 fi
 
 {
   printf '# Device speed: %d Mbit/s\n' "$(cat /sys/class/net/$IFNAME/speed)"
   printf '# Device mtu: %d bytes\n' "$(cat /sys/class/net/$IFNAME/mtu)"
-  printf '# Device tx_queue_len: %d\n#\n' "$(cat /sys/class/net/$IFNAME/tx_queue_len)"
-  printf '# Start of test: %s\n\n' "$(get_date)"
+  printf '# Device tx_queue_len: %d\n' "$(cat /sys/class/net/$IFNAME/tx_queue_len)"
+  print_separator
 } >> "$OUTPUT_FILE"
+
+{
+  printf '#\n# CPU Information\n'
+  print_separator
+  # shellcheck disable=SC2016,SC1004
+  find /sys/devices/system/cpu -type d -name "cpu[0-9]*" \
+    | sort --version-sort \
+    | xargs -I '{}' sh -c '
+        printf "%s: socket %d, %d KHz\\n" \
+          "$(basename {})" \
+          "$(cat {}/topology/physical_package_id)" \
+          "$(cat {}/cpufreq/cpuinfo_max_freq)"' \
+    | sed 's/^/# /'
+  print_separator
+
+  printf '#\n# Memory Information\n'
+  print_separator
+  cat /sys/devices/system/node/node*/meminfo | grep -i MemTotal \
+    | sed 's/^/# /'
+  print_separator
+
+  printf '#\n# Start of test: %s\n\n' "$(get_date)"
+} >> "$OUTPUT_FILE"
+
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
