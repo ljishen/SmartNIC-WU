@@ -8,7 +8,7 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # shellcheck source=/dev/null
 source "${SCRIPT_DIR}"/functions.sh
@@ -21,8 +21,8 @@ source "${SCRIPT_DIR}"/parameters.sh
 # discard protocol on port 9: https://en.wikipedia.org/wiki/Discard_Protocol
 # See the list of well known ports:
 #   https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers#Well-known_ports
-UDP_SRC_MIN=9
-UDP_SRC_MAX=109
+readonly UDP_SRC_MIN=9
+readonly UDP_SRC_MAX=109
 
 validate_addr"$IP6" "$DEST_IP"
 read -r DST_MIN DST_MAX <<< "$(parse_addr"$IP6" "$DEST_IP")"

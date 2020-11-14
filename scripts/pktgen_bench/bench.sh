@@ -4,12 +4,12 @@ set -euo pipefail
 
 # You can change the following parameters as needed.
 # --------------------------
-IFNAME=ens1f1
-PKT_SIZE=60 # in bytes
-RUNTIME=20  # in seconds
+readonly IFNAME=ens1f1
+readonly PKT_SIZE=60 # in bytes
+readonly RUNTIME=20  # in seconds
 
-ROUNDS_PER_TEST=3
-OUTPUT_DIR="./results"
+readonly ROUNDS_PER_TEST=3
+readonly OUTPUT_DIR="./results"
 
 # The first step of testing is to evaluate the least value of
 # THREADS, CLONE_SKB, and BURST that can achieve the maximum
@@ -23,10 +23,10 @@ OUTPUT_DIR="./results"
 # improved under a given packet delay.
 #
 # ===== STEP ONE =====
-ARR_DELAY=(0)
-ARR_THREADS=({1..10})
-ARR_CLONE_SKB=({0..25..5})
-ARR_BURST=(1 {5..25..5})
+readonly ARR_DELAY=(0)
+readonly ARR_THREADS=({1..10})
+readonly ARR_CLONE_SKB=({0..25..5})
+readonly ARR_BURST=(1 {5..25..5})
 # ===================
 #
 # ===== STEP TWO =====
@@ -49,7 +49,7 @@ if [[ "$operstate" != "up" ]]; then
   exit 1
 fi
 
-OUTPUT_FILE="${OUTPUT_DIR}/pkt_size_${PKT_SIZE}bytes.data"
+readonly OUTPUT_FILE="${OUTPUT_DIR}/pkt_size_${PKT_SIZE}bytes.data"
 if [[ -f "$OUTPUT_FILE" ]]; then
   echo "[ERROR] we don't want to overwrite the existing file $OUTPUT_FILE" >&2
   exit 2
@@ -135,7 +135,7 @@ fi
 } >> "$OUTPUT_FILE"
 
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 printf 'DELAY (ns)\tTHREADS\tCLONE_SKB\tBURST\tTHROUGHPUT (Mb/sec)\tSTD\n' >> "$OUTPUT_FILE"
 
