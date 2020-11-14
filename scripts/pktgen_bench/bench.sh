@@ -127,8 +127,11 @@ fi
 
   printf '#\n# Memory Information\n'
   print_separator
-  cat /sys/devices/system/node/node*/meminfo | grep -i MemTotal \
-    | sed 's/^/# /'
+  if [[ -d /sys/devices/system/node ]]; then
+    cat /sys/devices/system/node/node*/meminfo | grep -i MemTotal
+  else
+    head --lines=3 /proc/meminfo
+  fi | sed 's/^/# /'
   print_separator
 
   printf '#\n# Start of test: %s\n\n' "$(get_date)"
