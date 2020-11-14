@@ -51,7 +51,7 @@ if ! [[ -d /sys/class/net/"$IFNAME" ]]; then
   exit 1
 fi
 
-operstate="$(cat /sys/class/net/$IFNAME/operstate)"
+operstate="$(cat /sys/class/net/"$IFNAME"/operstate)"
 if [[ "$operstate" != "up" ]]; then
   echo "[ERROR] network device $IFNAME is $operstate" >&2
   exit 1
@@ -95,13 +95,17 @@ fi
 
 if [[ "$got_device_info" != true ]] \
   && command -v ethtool >/dev/null 2>&1; then
-  {
-    echo " (via ethtool)"
-    print_separator
-    sudo ethtool "$IFNAME" | sed 's/^/# /'
-    echo "#"
-  } >> "$OUTPUT_FILE"
-  got_device_info=true
+  exit_status=0
+  ethtool_output="$(sudo ethtool "$IFNAME" | sed 's/^/# /')" || exit_status=$?
+  if (( exit_status == 0 )); then
+    {
+      echo " (via ethtool)"
+      print_separator
+      echo "$ethtool_output"
+      echo "#"
+    } >> "$OUTPUT_FILE"
+    got_device_info=true
+  fi
 fi
 
 if [[ "$got_device_info" != true ]]; then
@@ -113,9 +117,9 @@ if [[ "$got_device_info" != true ]]; then
 fi
 
 {
-  printf '# Device speed: %d Mbit/s\n' "$(cat /sys/class/net/$IFNAME/speed)"
-  printf '# Device mtu: %d bytes\n' "$(cat /sys/class/net/$IFNAME/mtu)"
-  printf '# Device tx_queue_len: %d\n' "$(cat /sys/class/net/$IFNAME/tx_queue_len)"
+  printf '# Device speed: %d Mbit/s\n' "$(cat /sys/class/net/"$IFNAME"/speed)"
+  printf '# Device mtu: %d bytes\n' "$(cat /sys/class/net/"$IFNAME"/mtu)"
+  printf '# Device tx_queue_len: %d\n' "$(cat /sys/class/net/"$IFNAME"/tx_queue_len)"
   print_separator
 } >> "$OUTPUT_FILE"
 

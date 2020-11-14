@@ -43,7 +43,7 @@ function get_thread_dev() {
   echo "$DEV@$thread"
 }
 
-for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
+for (( thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++ )); do
   dev=$(get_thread_dev $thread)
 
   # Add remove all other devices and add_device $dev to thread
@@ -91,7 +91,7 @@ done
 
 function print_results() {
   printf -- '\n-------------------- RESULTS --------------------\n'
-  for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
+  for (( thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++ )); do
     dev=$(get_thread_dev $thread)
     grep -A2 "Result:" "$PROC_DIR/$dev" 2>&1 | sed "s/^/[IFNAME: $dev] /"
   done
@@ -99,7 +99,7 @@ function print_results() {
 
 function print_summary() {
   echo
-  for ((thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++)); do
+  for (( thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++ )); do
     dev=$(get_thread_dev $thread)
     awk -v dev="$dev" -v thread="$thread" -v F_THREAD="$F_THREAD" '
       BEGIN { in_current = 0 }
