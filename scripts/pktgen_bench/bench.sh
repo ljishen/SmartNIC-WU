@@ -2,9 +2,14 @@
 
 set -euo pipefail
 
+if [[ "$#" -ne 1 ]]; then
+  echo "Usage: $0 ifname"
+  exit
+fi
+readonly IFNAME="$1"
+
 # You can change the following parameters as needed.
 # --------------------------
-readonly IFNAME=ens1f1
 readonly PKT_SIZE=60 # in bytes
 readonly RUNTIME=20  # in seconds
 
