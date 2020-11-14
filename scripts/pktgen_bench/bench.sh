@@ -2,16 +2,9 @@
 
 set -euo pipefail
 
-if [[ "$#" -ne 1 ]]; then
-  echo "Usage: $0 ifname"
-  exit
-fi
-readonly IFNAME="$1"
-
 # You can change the following parameters as needed.
 # --------------------------
-readonly PKT_SIZE=60 # in bytes
-readonly RUNTIME=20  # in seconds
+readonly RUNTIME=20     # in seconds
 
 readonly ROUNDS_PER_TEST=3
 readonly OUTPUT_DIR="./results"
@@ -46,21 +39,36 @@ readonly ARR_BURST=(1 {5..25..5})
 readonly DEBUG=false
 # --------------------------
 
+if [[ "$#" -ne 2 ]]; then
+  echo "Usage: $0 ifname pkt_size"
+  exit
+fi
+readonly IFNAME="$1"
+readonly PKT_SIZE="$2"  # in bytes
+
+function err() {
+  local exitcode=$1
+  shift
+  echo "[ERROR] $*" >&2
+  exit "$exitcode"
+}
+
 if ! [[ -d /sys/class/net/"$IFNAME" ]]; then
-  echo "[ERROR] network device $IFNAME is not available" >&2
-  exit 1
+  err 1 "network device $IFNAME is not available."
+fi
+
+if ! [[ "$PKT_SIZE" =~ ^[0-9]+$ ]]; then
+  err 1 "pkt_size is not a positive number."
 fi
 
 operstate="$(cat /sys/class/net/"$IFNAME"/operstate)"
 if [[ "$operstate" != "up" ]]; then
-  echo "[ERROR] network device $IFNAME is $operstate" >&2
-  exit 1
+  err 2 "network device $IFNAME is $operstate."
 fi
 
 readonly OUTPUT_FILE="${OUTPUT_DIR}/pkt_size_${PKT_SIZE}bytes.data"
 if [[ -f "$OUTPUT_FILE" ]]; then
-  echo "[ERROR] we don't want to overwrite the existing file $OUTPUT_FILE" >&2
-  exit 2
+  err 2 "we don't want to overwrite the existing file $OUTPUT_FILE"
 else
   mkdir -p "$OUTPUT_DIR"
 fi
