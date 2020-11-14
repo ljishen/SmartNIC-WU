@@ -123,6 +123,9 @@ export exit_trap_funcs=()
 
 function on_exit() {
   trace_off
+  if ! [[ -d "$PROC_DIR" ]]; then
+    return
+  fi
   PS4='\033[0D[ON_EXIT] '
 
   newline_for_debug_output
