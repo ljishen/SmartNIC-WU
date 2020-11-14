@@ -36,6 +36,9 @@ readonly ARR_BURST=(1 {5..25..5})
 # ARR_CLONE_SKB=(20)  # update this value
 # ARR_BURST=(20)      # update this value
 # ====================
+
+# if true, write debug output to $OUTPUT_DIR/debug.log
+readonly DEBUG=false
 # --------------------------
 
 if ! [[ -d /sys/class/net/"$IFNAME" ]]; then
@@ -139,6 +142,10 @@ fi
 
 
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+debug_command="cat"
+if [[ "$DEBUG" == true ]]; then
+  debug_command="tee $OUTPUT_DIR/debug.log"
+fi
 
 printf 'DELAY (ns)\tTHREADS\tCLONE_SKB\tBURST\tTHROUGHPUT (Mb/sec)\tSTD\n' >> "$OUTPUT_FILE"
 
@@ -163,6 +170,7 @@ for d in "${ARR_DELAY[@]}"; do
               -t "$t" \
               -c "$c" \
               -b "$b" 2>&1 \
+                | sh -c "$debug_command" \
                 | grep -oP "\d+(?=Mb/sec)" \
                 | awk '{ sum += $1 } END { print sum }'
             )
