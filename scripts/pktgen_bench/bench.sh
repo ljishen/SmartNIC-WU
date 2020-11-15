@@ -164,7 +164,7 @@ if [[ "$DEBUG" == true ]]; then
   debug_command="tee $OUTPUT_DIR/debug.log"
 fi
 
-printf 'DELAY (ns)\tTHREADS\tCLONE_SKB\tBURST\tTHROUGHPUT (Mb/sec)\tSTD\n' >> "$OUTPUT_FILE"
+printf '"DELAY (ns)"\tTHREADS\tCLONE_SKB\tBURST\t"THROUGHPUT (Mb/sec)"\tSTD\n' >> "$OUTPUT_FILE"
 
 for d in "${ARR_DELAY[@]}"; do
   for t in "${ARR_THREADS[@]}"; do
@@ -217,5 +217,5 @@ for d in "${ARR_DELAY[@]}"; do
   done
 done
 
-printf '\n# End of test: %s' "$(get_date)" >> "$OUTPUT_FILE"
+printf '\n# End of test: %s\n' "$(get_date)" >> "$OUTPUT_FILE"
 echo "[$(get_date)][INFO] complete!"
