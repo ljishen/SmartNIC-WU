@@ -218,4 +218,4 @@ for d in "${ARR_DELAY[@]}"; do
 done
 
 printf '\n# End of test: %s' "$(get_date)" >> "$OUTPUT_FILE"
-echo "[$(get_date)][INFO] completed!"
+echo "[$(get_date)][INFO] complete!"
