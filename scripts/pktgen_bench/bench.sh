@@ -66,7 +66,7 @@ if [[ "$operstate" != "up" ]]; then
   err 2 "network device $IFNAME is $operstate."
 fi
 
-readonly OUTPUT_FILE="${OUTPUT_DIR}/pkt_size_${PKT_SIZE}bytes.data"
+readonly OUTPUT_FILE="${OUTPUT_DIR}/pkt_size_${PKT_SIZE}bytes.dat"
 if [[ -f "$OUTPUT_FILE" ]]; then
   err 2 "we don't want to overwrite the existing file $OUTPUT_FILE"
 else
