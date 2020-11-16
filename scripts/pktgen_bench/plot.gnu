@@ -6,17 +6,31 @@ if (ARGC != 1) {
   exit
 }
 
-inputfile = ARG1
-if (system(sprintf("test -f '%s' && echo 0 || echo $?",inputfile)) != 0) {
-  print sprintf("[ERROR] file %s does not exist!",inputfile)
+datafile = ARG1
+if (system(sprintf("test -f '%s' && echo 0 || echo $?",datafile)) != 0) {
+  printerr sprintf("[ERROR] No such file %s",datafile)
   exit status 1
 }
 
-outputdir = system("dirname ".inputfile)
-set output outputdir."/pktgen_bench.svg"
 
-set terminal svg enhanced size 1000 1000 fname "Times,36"
-set samples 1001            # high quality
-set border 31 linewidth .3  # thin border
+set terminal svg enhanced font "arial,12" fontscale 1.0 size 600, 400
 
-set title "network throughput"
+output_dir = system("dirname -- ".datafile)
+datafile_name = system("basename -- ".datafile)
+indexof_dot = strstrt(datafile_name,".")
+datafile_name_noext = substr(datafile_name,1,(indexof_dot == 0 ? -1 : indexof_dot - 1))
+set output output_dir."/".datafile_name_noext.".svg"
+
+set grid
+set key bottom right nobox
+set title sprintf("Network Throughput (%s)",datafile_name_noext) font ",20" noenhanced
+
+data_headers = system("grep -m1 '^[^#]' ".datafile)
+set xlabel word(data_headers,4)
+set autoscale x
+set ylabel word(data_headers,5)
+set yrange [0:*]
+
+stats datafile using 2 name "threads" nooutput
+plot for [i=threads_min:threads_max] \
+  datafile using 4:($2 == i && $3 == 0 ? $5 : 1/0):6 with errorlines title sprintf("%d threads", i)
