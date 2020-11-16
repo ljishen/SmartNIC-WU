@@ -35,7 +35,8 @@ set output output_dir."/".datafile_name_noext.".svg"
 
 set grid
 set key bottom right nobox
-set title sprintf("Network Throughput (%s)",datafile_name_noext) font ",20" noenhanced
+set title sprintf("Network Throughput (%s)",datafile_name_noext) \
+  font ",20" noenhanced
 
 data_headers = system("grep -m1 '^[^#]' ".datafile)
 set xlabel word(data_headers,4)
@@ -43,6 +44,13 @@ set autoscale x
 set ylabel word(data_headers,5)
 set yrange [0:*]
 
+stats datafile using 4:($3 == 0 ? $5 : 1/0) name "throughput" nooutput
+set arrow from throughput_pos_max_y-3, graph 0.85 to \
+  throughput_pos_max_y, throughput_max_y filled
+set label at throughput_pos_max_y-3, graph 0.85 \
+  sprintf("max (%d)",throughput_max_y) center offset 0,-0.5
+
 stats datafile using 2 name "threads" nooutput
 plot for [i=threads_min:threads_max] \
-  datafile using 4:($2 == i && $3 == 0 ? $5 : 1/0):6 with errorlines title sprintf("%d threads", i)
+  datafile using 4:($2 == i && $3 == 0 ? $5 : 1/0):6 with errorlines \
+  title sprintf("%d threads", i)
