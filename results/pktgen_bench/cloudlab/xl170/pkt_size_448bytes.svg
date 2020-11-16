@@ -200,7 +200,13 @@
 <g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
 </g>
 <g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
-	<path stroke='black'  d='M88.5,66.1 L88.5,342.4 L575.0,342.4 L575.0,66.1 L88.5,66.1 Z  '/></g>
+	<path stroke='black'  d='M88.5,66.1 L88.5,342.4 L575.0,342.4 L575.0,66.1 L88.5,66.1 Z  '/>	<g transform="translate(516.6,120.4)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="middle">
+		<text><tspan font-family="arial" >max (23731)</tspan></text>
+	</g>
+	<g stroke='none' shape-rendering='crispEdges'>
+		<polygon fill = 'black' points = '559.3,87.4 561.3,91.7 575.0,80.1 557.3,83.2 559.3,87.4 '/>
+	</g>
+	<path stroke='black'  d='M559.3,87.4 L561.3,91.7 L575.0,80.1 L557.3,83.2 L559.3,87.4 Z  '/>	<path stroke='black'  d='M516.6,107.5 L559.3,87.4  '/></g>
 <g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
 	<g transform="translate(19.0,204.3) rotate(270)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="middle">
 		<text><tspan font-family="arial" >THROUGHPUT (Mb/sec)</tspan></text>
