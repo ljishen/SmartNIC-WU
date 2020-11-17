@@ -25,7 +25,7 @@ if (system(sprintf("test -f '%s' && echo 0 || echo $?",datafile)) != 0) {
 }
 
 
-set terminal svg enhanced font "arial,12" fontscale 1.0 size 600, 400
+set terminal svg size 600,600 enhanced font "arial,12" fontscale 1.0
 
 output_dir = system("dirname -- ".datafile)
 datafile_name = system("basename -- ".datafile)
