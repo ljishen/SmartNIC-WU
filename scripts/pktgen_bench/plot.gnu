@@ -33,7 +33,8 @@ indexof_dot = strstrt(datafile_name,".")
 datafile_name_noext = substr(datafile_name,1,(indexof_dot == 0 ? -1 : indexof_dot - 1))
 set output output_dir."/".datafile_name_noext.".svg"
 
-set grid
+set mytics 2
+set grid xtics ytics mytics linetype 1 linecolor "grey" linewidth 0.5, linetype 0
 set key outside top center horizontal Left reverse nobox
 set title offset 0,1 font ",15" noenhanced
 set datafile missing NaN
