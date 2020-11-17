@@ -162,7 +162,7 @@ function root_check_run_with_sudo() {
 function get_iface_node() {
   local node
   node=$(</sys/class/net/"$1"/device/numa_node)
-  if [[ $node == -1 ]]; then
+  if (( node == -1 )); then
     echo 0
   else
     echo "$node"

@@ -31,8 +31,8 @@ readonly ARR_BURST=(1 {5..25..5})
 # exmple delays for evaluation
 # ARR_DELAY=(0 125 250 500 1000 2000 4000 8000 16000)
 # ARR_THREADS=({1..10})
-# ARR_CLONE_SKB=(20)  # update this value
-# ARR_BURST=(20)      # update this value
+# ARR_CLONE_SKB=(0)  # update this value
+# ARR_BURST=(5)      # update this value
 # ====================
 
 # if true, write debug output to $OUTPUT_DIR/debug.log
@@ -66,7 +66,11 @@ if [[ "$operstate" != "up" ]]; then
   err 2 "network device $IFNAME is $operstate."
 fi
 
-readonly OUTPUT_FILE="${OUTPUT_DIR}/pkt_size_${PKT_SIZE}bytes.dat"
+filename_extra=""
+if [[ "${#DELAY}" -gt 1 ]]; then
+  filename_extra="_delays"
+fi
+readonly OUTPUT_FILE="${OUTPUT_DIR}/pkt_size_${PKT_SIZE}bytes${filename_extra}.dat"
 if [[ -f "$OUTPUT_FILE" ]]; then
   err 2 "we don't want to overwrite the existing file $OUTPUT_FILE"
 else

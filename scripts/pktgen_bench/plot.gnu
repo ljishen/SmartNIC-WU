@@ -35,7 +35,8 @@ set output output_dir."/".datafile_name_noext.".svg"
 
 set grid
 set key bottom right nobox
-set title sprintf("Network Throughput (%s)",datafile_name_noext) \
+set title sprintf("Network Throughput (pkt_size: %d bytes)", \
+    system(sprintf("echo '%s' | tr -dc '0-9'",datafile_name_noext))) \
   font ",20" noenhanced
 
 data_headers = system("grep -m1 '^[^#]' ".datafile)
