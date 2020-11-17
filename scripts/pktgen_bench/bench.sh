@@ -30,7 +30,7 @@ readonly ARR_BURST=(1 {5..25..5})
 # ===== STEP TWO =====
 # exmple delays for evaluation
 # readonly ARR_DELAY=(0 125 250 500 1000 2000 4000 8000 16000)
-# readonly ARR_THREADS=({1..10})
+# IFS=' ' read -ra ARR_THREADS <<< "$(seq -s ' ' 1 "$(nproc)")"
 # readonly ARR_CLONE_SKB=(0)  # update this value
 # readonly ARR_BURST=(5)      # update this value
 # ====================
