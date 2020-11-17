@@ -34,15 +34,23 @@ datafile_name_noext = substr(datafile_name,1,(indexof_dot == 0 ? -1 : indexof_do
 set output output_dir."/".datafile_name_noext.".svg"
 
 set grid
-set key bottom right nobox
-set title font ",20" noenhanced
+set key outside top center horizontal Left reverse nobox
+set title offset 0,1 font ",15" noenhanced
+set datafile missing NaN
 
-pkt_size = system(sprintf("echo '%s' | tr -dc '0-9'",datafile_name_noext))
 data_headers = system("grep -m1 '^[^#]' ".datafile)
 
 set autoscale x
 set ylabel word(data_headers,5)
-set yrange [0:*]
+
+device_speed = system("grep -oPi 'device speed: \\K\\d+' ".datafile)
+if (strlen(device_speed) > 0) {
+  set yrange [0:device_speed]
+} else {
+  set yrange [0:*]
+}
+
+pkt_size = system(sprintf("echo '%s' | tr -dc '0-9'",datafile_name_noext))
 
 stats datafile using 2 name "threads" nooutput
 
@@ -54,19 +62,19 @@ if (strstrt(datafile_name,"_delays")) {  # a datafile for benchmarking delays
   set xlabel word(data_headers,1)
 
   plot for [i=threads_min:threads_max] \
-    datafile using 1:($2 == i ? $5 : 1/0):6 with errorlines \
+    datafile using 1:($2 == i ? $5 : NaN):6 with errorlines \
     title sprintf("%d threads", i)
 } else {
   set title sprintf("Network Throughput (pkt_size: %s bytes)",pkt_size)
   set xlabel word(data_headers,4)
 
-  stats datafile using 4:($3 == 0 ? $5 : 1/0) name "throughput" nooutput
-  set arrow from throughput_pos_max_y-3, graph 0.85 to \
+  stats datafile using 4:($3 == 0 ? $5 : NaN) name "throughput" nooutput
+  set arrow from throughput_pos_max_y-3, graph 1.05 to \
     throughput_pos_max_y, throughput_max_y filled
-  set label at throughput_pos_max_y-3, graph 0.85 \
-    sprintf("max (%d)",throughput_max_y) center offset 0,-0.5
+  set label at throughput_pos_max_y-3, graph 1.05 \
+    sprintf("max (%d)",throughput_max_y) center offset 0,0.5
 
   plot for [i=threads_min:threads_max] \
-    datafile using 4:($2 == i && $3 == 0 ? $5 : 1/0):6 with errorlines \
+    datafile using 4:($2 == i && $3 == 0 ? $5 : NaN):6 with errorlines \
     title sprintf("%d threads", i)
 }
