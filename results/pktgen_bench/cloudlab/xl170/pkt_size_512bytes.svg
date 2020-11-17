@@ -219,7 +219,7 @@
 </g>
 <g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
 	<g transform="translate(331.7,33.6)" stroke="none" fill="black" font-family="arial" font-size="20.00"  text-anchor="middle">
-		<text>Network Throughput (pkt_size_512bytes)</text>
+		<text>Network Throughput (pkt_size: 512 bytes)</text>
 	</g>
 </g>
 <g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
