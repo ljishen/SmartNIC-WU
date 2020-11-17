@@ -35,23 +35,38 @@ set output output_dir."/".datafile_name_noext.".svg"
 
 set grid
 set key bottom right nobox
-set title sprintf("Network Throughput (pkt_size: %s bytes)", \
-    system(sprintf("echo '%s' | tr -dc '0-9'",datafile_name_noext))) \
-  font ",20" noenhanced
+set title font ",20" noenhanced
 
+pkt_size = system(sprintf("echo '%s' | tr -dc '0-9'",datafile_name_noext))
 data_headers = system("grep -m1 '^[^#]' ".datafile)
-set xlabel word(data_headers,4)
+
 set autoscale x
 set ylabel word(data_headers,5)
 set yrange [0:*]
 
-stats datafile using 4:($3 == 0 ? $5 : 1/0) name "throughput" nooutput
-set arrow from throughput_pos_max_y-3, graph 0.85 to \
-  throughput_pos_max_y, throughput_max_y filled
-set label at throughput_pos_max_y-3, graph 0.85 \
-  sprintf("max (%d)",throughput_max_y) center offset 0,-0.5
-
 stats datafile using 2 name "threads" nooutput
-plot for [i=threads_min:threads_max] \
-  datafile using 4:($2 == i && $3 == 0 ? $5 : 1/0):6 with errorlines \
-  title sprintf("%d threads", i)
+
+if (strstrt(datafile_name,"_delays")) {  # a datafile for benchmarking delays
+  stats datafile using 3 name "clone_skb" nooutput
+  stats datafile using 4 name "burst" nooutput
+  set title sprintf("Network Throughput (%s bytes, %d clone_skb, %d burst)", \
+    pkt_size,clone_skb_max,burst_max)
+  set xlabel word(data_headers,1)
+
+  plot for [i=threads_min:threads_max] \
+    datafile using 1:($2 == i ? $5 : 1/0):6 with errorlines \
+    title sprintf("%d threads", i)
+} else {
+  set title sprintf("Network Throughput (pkt_size: %s bytes)",pkt_size)
+  set xlabel word(data_headers,4)
+
+  stats datafile using 4:($3 == 0 ? $5 : 1/0) name "throughput" nooutput
+  set arrow from throughput_pos_max_y-3, graph 0.85 to \
+    throughput_pos_max_y, throughput_max_y filled
+  set label at throughput_pos_max_y-3, graph 0.85 \
+    sprintf("max (%d)",throughput_max_y) center offset 0,-0.5
+
+  plot for [i=threads_min:threads_max] \
+    datafile using 4:($2 == i && $3 == 0 ? $5 : 1/0):6 with errorlines \
+    title sprintf("%d threads", i)
+}
