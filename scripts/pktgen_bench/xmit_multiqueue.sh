@@ -137,10 +137,13 @@ function setup_timeout() {
   if (( TIMEOUT  > 0 )); then
     sleep "$TIMEOUT"
 
-    # the first kill can be futile if at the same time a new
-    # sleep interval is brought up.
     pkill -INT --parent "$$"
-    pkill -INT --parent "$$"
+
+    if (( INTERVAL > 0 )); then
+      # the first kill can be futile if at the same time a new
+      # sleep interval is brought up.
+      pkill -INT --parent "$$"
+    fi
   fi
 }
 
