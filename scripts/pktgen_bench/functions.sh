@@ -15,10 +15,10 @@ stty -echoctl
 
 ## -- General shell logging cmds --
 function err() {
-  local exitcode=$1
+  local exit_status=$1
   shift
   echo "[ERROR] $*" >&2
-  exit "$exitcode"
+  exit "$exit_status"
 }
 
 function warn() {
@@ -122,6 +122,7 @@ function newline_for_debug_output() {
 export exit_trap_funcs=()
 
 function on_exit() {
+  local exit_status="$?"
   trace_off
   if ! [[ -d "$PROC_DIR" ]]; then
     return
@@ -139,8 +140,10 @@ function on_exit() {
   newline_for_debug_output
   pg_ctrl "reset"
 
-  # Exit with 0 if the program is self-terminated
-  exit 0
+  if (( exit_status == 130 )); then
+    # Exit with 0 only if the program is self-terminated
+    exit 0
+  fi
 }
 [[ $EUID -eq 0 ]] && trap on_exit EXIT
 
