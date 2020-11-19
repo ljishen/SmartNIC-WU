@@ -124,6 +124,11 @@ export exit_trap_funcs=()
 function on_exit() {
   local exit_status="$?"
   trace_off
+
+  # Once we received this signal, we can ignore those following ones
+  # so that we can finish the remaining cleanning up process.
+  trap '' INT
+
   if ! [[ -d "$PROC_DIR" ]]; then
     return
   fi
