@@ -132,9 +132,7 @@ function validate_num_params() {
     fi
 
     if ! [[ ${!param} =~ $re ]] ; then
-      err 2 "$param is not a number!"
-    elif (( ${!param} < 0 )); then
-      err 2 "$param should be greater then 0!"
+      err 2 "$param is not a valid number!"
     fi
   done
 }
