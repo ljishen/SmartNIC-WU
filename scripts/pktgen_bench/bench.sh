@@ -101,8 +101,7 @@ separate() {
   echo "# ========================================"
 }
 
-GOT_DEVICE_INFO=false
-
+GOT_NIC_INFO=false
 printf '# Network Device Information' > "$OUTPUT_FILE"
 
 get_nic_info_lshw() {
@@ -110,7 +109,7 @@ get_nic_info_lshw() {
     {
       echo " (via lshw)"
       separate
-      sudo lshw -class network \
+      lshw -class network \
         | awk -v ifname="$IFNAME" '
             BEGIN { FS="\n"; RS="\*-network:[[:digit:]]*" }
             $0 ~ ifname { print $0 }
@@ -122,13 +121,15 @@ get_nic_info_lshw() {
     echo true
   fi
 }
-GOT_DEVICE_INFO=$(get_nic_info_lshw)
+GOT_NIC_INFO=$(get_nic_info_lshw)
 
 get_nic_info_ethtool() {
   if command -v ethtool >/dev/null 2>&1; then
     local -i exit_status=0
     local ethtool_output
-    ethtool_output="$(sudo ethtool "$IFNAME" | sed 's/^/# /')" || exit_status=$?
+    ethtool_output="$(ethtool "$IFNAME" | sed 's/^/# /')" || exit_status=$?
+    # some machine may print "No data available"
+    # with exit_status=75 (e.g. wlan0 on Raspberry Pi)
     if (( exit_status == 0 )); then
       {
         echo " (via ethtool)"
@@ -140,16 +141,16 @@ get_nic_info_ethtool() {
     fi
   fi
 }
-if [[ "$GOT_DEVICE_INFO" != true ]]; then
-  GOT_DEVICE_INFO=$(get_nic_info_ethtool)
+if [[ "$GOT_NIC_INFO" != true ]]; then
+  GOT_NIC_INFO=$(get_nic_info_ethtool)
 fi
 
-if [[ "$GOT_DEVICE_INFO" != true ]]; then
+if [[ "$GOT_NIC_INFO" != true ]]; then
   {
     echo
     separate
   } >> "$OUTPUT_FILE"
-  echo '[WARN] Need either "lshw" or "ethtool" to log device information.' >&2
+  echo '[WARN] Need either "lshw" or "ethtool" to log the NIC information.' >&2
 fi
 
 {
@@ -160,21 +161,92 @@ fi
   echo "#"
 } >> "$OUTPUT_FILE"
 
-{
-  echo "# CPU Information"
-  separate
-  # shellcheck disable=SC2016,SC1004
-  find /sys/devices/system/cpu -type d -name "cpu[0-9]*" \
-    | sort --version-sort \
-    | xargs -I '{}' sh -c '
-        printf "%s: socket %d, %d KHz\\n" \
-          "$(basename {})" \
-          "$(cat {}/topology/physical_package_id)" \
-          "$(cat {}/cpufreq/cpuinfo_max_freq)"' \
-    | sed 's/^/# /'
-  separate
-  echo "#"
 
+GOT_CPU_INFO=false
+printf '# CPU Information' >> "$OUTPUT_FILE"
+
+get_cpu_info_dmidecode() {
+  if command -v dmidecode >/dev/null 2>&1; then
+    local dmidecode_output
+    # sed '$d' to delete the last line (empty line)
+    dmidecode_output="$(
+      dmidecode --type processor \
+        | sed '/^#/d' \
+        | sed 's/^/# /' \
+        | sed '$d'
+    )"
+    if grep "Max Speed:" <<< "$dmidecode_output" >/dev/null 2>&1; then
+      {
+        echo " (via dmidecode)"
+        separate
+        echo "$dmidecode_output"
+        separate
+        echo "#"
+      } >> "$OUTPUT_FILE"
+      echo true
+    fi
+  fi
+}
+GOT_CPU_INFO=$(get_cpu_info_dmidecode)
+
+get_cpu_info_lshw() {
+  if command -v lshw >/dev/null 2>&1; then
+    {
+      echo " (via lshw)"
+      separate
+      lshw -class cpu \
+        | awk '
+            BEGIN { FS="\n"; RS="\*-cpu:[[:digit:]]*" }
+            { print $0 }
+        ' \
+        | sed '/^[[:space:]]*$/d' \
+        | sed 's/^ */# /'
+      separate
+      echo "#"
+    } >> "$OUTPUT_FILE"
+    echo true
+  fi
+}
+if [[ "$GOT_CPU_INFO" != true ]]; then
+  GOT_CPU_INFO=$(get_cpu_info_lshw)
+fi
+
+get_cpu_info_sysfs() {
+  # the directory may not exist
+  #   https://software.intel.com/sites/default/files/comment/1716807/how-to-change-frequency-on-linux-pub.txt
+  if [[ -d /sys/devices/system/cpu/cpu0/cpufreq ]]; then
+    {
+      echo " (via sysfs)"
+      separate
+      # shellcheck disable=SC1004
+      find /sys/devices/system/cpu -type d -name "cpu[0-9]*" \
+        | sort --version-sort \
+        | xargs -I '{}' sh -c '
+            printf "# %s: socket %d, %d KHz\\n" \
+              "$(basename {})" \
+              "$(cat {}/topology/physical_package_id)" \
+              "$(cat {}/cpufreq/cpuinfo_max_freq)"'
+      separate
+      echo "#"
+    } >> "OUTPUT_FILE"
+    echo true
+  fi
+}
+if [[ "$GOT_CPU_INFO" != true ]]; then
+  GOT_CPU_INFO=$(get_cpu_info_sysfs)
+fi
+
+if [[ "$GOT_CPU_INFO" != true ]]; then
+  {
+    echo " (not available)"
+    separate
+    echo "#"
+  } >> "$OUTPUT_FILE"
+  echo '[WARN] Need either "dmidecode" or "lshw" to log the CPU information.' >&2
+fi
+
+
+{
   echo "# Memory Information"
   separate
   if [[ -d /sys/devices/system/node ]]; then
