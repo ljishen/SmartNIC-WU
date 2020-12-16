@@ -39,104 +39,130 @@ readonly ARR_BURST=(1 {5..25..5})
 readonly DEBUG=false
 # --------------------------
 
+err() {
+  local -ir exit_status="$1"
+  shift
+  printf "\\033[1;31m[ERROR] %s\\033[0m\\n" "$*" >&2
+  exit "$exit_status"
+}
+
+
 if [[ "$#" -ne 2 ]]; then
   echo "Usage: $0 ifname pkt_size"
   exit
 fi
+
+if [[ "$EUID" -ne 0 ]]; then
+  err 1 "This program should be run as root"
+fi
+
 readonly IFNAME="$1"
 readonly PKT_SIZE="$2"  # in bytes
 
-function err() {
-  local exitcode=$1
-  shift
-  echo "[ERROR] $*" >&2
-  exit "$exitcode"
-}
-
 if ! [[ -d /sys/class/net/"$IFNAME" ]]; then
-  err 1 "network device $IFNAME is not available."
+  err 2 "Network device $IFNAME is not available."
 fi
 
 if ! [[ "$PKT_SIZE" =~ ^[0-9]+$ ]]; then
-  err 1 "pkt_size is not a positive number."
+  err 2 "pkt_size is not a positive number."
 fi
 
-operstate="$(cat /sys/class/net/"$IFNAME"/operstate)"
-if [[ "$operstate" != "up" ]]; then
-  err 2 "network device $IFNAME is $operstate."
+readonly IFOPSTATE="$(cat /sys/class/net/"$IFNAME"/operstate)"
+if [[ "$IFOPSTATE" != "up" ]]; then
+  err 3 "Network device $IFNAME is $IFOPSTATE."
 fi
 
-if [[ "${#ARR_DELAY[@]}" -gt 1 ]]; then
+delay_test() {
+  local -i delay
+  for delay in "${ARR_DELAY[@]}"; do
+    if (( delay > 0 )); then
+      echo true
+      break
+    fi
+  done
+  echo false
+}
+
+if [[ "$(delay_test)" == true ]]; then
   filename_extra="_delays"
 fi
 readonly OUTPUT_FILE="${OUTPUT_DIR}/pkt_size_${PKT_SIZE}bytes${filename_extra:-}.dat"
 if [[ -f "$OUTPUT_FILE" ]]; then
-  err 2 "we don't want to overwrite the existing file $OUTPUT_FILE"
+  err 3 "We don't want to overwrite the existing file $OUTPUT_FILE"
 else
   mkdir -p "$OUTPUT_DIR"
 fi
 
-function get_date() {
+get_date() {
   date --iso-8601=seconds
 }
 
-function print_separator() {
+separate() {
   echo "# ========================================"
 }
 
-got_device_info=false
+GOT_DEVICE_INFO=false
 
 printf '# Network Device Information' > "$OUTPUT_FILE"
 
-if command -v lshw >/dev/null 2>&1; then
-  {
-    echo " (via lshw)"
-    print_separator
-    sudo lshw -class network \
-      | awk -v ifname="$IFNAME" '
-          BEGIN { FS="\n"; RS="\*-network:[[:digit:]]*" }
-          $0 ~ ifname { print $0 }
-      ' \
-      | sed '/^[[:space:]]*$/d' \
-      | sed 's/^ */# /'
-    echo "#"
-  } >> "$OUTPUT_FILE"
-  got_device_info=true
-fi
-
-if [[ "$got_device_info" != true ]] \
-  && command -v ethtool >/dev/null 2>&1; then
-  exit_status=0
-  ethtool_output="$(sudo ethtool "$IFNAME" | sed 's/^/# /')" || exit_status=$?
-  if (( exit_status == 0 )); then
+get_nic_info_lshw() {
+  if command -v lshw >/dev/null 2>&1; then
     {
-      echo " (via ethtool)"
-      print_separator
-      echo "$ethtool_output"
+      echo " (via lshw)"
+      separate
+      sudo lshw -class network \
+        | awk -v ifname="$IFNAME" '
+            BEGIN { FS="\n"; RS="\*-network:[[:digit:]]*" }
+            $0 ~ ifname { print $0 }
+        ' \
+        | sed '/^[[:space:]]*$/d' \
+        | sed 's/^ */# /'
       echo "#"
     } >> "$OUTPUT_FILE"
-    got_device_info=true
+    echo true
   fi
+}
+GOT_DEVICE_INFO=$(get_nic_info_lshw)
+
+get_nic_info_ethtool() {
+  if command -v ethtool >/dev/null 2>&1; then
+    local -i exit_status=0
+    local ethtool_output
+    ethtool_output="$(sudo ethtool "$IFNAME" | sed 's/^/# /')" || exit_status=$?
+    if (( exit_status == 0 )); then
+      {
+        echo " (via ethtool)"
+        separate
+        echo "$ethtool_output"
+        echo "#"
+      } >> "$OUTPUT_FILE"
+      echo true
+    fi
+  fi
+}
+if [[ "$GOT_DEVICE_INFO" != true ]]; then
+  GOT_DEVICE_INFO=$(get_nic_info_ethtool)
 fi
 
-if [[ "$got_device_info" != true ]]; then
+if [[ "$GOT_DEVICE_INFO" != true ]]; then
   {
     echo
-    print_separator
+    separate
   } >> "$OUTPUT_FILE"
-  echo '[WARN] need either "lshw" or "ethtool" to get better device information.' >&2
+  echo '[WARN] Need either "lshw" or "ethtool" to log device information.' >&2
 fi
 
 {
   printf '# Device speed: %d Mbit/s\n' "$(cat /sys/class/net/"$IFNAME"/speed)"
   printf '# Device mtu: %d bytes\n' "$(cat /sys/class/net/"$IFNAME"/mtu)"
   printf '# Device tx_queue_len: %d\n' "$(cat /sys/class/net/"$IFNAME"/tx_queue_len)"
-  print_separator
+  separate
+  echo "#"
 } >> "$OUTPUT_FILE"
 
 {
-  printf '#\n# CPU Information\n'
-  print_separator
+  echo "# CPU Information"
+  separate
   # shellcheck disable=SC2016,SC1004
   find /sys/devices/system/cpu -type d -name "cpu[0-9]*" \
     | sort --version-sort \
@@ -146,25 +172,27 @@ fi
           "$(cat {}/topology/physical_package_id)" \
           "$(cat {}/cpufreq/cpuinfo_max_freq)"' \
     | sed 's/^/# /'
-  print_separator
+  separate
+  echo "#"
 
-  printf '#\n# Memory Information\n'
-  print_separator
+  echo "# Memory Information"
+  separate
   if [[ -d /sys/devices/system/node ]]; then
     cat /sys/devices/system/node/node*/meminfo | grep -i MemTotal
   else
     head --lines=3 /proc/meminfo
   fi | sed 's/^/# /'
-  print_separator
+  separate
+  echo "#"
 
-  printf '#\n# Start of test: %s\n\n' "$(get_date)"
+  printf '# Start of test: %s\n\n' "$(get_date)"
 } >> "$OUTPUT_FILE"
 
 
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-debug_command="cat"
+DEBUG_COMMAND="cat"
 if [[ "$DEBUG" == true ]]; then
-  debug_command="tee $OUTPUT_DIR/debug.log"
+  DEBUG_COMMAND="tee $OUTPUT_DIR/debug.log"
 fi
 
 printf '"DELAY (ns)"\tTHREADS\tCLONE_SKB\tBURST\t"THROUGHPUT (Mb/sec)"\tSTD\n' >> "$OUTPUT_FILE"
@@ -179,7 +207,7 @@ for d in "${ARR_DELAY[@]}"; do
              "CLONE_SKB=$c (${ARR_CLONE_SKB[0]}..${ARR_CLONE_SKB[-1]})," \
              "BURST=$b (${ARR_BURST[0]}..${ARR_BURST[-1]})"
 
-        records=()
+        RECORDS=()
         for _ in $(seq "$ROUNDS_PER_TEST"); do
           res=$(
             "$SCRIPT_DIR"/xmit_multiqueue.sh \
@@ -190,14 +218,14 @@ for d in "${ARR_DELAY[@]}"; do
               -t "$t" \
               -c "$c" \
               -b "$b" 2>&1 \
-                | sh -c "$debug_command" \
+                | sh -c "$DEBUG_COMMAND" \
                 | grep -oP "\d+(?=Mb/sec)" \
                 | awk '{ sum += $1 } END { print sum }'
             )
-          records+=("$res")
+          RECORDS+=("$res")
         done
 
-        printf '%s\n' "${records[@]}" | awk \
+        printf '%s\n' "${RECORDS[@]}" | awk \
           -v d="$d" \
           -v t="$t" \
           -v c="$c" \

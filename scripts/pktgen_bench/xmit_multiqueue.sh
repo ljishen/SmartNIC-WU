@@ -12,10 +12,11 @@ readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 &&
 
 # shellcheck source=/dev/null
 source "${SCRIPT_DIR}"/functions.sh
-root_check_run_with_sudo "$@"
 
 # shellcheck source=/dev/null
 source "${SCRIPT_DIR}"/parameters.sh
+
+check_root_privileges
 
 # Flow variation random source port between min and max
 # discard protocol on port 9: https://en.wikipedia.org/wiki/Discard_Protocol
@@ -27,28 +28,25 @@ readonly UDP_SRC_MAX=109
 validate_addr"$IP6" "$DEST_IP"
 read -r DST_MIN DST_MAX <<< "$(parse_addr"$IP6" "$DEST_IP")"
 
-if [[ -n "$DST_PORT" ]]; then
-  read -r UDP_DST_MIN UDP_DST_MAX <<< "$(parse_ports "$DST_PORT")"
-  validate_ports "$UDP_DST_MIN" "$UDP_DST_MAX"
-fi
+read -r UDP_DST_MIN UDP_DST_MAX <<< "$(parse_ports "$DST_PORT")"
+validate_ports "$UDP_DST_MIN" "$UDP_DST_MAX"
 
 # General cleanup everything since last run
-newline_for_debug_output
 pg_ctrl "reset"
 
 # The device name is extended with @name, using thread number to
 # make then unique, but any name will do.
-function get_thread_dev() {
-  local thread=$1
+get_thread_dev() {
+  local -i thread=$1
   echo "$DEV@$thread"
 }
 
 for (( thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++ )); do
-  dev=$(get_thread_dev $thread)
+  dev=$(get_thread_dev "$thread")
 
-  # Add remove all other devices and add_device $dev to thread
-  pg_thread $thread "rem_device_all"
-  pg_thread $thread "add_device" "$dev"
+  # Remove all other devices and add_device $dev to the thread
+  pg_thread "$thread" "rem_device_all"
+  pg_thread "$thread" "add_device" "$dev"
 
   # Notice config queue to map to cpu (mirrors smp_processor_id())
   # It is beneficial to map IRQ /proc/irq/*/smp_affinity 1:1 to CPU number
@@ -73,12 +71,10 @@ for (( thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++ )); do
   pg_set "$dev" "udp_src_min $UDP_SRC_MIN"
   pg_set "$dev" "udp_src_max $UDP_SRC_MAX"
 
-  if [[ -n "$DST_PORT" ]]; then
-    # Single destination port or random port range
-    pg_set "$dev" "flag UDPDST_RND"
-    pg_set "$dev" "udp_dst_min $UDP_DST_MIN"
-    pg_set "$dev" "udp_dst_max $UDP_DST_MAX"
-  fi
+  # Single destination port or random port range
+  pg_set "$dev" "flag UDPDST_RND"
+  pg_set "$dev" "udp_dst_min $UDP_DST_MIN"
+  pg_set "$dev" "udp_dst_max $UDP_DST_MAX"
 
   pg_set "$dev" "xmit_mode $XMIT_MODE"
   if [[ "$XMIT_MODE" == "$XMIT_MODE_START_XMIT" ]]; then
@@ -89,18 +85,23 @@ for (( thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++ )); do
   fi
 done
 
-function print_results() {
+print_results() {
   printf -- '\n-------------------- RESULTS --------------------\n'
+  local -i thread
+  local dev
   for (( thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++ )); do
-    dev=$(get_thread_dev $thread)
+    dev=$(get_thread_dev "$thread")
     grep -A2 "Result:" "$PROC_DIR/$dev" 2>&1 | sed "s/^/[IFNAME: $dev] /"
   done
 }
 
-function print_summary() {
+print_summary() {
   echo
+
+  local -i thread
+  local dev
   for (( thread = "$F_THREAD"; thread <= "$L_THREAD"; thread++ )); do
-    dev=$(get_thread_dev $thread)
+    dev=$(get_thread_dev "$thread")
     awk -v dev="$dev" -v thread="$thread" -v F_THREAD="$F_THREAD" '
       BEGIN { in_current = 0 }
       $0 ~ /^Result:/ { exit }
@@ -133,7 +134,7 @@ function print_summary() {
   done | column -t
 }
 
-function setup_timeout() {
+setup_timeout() {
   if (( TIMEOUT  > 0 )); then
     sleep "$TIMEOUT"
 
@@ -159,9 +160,8 @@ if (( TIMEOUT > 0 )); then
 fi
 echo "... Ctrl-C to stop."
 
-newline_for_debug_output
 pg_ctrl "start" &
-exit_trap_funcs+=(print_results)
+EXIT_TRAP_FUNCS+=(print_results)
 
 setup_timeout &
 

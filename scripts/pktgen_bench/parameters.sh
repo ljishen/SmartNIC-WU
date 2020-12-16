@@ -7,28 +7,31 @@ set -euo pipefail
 export XMIT_MODE_QUEUE_XMIT="queue_xmit"
 export XMIT_MODE_START_XMIT="start_xmit"
 
-function usage() {
-  echo
-  echo "Usage: $0 -i ethX [OPTIONS]"
-  echo "  -i : (\$DEV)       output interface/device (required)"
-  echo "  -d : (\$DEST_IP)   destination IP. CIDR (e.g. 198.18.0.0/15) is also allowed"
-  echo "  -6 : (\$IP6)       IPv6"
-  echo "  -a : (\$DST_MAC)   destination MAC-addr"
-  echo "  -p : (\$DST_PORT)  destination PORT range (e.g. 433-444) is also allowed"
-  echo "  -c : (\$CLONE_SKB) SKB clones send before alloc new SKB (default 0)"
-  echo "  -b : (\$BURST)     HW level bursting of SKBs (>= 1, default 1)"
-  echo "  -m : (\$XMIT_MODE) can be <$XMIT_MODE_START_XMIT|$XMIT_MODE_QUEUE_XMIT> (default $XMIT_MODE_START_XMIT)"
-  echo "  -s : (\$PKT_SIZE)  packet size in bytes (>= 14 + 20 + 8, default 60)"
-  echo "  -t : (\$THREADS)   threads to start (<=$(nproc), default 1)"
-  echo "  -f : (\$F_THREAD)  index of first thread (zero indexed CPU number)"
-  echo "  -n : (\$COUNT)     num messages to send per thread, 0 means indefinitely"
-  echo "  -l : (\$DELAY)     add delay between packets in nanoseconds (default 0)"
-  echo "  -g : (\$INTERVAL)  interval of device summary in seconds (default 0, disabled)"
-  echo "  -e : (\$TIMEOUT)   run with a time limit in seconds, 0 means indefinitely"
-  echo "  -v : (\$VERBOSE)   verbose"
-  echo "  -x : (\$DEBUG)     debug"
-  echo
+usage() {
+  cat <<EOF
+Usage: $0 -i ethX [OPTIONS]
+  -i : (\$DEV)       output interface/device (required)
+  -d : (\$DEST_IP)   destination IP. CIDR (e.g. 198.18.0.0/15) is also allowed
+  -6 : (\$IP6)       IPv6
+  -a : (\$DST_MAC)   destination MAC-addr
+  -p : (\$DST_PORT)  destination PORT range (e.g. 433-444) is also allowed (default 9)
+  -c : (\$CLONE_SKB) SKB clones send before alloc new SKB (default 0)
+  -b : (\$BURST)     HW level bursting of SKBs (>= 1, default 1)
+  -m : (\$XMIT_MODE) can be <$XMIT_MODE_START_XMIT|$XMIT_MODE_QUEUE_XMIT> (default $XMIT_MODE_START_XMIT)
+  -s : (\$PKT_SIZE)  packet size in bytes (>= 14 + 20 + 8, default 60)
+  -t : (\$THREADS)   threads to start (<=$(nproc), default 1)
+  -f : (\$F_THREAD)  index of first thread (zero indexed CPU number)
+  -n : (\$COUNT)     num messages to send per thread, 0 means indefinitely
+  -l : (\$DELAY)     add delay between packets in nanoseconds (default 0)
+  -g : (\$INTERVAL)  interval of device summary in seconds (default 0, disabled)
+  -e : (\$TIMEOUT)   run with a time limit in seconds, 0 means indefinitely
+  -v : (\$VERBOSE)   verbose
+  -x : (\$DEBUG)     debug
+
+EOF
 }
+
+readonly ERR_INVALID_INPUT_PARAM=1
 
 ##  --- Parse command line arguments / parameters ---
 while getopts ":i:d:6a:p:c:b:m:s:t:f:n:l:g:e:vxh" option; do
@@ -57,11 +60,11 @@ while getopts ":i:d:6a:p:c:b:m:s:t:f:n:l:g:e:vxh" option; do
       ;;
     \? )
       usage
-      err 2 "Invalid option: -$OPTARG"
+      err $ERR_INVALID_INPUT_PARAM "Invalid option: -$OPTARG"
       ;;
     :  )
       usage
-      err 2 "Option -$OPTARG requires an argument."
+      err $ERR_INVALID_INPUT_PARAM "Option -$OPTARG requires an argument."
       ;;
     *  )
       usage
@@ -70,21 +73,27 @@ while getopts ":i:d:6a:p:c:b:m:s:t:f:n:l:g:e:vxh" option; do
 done
 shift "$(( OPTIND - 1 ))"
 
-all_params=()
-function add_to_export() {
+ALL_PARAMS=()
+add_to_export() {
   local def_val="${2:-}"
   export "$1"="${!1:-$def_val}"
-  all_params+=("$1")
+  ALL_PARAMS+=("$1")
 }
 
 add_to_export DEV
 if [[ -z "$DEV" ]]; then
   usage
-  err 2 "Please specify output device"
+  err $ERR_INVALID_INPUT_PARAM "Please specify output device"
 fi
 
 add_to_export IP6
-add_to_export DST_PORT
+add_to_export DST_PORT 9
+
+# Remove a particular character from a string variable
+#   https://unix.stackexchange.com/a/104887
+if ! [[ "${DST_PORT//-}" =~ ^[0-9]+$ ]]; then
+  err $ERR_INVALID_INPUT_PARAM "Port range can only be numbers"
+fi
 
 add_to_export CLONE_SKB 0
 add_to_export BURST 1
@@ -93,15 +102,15 @@ add_to_export XMIT_MODE "$XMIT_MODE_START_XMIT"
 if [[ "$XMIT_MODE" != "$XMIT_MODE_START_XMIT" ]] \
   && [[ "$XMIT_MODE" != "$XMIT_MODE_QUEUE_XMIT" ]]; then
   usage
-  err 2 "XMIT_MODE can only be \"$XMIT_MODE_START_XMIT\" or \"$XMIT_MODE_QUEUE_XMIT\""
+  err $ERR_INVALID_INPUT_PARAM "XMIT_MODE can only be '$XMIT_MODE_START_XMIT' or '$XMIT_MODE_QUEUE_XMIT'"
 fi
 
 if [[ "$XMIT_MODE" == "$XMIT_MODE_QUEUE_XMIT" ]]; then
-  if [[ "$CLONE_SKB" != "0" ]]; then
-    err 1 "CLONE_SKB not supported for this mode ($XMIT_MODE_QUEUE_XMIT)"
+  if (( CLONE_SKB != 0 )); then
+    err $ERR_INVALID_INPUT_PARAM "CLONE_SKB is not supported in this mode ($XMIT_MODE_QUEUE_XMIT)"
   fi
-  if [[ "$BURST" != "1" ]]; then
-    err 1  "bursting not supported for this mode ($XMIT_MODE_QUEUE_XMIT)"
+  if (( BURST != 1 )); then
+    err $ERR_INVALID_INPUT_PARAM "Bursting is not supported in this mode ($XMIT_MODE_QUEUE_XMIT)"
   fi
 fi
 
@@ -124,21 +133,20 @@ add_to_export TIMEOUT 0
 add_to_export VERBOSE false
 add_to_export DEBUG false
 
-function validate_num_params() {
-  local re='^[0-9]+$'
+validate_num_params() {
+  local param
   for param in "$@"; do
     if [[ -z "${!param}" ]]; then
       continue
     fi
 
-    if ! [[ ${!param} =~ $re ]] ; then
-      err 2 "$param is not a valid number!"
+    if ! [[ "${!param}" =~ ^[0-9]+$ ]] ; then
+      err $ERR_INVALID_INPUT_PARAM "$param is not a valid number!"
     fi
   done
 }
 
 validate_num_params \
-  DST_PORT \
   CLONE_SKB \
   BURST \
   PKT_SIZE \
@@ -150,13 +158,13 @@ validate_num_params \
   TIMEOUT
 
 if (( BURST < 1 )); then
-  err 2 "BURST should be >= 1"
+  err $ERR_INVALID_INPUT_PARAM "BURST should be >= 1"
 fi
 if (( PKT_SIZE < 42 )); then
-  err 2 "PKT_SIZE should be >= 42 (14 + 20 + 8)"
+  err $ERR_INVALID_INPUT_PARAM "PKT_SIZE should be >= 42 (14 + 20 + 8)"
 fi
 if (( THREADS > "$(nproc)" )); then
-  err 2 "THREADS should be <= $(nproc)"
+  err $ERR_INVALID_INPUT_PARAM "THREADS should not be greater than the number of CPU cores ($(nproc))"
 fi
 
 add_to_export L_THREAD "$(( THREADS + F_THREAD - 1 ))"
@@ -167,28 +175,33 @@ if [[ -z "${DEST_IP:-}" ]]; then
   else
     add_to_export DEST_IP "FD00::1"
   fi
-  warn "Missing destination IP address."
+  warn "Set default destination IP to $DEST_IP"
 fi
 
 if [[ -z "${DST_MAC:-}" ]]; then
   add_to_export DST_MAC "90:e2:ba:ff:ff:ff"
-  warn "Missing destination MAC address."
+  warn "Set defualt destination MAC address to $DST_MAC"
 fi
 
 if [[ "$#" -gt 0 ]]; then
   warn "Ignore non-option arguments: $*"
 fi
 
-if [[ "$VERBOSE" == true ]]; then
-  echo
-  (
+print_all_params() {
+  {
     printf -- '--------- | -----\n'
     printf 'PARAMETER | VALUE\n'
     printf -- '--------- | -----\n'
-    for param in "${all_params[@]}"; do
+
+    local param
+    for param in "${ALL_PARAMS[@]}"; do
       printf '%s | %s\n' "$param" "${!param:-\"\"}"
     done
-  ) | column -t | sed 's/^/[VERBOSE] /'
+  } | column -t | sed 's/^/[VERBOSE] /'
+}
+
+if [[ "$VERBOSE" == true ]]; then
+  print_all_params
 fi
 
 if [[ ! -d /proc/net/pktgen ]]; then

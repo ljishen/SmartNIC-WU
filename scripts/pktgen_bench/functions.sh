@@ -6,30 +6,36 @@ set -euo pipefail
 
 # https://stackoverflow.com/a/51548669
 shopt -s expand_aliases
-alias trace_on='if [[ "${DEBUG:-false}" == true ]]; then set -x; fi'
+alias trace_on='{ if [[ "${DEBUG:-false}" == true ]]; then echo; set -x; fi } 2>/dev/null'
 alias trace_off='{ set +x; } 2>/dev/null'
+export PS4='# ${BASH_SOURCE:-"$0"}:${LINENO} - ${FUNCNAME[0]:+${FUNCNAME[0]}()} > '
 
 # stop "^C" being printed when Ctrl-C
 #   https://unix.stackexchange.com/a/333804
 stty -echoctl
 
 ## -- General shell logging cmds --
-function err() {
-  local exit_status=$1
+err() {
+  local -ir exit_status="$1"
   shift
-  echo "[ERROR] $*" >&2
+  printf "\\033[1;31m[ERROR] %s\\033[0m\\n" "$*" >&2
   exit "$exit_status"
 }
 
-function warn() {
+warn() {
   echo "[WARN] $*" >&2
 }
 
-function info() {
-  if [[ "${VERBOSE:-true}" == true ]]; then
+info() {
+  if [[ "${VERBOSE:-false}" == true ]]; then
     echo "[INFO] $*"
   fi
 }
+
+readonly ERR_INVALID_PARAM_FORMAT=2
+readonly ERR_INVALID_PERMISSION=3
+readonly ERR_PROGRAM=4
+
 
 ## -- Pktgen proc config commands -- ##
 export PROC_DIR=/proc/net/pktgen
@@ -42,90 +48,65 @@ export PROC_DIR=/proc/net/pktgen
 # * pg_ctrl()   control "pgctrl" (/proc/net/pktgen/pgctrl)
 # * pg_thread() control the kernel threads and binding to devices
 # * pg_set()    control setup of individual devices
-function pg_ctrl() {
+pg_ctrl() {
   local proc_file="pgctrl"
-  proc_cmd ${proc_file} "$@"
+  proc_cmd "$proc_file" "$@"
 }
 
-function pg_thread() {
-  local thread=$1
-  local proc_file="kpktgend_${thread}"
+pg_thread() {
+  local -i thread=$1
   shift
-  proc_cmd "${proc_file}" "$@"
+
+  if (( thread > $(nproc) )); then
+    err $ERR_PROGRAM "Thread number ($thread) is greater than the number of CPU cores ($(nproc))"
+  fi
+
+  local proc_file="kpktgend_$thread"
+  proc_cmd "$proc_file" "$@"
 }
 
-function pg_set() {
+pg_set() {
   local dev=$1
   local proc_file="$dev"
   shift
-  proc_cmd "${proc_file}" "$@"
+  proc_cmd "$proc_file" "$@"
 }
 
-# More generic replacement for pgset(), that does not depend on global
-# variable for proc file.
-function proc_cmd() {
-  local result
+proc_cmd() {
   local proc_file=$1
-  local status=0
+  local -i exit_status=0
   # after shift, the remaining args are contained in $@
   shift
 
   local proc_ctrl="$PROC_DIR/$proc_file"
   if [[ ! -e "$proc_ctrl" ]]; then
-    err 3 "proc file: $proc_ctrl does not exists (num CPU cores: $(nproc))"
-  else
-    if [[ ! -w "$proc_ctrl" ]]; then
-      err 4 "proc file: $proc_ctrl not writable, not root?!"
-    fi
+    err $ERR_PROGRAM "proc file: $proc_ctrl does not exists"
+  elif [[ ! -w "$proc_ctrl" ]]; then
+    err $ERR_INVALID_PERMISSION "proc file: $proc_ctrl not writable"
   fi
 
   # Quoting of "$@" is important for space expansion
   trace_on
-  echo "$@" | tee "$proc_ctrl" >/dev/null 2>&1 || status=$?
+  echo "$@" | tee "$proc_ctrl" >/dev/null 2>&1 || exit_status=$?
   trace_off
 
+  local result=''
   if [[ "$proc_file" != "pgctrl" ]]; then
-    result=$(grep "Result: OK:" "$proc_ctrl") || true
-    if [[ -z "$result" ]]; then
-      result=$(grep "Result:" "$proc_ctrl")
-    fi
+    result=$(grep "Result:" "$proc_ctrl")
   fi
-  if (( "$status" != 0 )); then
-    err 5 "Write error($status) occurred cmd: echo \"$*\" > $proc_ctrl"$'\n\t'"$result"
+
+  if (( exit_status )); then
+    err $ERR_PROGRAM "Write error ($exit_status) occurred cmd: echo $* > $proc_ctrl"$'\n\t'"$result"
   fi
 }
 
-# Old obsolete "pgset" function, with slightly improved err handling
-function pgset() {
-  local result
-  local status=0
+export EXIT_TRAP_FUNCS=()
 
-  trace_on
-  echo "$1" | tee "$PGDEV" >/dev/null 2>&1 || status=$?
+on_exit() {
+  local -i exit_status="$?"
   trace_off
 
-  result="$(grep "Result: OK:" "$PGDEV")" || true
-  if [[ -z "$result" ]]; then
-    result=$(grep "Result:" "$PGDEV")
-  fi
-  if (( "$status" != 0 )); then
-    err 5 "Write error($status) occurred cmd: echo \"$1\" > $PGDEV"$'\n\t'"$result"
-  fi
-}
-
-function newline_for_debug_output() {
-  if [[ "${DEBUG:-false}" == true ]]; then
-    echo  # separate from the output of the customized traps
-  fi
-}
-
-export exit_trap_funcs=()
-
-function on_exit() {
-  local exit_status="$?"
-  trace_off
-
-  # Once we received this signal, we can ignore those following ones
+  # Once we received this signal, we can ignore the following ones
   # so that we can finish the remaining cleanning up process.
   trap '' INT
 
@@ -134,40 +115,31 @@ function on_exit() {
   fi
   PS4='\033[0D[ON_EXIT] '
 
-  newline_for_debug_output
   pg_ctrl "stop"
 
   # run customized trap functions
-  for func in "${exit_trap_funcs[@]}"; do
+  local func
+  for func in "${EXIT_TRAP_FUNCS[@]}"; do
     $func
   done
 
-  newline_for_debug_output
   pg_ctrl "reset"
 
   if (( exit_status == 130 )); then
-    # Exit with 0 only if the program is self-terminated
+    # Exit with 0 if the program is self-terminated
     exit 0
   fi
 }
 [[ $EUID -eq 0 ]] && trap on_exit EXIT
 
-## -- General shell tricks --
-function root_check_run_with_sudo() {
-  # Trick so, program can be run as normal user, will just use "sudo"
-  #  call as root_check_run_as_sudo "$@"
+check_root_privileges() {
   if [[ "$EUID" -ne 0 ]]; then
-    if [[ -x "$0" ]]; then # Directly executable use sudo
-      info "Not root, running with sudo"
-      sudo "$0" "$@"
-      exit $?
-    fi
-    err 4 "cannot perform sudo run of $0"
+    err $ERR_INVALID_PERMISSION "This program should be run as root"
   fi
 }
 
 # Exact input device's NUMA node info
-function get_iface_node() {
+get_iface_node() {
   local node
   node=$(</sys/class/net/"$1"/device/numa_node)
   if (( node == -1 )); then
@@ -178,22 +150,23 @@ function get_iface_node() {
 }
 
 # Given an Dev/iface, get its queues' irq numbers
-function get_iface_irqs() {
+get_iface_irqs() {
   local IFACE=$1
   local queues="${IFACE}-.*TxRx"
 
+  local irqs
   irqs=$(grep "$queues" /proc/interrupts | cut -f1 -d:)
   [[ -z "$irqs" ]] && irqs=$(grep "$IFACE" /proc/interrupts | cut -f1 -d:)
   [[ -z "$irqs" ]] && irqs=$(for i in $(ls -Ux /sys/class/net/"$IFACE"/device/msi_irqs) ;\
     do grep "$i:.*TxRx" /proc/interrupts | grep -v fdir | cut -f 1 -d : ;\
     done)
-  [[ -z "$irqs" ]] && err 3 "Could not find interrupts for $IFACE"
+  [[ -z "$irqs" ]] && err $ERR_PROGRAM "Could not find interrupts for $IFACE"
 
   echo "$irqs"
 }
 
 # Given a NUMA node, return cpu ids belonging to it.
-function get_node_cpus() {
+get_node_cpus() {
   local node=$1
   local node_cpu_list node_cpu_range_list
   node_cpu_range_list=$(cut -f1- -d, --output-delimiter=" " \
@@ -208,11 +181,11 @@ function get_node_cpus() {
 }
 
 # Check $1 is in between $2, $3 ($2 <= $1 <= $3)
-function in_between() { [[ ($1 -ge $2) && ($1 -le $3) ]] ; }
+in_between() { [[ ($1 -ge $2) && ($1 -le $3) ]] ; }
 
 # Extend shrunken IPv6 address.
 # fe80::42:bcff:fe84:e10a => fe80:0:0:0:42:bcff:fe84:e10a
-function extend_addr6() {
+extend_addr6() {
   local addr=$1
   local sep=: sep2=:: sep_cnt
   sep_cnt=$(tr -cd $sep <<< "$1" | wc -c)
@@ -220,14 +193,14 @@ function extend_addr6() {
 
     # separator count should be (2 <= $sep_cnt <= 7)
     if ! (in_between "$sep_cnt" 2 7); then
-      err 5 "Invalid IP6 address: $1"
+      err $ERR_INVALID_PARAM_FORMAT "Invalid IP6 address: $1"
     fi
 
     # if shrink '::' occurs multiple, it's malformed.
     shrink=( $(egrep -o "$sep{2,}" <<< "$addr") )
     if [[ ${#shrink[@]} -ne 0 ]]; then
       if [[ ${#shrink[@]} -gt 1 || ( ${shrink[0]} != "$sep2" ) ]]; then
-        err 5 "Invalid IP6 address: $1"
+        err $ERR_INVALID_PARAM_FORMAT "Invalid IP6 address: $1"
       fi
     fi
 
@@ -238,7 +211,7 @@ function extend_addr6() {
 }
 
 # Given a single IP(v4/v6) address, whether it is valid.
-function validate_addr() {
+validate_addr() {
   # check function is called with (funcname)6
   [[ ${FUNCNAME[1]: -1} == 6 ]] && local IP6=6
   local bitlen=$(( IP6 ? 128 : 32 ))
@@ -253,7 +226,7 @@ function validate_addr() {
   # if prefix exists, check (0 <= $prefix <= $bitlen)
   if [[ -n $prefix ]]; then
     if ! (in_between "$prefix" 0 $bitlen); then
-      err 5 "Invalid prefix: /$prefix"
+      err $ERR_INVALID_PARAM_FORMAT "Invalid prefix: /$prefix"
     fi
   fi
 
@@ -263,24 +236,25 @@ function validate_addr() {
 
   # array length
   if [[ ${#addr[@]} -ne "$len" ]]; then
-    err 5 "Invalid IP$IP6 address: $1"
+    err $ERR_INVALID_PARAM_FORMAT "Invalid IP$IP6 address: $1"
   fi
 
   # check each digit (0 <= $digit <= $max)
+  local digit
   for digit in "${addr[@]}"; do
     [[ $IP6 ]] && digit=$(( 16#$digit ))
     if ! (in_between $digit 0 $max); then
-      err 5 "Invalid IP$IP6 address: $1"
+      err $ERR_INVALID_PARAM_FORMAT "Invalid IP$IP6 address: $1"
     fi
   done
 
   return 0
 }
 
-function validate_addr6() { validate_addr "$@" ; }
+validate_addr6() { validate_addr "$@" ; }
 
 # Given a single IP(v4/v6) or CIDR, return minimum and maximum IP addr.
-function parse_addr() {
+parse_addr() {
   # check function is called with (funcname)6
   [[ ${FUNCNAME[1]: -1} == 6 ]] && local IP6=6
   local net prefix
@@ -315,6 +289,7 @@ function parse_addr() {
     max_mask="$(printf '0%.s' $(seq "$prefix"))$(printf '1%.s' $(seq $remain))"
 
     # calculate min/max ip with &,| operator
+    local i idx digit
     for i in "${!ip[@]}"; do
       digit=$(( IP6 ? 16#${ip[$i]} : ${ip[$i]} ))
       ip_bit=${D2B[$digit]}
@@ -333,10 +308,10 @@ function parse_addr() {
   echo "$min_ip" "$max_ip"
 }
 
-function parse_addr6() { parse_addr "$@" ; }
+parse_addr6() { parse_addr "$@" ; }
 
 # Given a single or range of port(s), return minimum and maximum port number.
-function parse_ports() {
+parse_ports() {
   local port_str=$1
   local port_list
   local min_port
@@ -351,7 +326,7 @@ function parse_ports() {
 }
 
 # Given a minimum and maximum port, verify port number.
-function validate_ports() {
+validate_ports() {
   local min_port=$1
   local max_port=$2
 
@@ -364,5 +339,5 @@ function validate_ports() {
     fi
   fi
 
-  err 5 "Invalid port(s): $min_port-$max_port"
+  err $ERR_INVALID_PARAM_FORMAT "Invalid port(s): $min_port-$max_port"
 }
