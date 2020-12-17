@@ -314,8 +314,8 @@ parse_addr6() { parse_addr "$@" ; }
 parse_ports() {
   local port_str=$1
   local port_list
-  local min_port
-  local max_port
+  local -i min_port
+  local -i max_port
 
   IFS="-" read -ra port_list <<< "$port_str"
 
@@ -327,13 +327,13 @@ parse_ports() {
 
 # Given a minimum and maximum port, verify port number.
 validate_ports() {
-  local min_port=$1
-  local max_port=$2
+  local -i min_port=$1
+  local -i max_port=$2
 
   # 1 <= port <= 65535
   if (in_between "$min_port" 1 65535); then
     if (in_between "$max_port" 1 65535); then
-      if [[ $min_port -le $max_port ]]; then
+      if (( min_port <= max_port )); then
         return 0
       fi
     fi

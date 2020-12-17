@@ -93,8 +93,8 @@ else
   mkdir -p "$OUTPUT_DIR"
 fi
 
-get_date() {
-  date --iso-8601=seconds
+now() {
+  date --iso-8601=ns
 }
 
 separate() {
@@ -257,7 +257,7 @@ fi
   separate
   echo "#"
 
-  printf '# Start of test: %s\n\n' "$(get_date)"
+  printf '# Start of test: %s\n\n' "$(now)"
 } >> "$OUTPUT_FILE"
 
 
@@ -273,7 +273,7 @@ for d in "${ARR_DELAY[@]}"; do
   for t in "${ARR_THREADS[@]}"; do
     for c in "${ARR_CLONE_SKB[@]}"; do
       for b in "${ARR_BURST[@]}"; do
-        echo "[$(get_date)][INFO] running" \
+        echo "[$(now)][INFO] running" \
              "DELAY=$d (${ARR_DELAY[0]}..${ARR_DELAY[-1]})," \
              "THREADS=$t (${ARR_THREADS[0]}..${ARR_THREADS[-1]})," \
              "CLONE_SKB=$c (${ARR_CLONE_SKB[0]}..${ARR_CLONE_SKB[-1]})," \
@@ -320,5 +320,5 @@ for d in "${ARR_DELAY[@]}"; do
   done
 done
 
-printf '\n# End of test: %s\n' "$(get_date)" >> "$OUTPUT_FILE"
-echo "[$(get_date)][INFO] complete!"
+printf '\n# End of test: %s\n' "$(now)" >> "$OUTPUT_FILE"
+echo "[$(now)][INFO] complete!"
