@@ -64,18 +64,20 @@ if (strstrt(datafile_name,"_delays")) {  # a datafile for benchmarking delays
 
   plot for [i=threads_min:threads_max] \
     datafile using 1:($2 == i ? $5 : NaN):6 with errorlines \
-    title sprintf("%d threads", i)
+    title sprintf("%d threads",i)
 } else {
   set title sprintf("Network Throughput (pkt_size: %s bytes)",pkt_size)
   set xlabel word(data_headers,4)
 
-  stats datafile using 4:($3 == 0 ? $5 : NaN) name "throughput" nooutput
-  set arrow from throughput_pos_max_y-3, graph 1.05 to \
-    throughput_pos_max_y, throughput_max_y filled
-  set label at throughput_pos_max_y-3, graph 1.05 \
-    sprintf("max (%d)",throughput_max_y) center offset 0,0.5
+  stats datafile using 4:($3 == 0 ? $5 : NaN) name "burst_throughput" nooutput
+  stats datafile using 2:($3 == 0 ? $5 : NaN) name "thread_throughput" nooutput
+  set arrow from burst_throughput_pos_max_y-5, graph 1.05 to \
+    burst_throughput_pos_max_y, burst_throughput_max_y filled
+  set label at burst_throughput_pos_max_y-5, graph 1.05 \
+    sprintf("max throughput %d with %d threads", \
+        burst_throughput_max_y,thread_throughput_pos_max_y) center offset 0,0.5
 
   plot for [i=threads_min:threads_max] \
     datafile using 4:($2 == i && $3 == 0 ? $5 : NaN):6 with errorlines \
-    title sprintf("%d threads", i)
+    title sprintf("%d threads",i)
 }

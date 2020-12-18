@@ -7,7 +7,7 @@ set -euo pipefail
 readonly RUNTIME=20     # in seconds
 
 readonly ROUNDS_PER_TEST=3
-readonly OUTPUT_DIR="./results"
+readonly OUTPUT_DIR="$PWD/results"
 
 # The first step of testing is to evaluate the least value of
 # THREADS, CLONE_SKB, and BURST that can achieve the maximum
@@ -76,6 +76,15 @@ if ! command -v "sar" >/dev/null 2>&1; then
   err 4 "Please install the 'sysstat' package for system activity data collection."
 fi
 
+
+now() {
+  date --iso-8601=ns
+}
+
+info() {
+  echo "[$(now)][INFO] $*"
+}
+
 delay_test() {
   local -i delay
   for delay in "${ARR_DELAY[@]}"; do
@@ -92,15 +101,14 @@ if [[ "$(delay_test)" == true ]]; then
 fi
 readonly OUTPUT_DATA_FILE="${OUTPUT_DIR}/pkt_size_${PKT_SIZE}bytes${filename_extra:-}.dat"
 readonly OUTPUT_LOG_FILE="${OUTPUT_DATA_FILE%.*}.log"
+readonly OUTPUT_SYS_ACTIVITY_FILE="${OUTPUT_DATA_FILE%.*}_sys_activity.dat"
 if [[ -f "$OUTPUT_DATA_FILE" ]]; then
   err 3 "We don't want to overwrite the existing file $OUTPUT_DATA_FILE"
 else
   mkdir -p "$OUTPUT_DIR"
+  rm --force "$OUTPUT_LOG_FILE" "$OUTPUT_SYS_ACTIVITY_FILE"
+  info "OUTPUT_DIR: $OUTPUT_DIR"
 fi
-
-now() {
-  date --iso-8601=ns
-}
 
 separate() {
   echo "# ========================================"
@@ -266,25 +274,22 @@ fi
 } >> "$OUTPUT_DATA_FILE"
 
 
-readonly OUTPUT_SYS_ACTIVITY_FILE="${OUTPUT_DATA_FILE%.*}_sys_activity.dat"
-
-echo "[$(now)][INFO] Kill existing sar processes"
+info "Kill existing sar processes"
 pkill -INT -u "$USER" sar || true
-rm --force "$OUTPUT_SYS_ACTIVITY_FILE"
 S_TIME_FORMAT=ISO sar -A -o "$OUTPUT_SYS_ACTIVITY_FILE" 5 >/dev/null 2>&1 &
 SAR_PID=$!
 
 clean_up() {
   kill -INT "$SAR_PID"
-  echo "[$(now)][INFO] Stopped the system activity data collection process (PID $SAR_PID)"
+  info "Stopped the system activity data collection process (PID $SAR_PID)"
 }
 trap clean_up EXIT
-echo "[$(now)][INFO] Started to collect system activity data (PID $SAR_PID)"
+info "Started to collect system activity data (PID $SAR_PID)"
 
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 DEBUG_COMMAND="cat"
 if [[ "$DEBUG" == true ]]; then
-  DEBUG_COMMAND="tee $OUTPUT_DIR/debug.log"
+  DEBUG_COMMAND="tee --append $OUTPUT_DIR/debug.log"
 fi
 
 
@@ -295,11 +300,11 @@ for d in "${ARR_DELAY[@]}"; do
   for t in "${ARR_THREADS[@]}"; do
     for c in "${ARR_CLONE_SKB[@]}"; do
       for b in "${ARR_BURST[@]}"; do
-        echo "[$(now)][INFO] Running" \
+        info "Running" \
              "DELAY=$d (${ARR_DELAY[0]}..${ARR_DELAY[-1]})," \
              "THREADS=$t (${ARR_THREADS[0]}..${ARR_THREADS[-1]})," \
              "CLONE_SKB=$c (${ARR_CLONE_SKB[0]}..${ARR_CLONE_SKB[-1]})," \
-             "BURST=$b (${ARR_BURST[0]}..${ARR_BURST[-1]})" | tee "$OUTPUT_LOG_FILE"
+             "BURST=$b (${ARR_BURST[0]}..${ARR_BURST[-1]})" | tee --append "$OUTPUT_LOG_FILE"
 
         RECORDS=()
         for _ in $(seq "$ROUNDS_PER_TEST"); do
@@ -343,4 +348,4 @@ for d in "${ARR_DELAY[@]}"; do
 done
 
 printf '\n# End of test: %s\n' "$(now)" >> "$OUTPUT_DATA_FILE"
-printf '\n[%s][INFO] Complete!\n' "$(now)" | tee "$OUTPUT_LOG_FILE"
+{ echo; info "Complete!"; } | tee --append "$OUTPUT_LOG_FILE"
