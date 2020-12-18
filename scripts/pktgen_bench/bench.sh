@@ -86,9 +86,10 @@ delay_test() {
 if [[ "$(delay_test)" == true ]]; then
   filename_extra="_delays"
 fi
-readonly OUTPUT_FILE="${OUTPUT_DIR}/pkt_size_${PKT_SIZE}bytes${filename_extra:-}.dat"
-if [[ -f "$OUTPUT_FILE" ]]; then
-  err 3 "We don't want to overwrite the existing file $OUTPUT_FILE"
+readonly OUTPUT_DATA_FILE="${OUTPUT_DIR}/pkt_size_${PKT_SIZE}bytes${filename_extra:-}.dat"
+readonly OUTPUT_LOG_FILE="${OUTPUT_DATA_FILE%.*}.log"
+if [[ -f "$OUTPUT_DATA_FILE" ]]; then
+  err 3 "We don't want to overwrite the existing file $OUTPUT_DATA_FILE"
 else
   mkdir -p "$OUTPUT_DIR"
 fi
@@ -102,7 +103,7 @@ separate() {
 }
 
 GOT_NIC_INFO=false
-printf '# Network Device Information' > "$OUTPUT_FILE"
+printf '# Network Device Information' > "$OUTPUT_DATA_FILE"
 
 get_nic_info_lshw() {
   if command -v lshw >/dev/null 2>&1; then
@@ -117,7 +118,7 @@ get_nic_info_lshw() {
         | sed '/^[[:space:]]*$/d' \
         | sed 's/^ */# /'
       echo "#"
-    } >> "$OUTPUT_FILE"
+    } >> "$OUTPUT_DATA_FILE"
     echo true
   fi
 }
@@ -136,7 +137,7 @@ get_nic_info_ethtool() {
         separate
         echo "$ethtool_output"
         echo "#"
-      } >> "$OUTPUT_FILE"
+      } >> "$OUTPUT_DATA_FILE"
       echo true
     fi
   fi
@@ -149,7 +150,7 @@ if [[ "$GOT_NIC_INFO" != true ]]; then
   {
     echo
     separate
-  } >> "$OUTPUT_FILE"
+  } >> "$OUTPUT_DATA_FILE"
   echo '[WARN] Need either "lshw" or "ethtool" to log the NIC information.' >&2
 fi
 
@@ -159,11 +160,11 @@ fi
   printf '# Device tx_queue_len: %d\n' "$(cat /sys/class/net/"$IFNAME"/tx_queue_len)"
   separate
   echo "#"
-} >> "$OUTPUT_FILE"
+} >> "$OUTPUT_DATA_FILE"
 
 
 GOT_CPU_INFO=false
-printf '# CPU Information' >> "$OUTPUT_FILE"
+printf '# CPU Information' >> "$OUTPUT_DATA_FILE"
 
 get_cpu_info_dmidecode() {
   if command -v dmidecode >/dev/null 2>&1; then
@@ -182,7 +183,7 @@ get_cpu_info_dmidecode() {
         echo "$dmidecode_output"
         separate
         echo "#"
-      } >> "$OUTPUT_FILE"
+      } >> "$OUTPUT_DATA_FILE"
       echo true
     fi
   fi
@@ -203,7 +204,7 @@ get_cpu_info_lshw() {
         | sed 's/^ */# /'
       separate
       echo "#"
-    } >> "$OUTPUT_FILE"
+    } >> "$OUTPUT_DATA_FILE"
     echo true
   fi
 }
@@ -228,7 +229,7 @@ get_cpu_info_sysfs() {
               "$(cat {}/cpufreq/cpuinfo_max_freq)"'
       separate
       echo "#"
-    } >> "OUTPUT_FILE"
+    } >> "OUTPUT_DATA_FILE"
     echo true
   fi
 }
@@ -241,7 +242,7 @@ if [[ "$GOT_CPU_INFO" != true ]]; then
     echo " (not available)"
     separate
     echo "#"
-  } >> "$OUTPUT_FILE"
+  } >> "$OUTPUT_DATA_FILE"
   echo '[WARN] Need either "dmidecode" or "lshw" to log the CPU information.' >&2
 fi
 
@@ -258,7 +259,7 @@ fi
   echo "#"
 
   printf '# Start of test: %s\n\n' "$(now)"
-} >> "$OUTPUT_FILE"
+} >> "$OUTPUT_DATA_FILE"
 
 
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -267,7 +268,7 @@ if [[ "$DEBUG" == true ]]; then
   DEBUG_COMMAND="tee $OUTPUT_DIR/debug.log"
 fi
 
-printf '"DELAY (ns)"\tTHREADS\tCLONE_SKB\tBURST\t"THROUGHPUT (Mb/sec)"\tSTD\n' >> "$OUTPUT_FILE"
+printf '"DELAY (ns)"\tTHREADS\tCLONE_SKB\tBURST\t"THROUGHPUT (Mb/sec)"\tSTD\n' >> "$OUTPUT_DATA_FILE"
 
 for d in "${ARR_DELAY[@]}"; do
   for t in "${ARR_THREADS[@]}"; do
@@ -277,7 +278,7 @@ for d in "${ARR_DELAY[@]}"; do
              "DELAY=$d (${ARR_DELAY[0]}..${ARR_DELAY[-1]})," \
              "THREADS=$t (${ARR_THREADS[0]}..${ARR_THREADS[-1]})," \
              "CLONE_SKB=$c (${ARR_CLONE_SKB[0]}..${ARR_CLONE_SKB[-1]})," \
-             "BURST=$b (${ARR_BURST[0]}..${ARR_BURST[-1]})"
+             "BURST=$b (${ARR_BURST[0]}..${ARR_BURST[-1]})" | tee "$OUTPUT_LOG_FILE"
 
         RECORDS=()
         for _ in $(seq "$ROUNDS_PER_TEST"); do
@@ -314,11 +315,11 @@ for d in "${ARR_DELAY[@]}"; do
                 sum / NR,
                 sqrt(sum_sq / NR - (sum / NR) ^ 2))
             }
-          ' >> "$OUTPUT_FILE"
+          ' >> "$OUTPUT_DATA_FILE"
       done
     done
   done
 done
 
-printf '\n# End of test: %s\n' "$(now)" >> "$OUTPUT_FILE"
-echo "[$(now)][INFO] complete!"
+printf '\n# End of test: %s\n' "$(now)" >> "$OUTPUT_DATA_FILE"
+echo "[$(now)][INFO] complete!" | tee "$OUTPUT_LOG_FILE"
