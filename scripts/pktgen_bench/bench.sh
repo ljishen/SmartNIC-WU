@@ -271,7 +271,7 @@ readonly OUTPUT_SYS_ACTIVITY_FILE="${OUTPUT_DATA_FILE%.*}_sys_activity.dat"
 echo "[$(now)][INFO] Kill existing sar processes"
 pkill -INT -u "$USER" sar || true
 rm --force "$OUTPUT_SYS_ACTIVITY_FILE"
-sar -A -o "$OUTPUT_SYS_ACTIVITY_FILE" 5 >/dev/null 2>&1 &
+S_TIME_FORMAT=ISO sar -A -o "$OUTPUT_SYS_ACTIVITY_FILE" 5 >/dev/null 2>&1 &
 SAR_PID=$!
 
 clean_up() {
