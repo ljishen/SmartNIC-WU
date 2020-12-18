@@ -72,6 +72,10 @@ if [[ "$IFOPSTATE" != "up" ]]; then
   err 3 "Network device $IFNAME is $IFOPSTATE."
 fi
 
+if ! command -v "sar" >/dev/null 2>&1; then
+  err 4 "Please install the 'sysstat' package for system activity data collection."
+fi
+
 delay_test() {
   local -i delay
   for delay in "${ARR_DELAY[@]}"; do
@@ -262,19 +266,36 @@ fi
 } >> "$OUTPUT_DATA_FILE"
 
 
+readonly OUTPUT_SYS_ACTIVITY_FILE="${OUTPUT_DATA_FILE%.*}_sys_activity.dat"
+
+echo "[$(now)][INFO] Kill existing sar processes"
+pkill -INT -u "$USER" sar || true
+rm --force "$OUTPUT_SYS_ACTIVITY_FILE"
+sar -A -o "$OUTPUT_SYS_ACTIVITY_FILE" 5 >/dev/null 2>&1 &
+SAR_PID=$!
+
+clean_up() {
+  kill -INT "$SAR_PID"
+  echo "[$(now)][INFO] Stopped the system activity data collection process (PID $SAR_PID)"
+}
+trap clean_up EXIT
+echo "[$(now)][INFO] Started to collect system activity data (PID $SAR_PID)"
+
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 DEBUG_COMMAND="cat"
 if [[ "$DEBUG" == true ]]; then
   DEBUG_COMMAND="tee $OUTPUT_DIR/debug.log"
 fi
 
+
+echo
 printf '"DELAY (ns)"\tTHREADS\tCLONE_SKB\tBURST\t"THROUGHPUT (Mb/sec)"\tSTD\n' >> "$OUTPUT_DATA_FILE"
 
 for d in "${ARR_DELAY[@]}"; do
   for t in "${ARR_THREADS[@]}"; do
     for c in "${ARR_CLONE_SKB[@]}"; do
       for b in "${ARR_BURST[@]}"; do
-        echo "[$(now)][INFO] running" \
+        echo "[$(now)][INFO] Running" \
              "DELAY=$d (${ARR_DELAY[0]}..${ARR_DELAY[-1]})," \
              "THREADS=$t (${ARR_THREADS[0]}..${ARR_THREADS[-1]})," \
              "CLONE_SKB=$c (${ARR_CLONE_SKB[0]}..${ARR_CLONE_SKB[-1]})," \
@@ -322,4 +343,4 @@ for d in "${ARR_DELAY[@]}"; do
 done
 
 printf '\n# End of test: %s\n' "$(now)" >> "$OUTPUT_DATA_FILE"
-echo "[$(now)][INFO] complete!" | tee "$OUTPUT_LOG_FILE"
+printf '\n[%s][INFO] Complete!\n' "$(now)" | tee "$OUTPUT_LOG_FILE"
