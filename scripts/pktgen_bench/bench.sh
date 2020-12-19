@@ -36,7 +36,7 @@ readonly ARR_BURST=(1 {5..25..5})
 # ====================
 
 # if true, write debug output to $OUTPUT_DIR/debug.log
-readonly DEBUG=false
+readonly "${DEBUG_BENCH:=false}"
 # --------------------------
 
 err() {
@@ -47,8 +47,8 @@ err() {
 }
 
 
-if [[ "$#" -ne 2 ]]; then
-  echo "Usage: $0 ifname pkt_size"
+if [[ "$#" -lt 2 ]]; then
+  echo "Usage: $0 ifname pkt_size [dest_ip]"
   exit
 fi
 
@@ -58,6 +58,7 @@ fi
 
 readonly IFNAME="$1"
 readonly PKT_SIZE="$2"  # in bytes
+readonly DEST_IP="${3:-}"
 
 if ! [[ -d /sys/class/net/"$IFNAME" ]]; then
   err 2 "Network device $IFNAME is not available."
@@ -231,7 +232,7 @@ get_cpu_info_sysfs() {
     {
       echo " (via sysfs)"
       separate
-      # shellcheck disable=SC1004
+      # shellcheck disable=SC1004,SC2016
       find /sys/devices/system/cpu -type d -name "cpu[0-9]*" \
         | sort --version-sort \
         | xargs -I '{}' sh -c '
@@ -288,7 +289,7 @@ info "Started to collect system activity data (PID $SAR_PID)"
 
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 DEBUG_COMMAND="cat"
-if [[ "$DEBUG" == true ]]; then
+if [[ "$DEBUG_BENCH" == true ]]; then
   DEBUG_COMMAND="tee --append $OUTPUT_DIR/debug.log"
 fi
 
@@ -309,10 +310,11 @@ for d in "${ARR_DELAY[@]}"; do
         RECORDS=()
         for _ in $(seq "$ROUNDS_PER_TEST"); do
           res=$(
-            "$SCRIPT_DIR"/xmit_multiqueue.sh \
+            "$SCRIPT_DIR"/xmit_multiqueue.sh -v \
               -i "$IFNAME" \
-              -e "$RUNTIME" \
+              -d "$DEST_IP" \
               -s "$PKT_SIZE" \
+              -e "$RUNTIME" \
               -l "$d" \
               -t "$t" \
               -c "$c" \

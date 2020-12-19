@@ -176,11 +176,15 @@ if [[ -z "${DEST_IP:-}" ]]; then
     add_to_export DEST_IP "FD00::1"
   fi
   warn "Set default destination IP to $DEST_IP"
+else
+  add_to_export DEST_IP
 fi
 
 if [[ -z "${DST_MAC:-}" ]]; then
   add_to_export DST_MAC "90:e2:ba:ff:ff:ff"
   warn "Set defualt destination MAC address to $DST_MAC"
+else
+  add_to_export DST_MAC
 fi
 
 if [[ "$#" -gt 0 ]]; then
