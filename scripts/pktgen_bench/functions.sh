@@ -155,11 +155,16 @@ get_iface_irqs() {
   local queues="${IFACE}-.*TxRx"
 
   local irqs
-  irqs=$(grep "$queues" /proc/interrupts | cut -f1 -d:)
-  [[ -z "$irqs" ]] && irqs=$(grep "$IFACE" /proc/interrupts | cut -f1 -d:)
-  [[ -z "$irqs" ]] && irqs=$(for i in $(ls -Ux /sys/class/net/"$IFACE"/device/msi_irqs) ;\
-    do grep "$i:.*TxRx" /proc/interrupts | grep -v fdir | cut -f 1 -d : ;\
-    done)
+  irqs=$(grep "$queues" /proc/interrupts | cut -f1 -d: || true)
+  [[ -z "$irqs" ]] && irqs=$(grep "$IFACE" /proc/interrupts | cut -f1 -d: || true)
+  [[ -z "$irqs" ]] && irqs=$(
+    for i in /sys/class/net/"$IFACE"/device/msi_irqs/*; do \
+      num="$(basename "$i")"; \
+      grep "$num:.*TxRx" /proc/interrupts | grep -v fdir | cut -f1 -d: || true; \
+    done
+  )
+  [[ -z "$irqs" ]] && irqs=$(ls -x /sys/class/net/"$IFACE"/device/msi_irqs)
+
   [[ -z "$irqs" ]] && err $ERR_PROGRAM "Could not find interrupts for $IFACE"
 
   echo "$irqs"
@@ -167,17 +172,20 @@ get_iface_irqs() {
 
 # Given a NUMA node, return cpu ids belonging to it.
 get_node_cpus() {
-  local node=$1
-  local node_cpu_list node_cpu_range_list
+  local -i node=$1
+  local node_cpu_range_list
   node_cpu_range_list=$(cut -f1- -d, --output-delimiter=" " \
     /sys/devices/system/node/node"$node"/cpulist)
 
-  for cpu_range in $node_cpu_range_list
-  do
-    node_cpu_list="$node_cpu_list "$(seq -s " " "${cpu_range//-/ }")
+  local cpu_range
+  local -a node_cpu_list
+  for cpu_range in $node_cpu_range_list; do
+    local cpu_range_arr
+    IFS='-' read -ra cpu_range_arr <<< "$cpu_range"
+    node_cpu_list+=("$(seq -s ' ' "${cpu_range_arr[0]}" "${cpu_range_arr[1]}")")
   done
 
-  echo "$node_cpu_list"
+  echo "${node_cpu_list[@]}"
 }
 
 # Check $1 is in between $2, $3 ($2 <= $1 <= $3)
