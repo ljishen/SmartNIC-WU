@@ -272,6 +272,12 @@ fi
   separate
   echo "#"
 
+  echo "# System Information"
+  separate
+  uname --all
+  separate
+  echo "#"
+
   printf '# Start of test: %s\n\n' "$(now)"
 } >> "$OUTPUT_DATA_FILE"
 
