@@ -30,9 +30,9 @@ readonly ARR_BURST=(1 {5..25..5})
 # ===== STEP TWO =====
 # exmple delays for evaluation
 # readonly ARR_DELAY=(0 125 250 500 1000 2000 4000 8000 16000)
-# IFS=' ' read -ra ARR_THREADS <<< "$(seq -s ' ' 1 "$(nproc)")"
+# IFS=' ' read -ra ARR_THREADS <<< "$(seq -s ' ' 1 $(nproc))"
 # readonly ARR_CLONE_SKB=(0)  # update this value
-# readonly ARR_BURST=(5)      # update this value
+# readonly ARR_BURST=(15)      # update this value
 # ====================
 
 # if true, write debug output to $OUTPUT_DIR/debug.log
@@ -88,13 +88,14 @@ info() {
 
 delay_test() {
   local -i delay
+  local result
   for delay in "${ARR_DELAY[@]}"; do
-    if (( delay > 0 )); then
-      echo true
+    if (( delay )); then
+      result=true
       break
     fi
   done
-  echo false
+  echo "${result:-false}"
 }
 
 if [[ "$(delay_test)" == true ]]; then
