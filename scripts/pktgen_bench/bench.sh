@@ -274,7 +274,7 @@ fi
 
   echo "# System Information"
   separate
-  uname --all
+  uname --all | sed 's/^/# /'
   separate
   echo "#"
 

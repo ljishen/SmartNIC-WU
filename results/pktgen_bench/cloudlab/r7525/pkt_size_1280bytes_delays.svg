@@ -282,17 +282,17 @@
 	<path stroke='black'  d='M96.8,130.6 L96.8,542.4 L575.0,542.4 L575.0,130.6 L96.8,130.6 Z  '/></g>
 <g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
 	<g transform="translate(19.0,336.5) rotate(270)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="middle">
-		<text><tspan font-family="arial" >SMP</tspan></text>
+		<text><tspan font-family="arial" >THROUGHPUT (Mb/sec)</tspan></text>
 	</g>
 </g>
 <g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
 	<g transform="translate(335.9,591.3)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="middle">
-		<text><tspan font-family="arial" >Linux</tspan></text>
+		<text><tspan font-family="arial" >DELAY (ns)</tspan></text>
 	</g>
 </g>
 <g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
 	<g transform="translate(335.9,86.0)" stroke="none" fill="black" font-family="arial" font-size="15.00"  text-anchor="middle">
-		<text>Network Throughput (1280 bytes, 5 clone_skb, 25 burst)</text>
+		<text>Network Throughput (1280 bytes, 0 clone_skb, 25 burst)</text>
 	</g>
 </g>
 <g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">

@@ -144,7 +144,7 @@
 #
 # System Information
 # ========================================
-Linux node-1.bluefield2.ucsc-cmps107-pg0.clemson.cloudlab.us 5.4.0-51-generic #56-Ubuntu SMP Mon Oct 5 14:28:49 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux
+# Linux node-1.bluefield2.ucsc-cmps107-pg0.clemson.cloudlab.us 5.4.0-51-generic #56-Ubuntu SMP Mon Oct 5 14:28:49 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux
 # ========================================
 #
 # Start of test: 2020-12-27T23:22:08,118112920-05:00
