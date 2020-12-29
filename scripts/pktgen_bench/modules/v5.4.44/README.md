@@ -1,5 +1,5 @@
 #### pktgen.c:
-  This file is modified based on the copy from the Linux kernel source v5.4.44. The only modification is to undefine the CONFIG_XFRM macro.
+  This file is modified based on the copy from the Linux kernel source v5.4.44. The only modification is to remove the support of IPsec encapsulation (no flag IPSEC) by undefining the CONFIG_XFRM macro, thus eliminating the external dependency of this module.
 
 ---
 
