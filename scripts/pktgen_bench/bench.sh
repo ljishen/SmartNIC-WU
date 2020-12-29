@@ -22,7 +22,7 @@ readonly OUTPUT_DIR="$PWD/results"
 #
 # ===== STEP ONE =====
 readonly ARR_DELAY=(0)
-readonly ARR_THREADS=({1..10})
+IFS=' ' read -ra ARR_THREADS <<< "$(seq -s ' ' 1 "$(( $(nproc) > 8 ? 8 : $(nproc) ))")"
 readonly ARR_CLONE_SKB=({0..25..5})
 readonly ARR_BURST=(1 {5..25..5})
 # ===================
