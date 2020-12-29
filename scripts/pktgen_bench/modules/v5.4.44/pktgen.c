@@ -111,6 +111,7 @@
  */
 
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+#undef CONFIG_XFRM
 
 #include <linux/sys.h>
 #include <linux/types.h>

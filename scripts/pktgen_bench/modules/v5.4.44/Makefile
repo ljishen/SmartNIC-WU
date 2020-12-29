@@ -1,4 +1,4 @@
-obj-m := pktgen.o
+obj-m += pktgen.o
 
 KDIR ?= /lib/modules/$(shell uname -r)/build
 
