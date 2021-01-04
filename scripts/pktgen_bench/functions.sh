@@ -10,9 +10,11 @@ alias trace_on='{ if [[ "${DEBUG:-false}" == true ]]; then echo; set -x; fi } 2>
 alias trace_off='{ set +x; } 2>/dev/null'
 export PS4='# ${BASH_SOURCE:-"$0"}:${LINENO} - ${FUNCNAME[0]:+${FUNCNAME[0]}()} > '
 
-# stop "^C" being printed when Ctrl-C
+# stop "^C" being printed only when Ctrl-C in an interactive shell to avoid error
+# "stty: 'standard input': Inappropriate ioctl for device"
 #   https://unix.stackexchange.com/a/333804
-stty -echoctl
+#   https://unix.stackexchange.com/a/26782
+[[ $- == *i* ]] && stty -echoctl
 
 ## -- General shell logging cmds --
 err() {
