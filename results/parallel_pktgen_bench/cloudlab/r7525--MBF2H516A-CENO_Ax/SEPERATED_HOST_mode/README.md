@@ -1,0 +1,1 @@
+[![Chart](https://user-images.githubusercontent.com/468515/103614116-ba483c80-4edc-11eb-924b-61d23d086d60.png)](https://docs.google.com/spreadsheets/d/e/2PACX-1vQRhtyBofNNb5fNIMVBjH4WD9OXEk4eh4CQhLVMsJ48ZOjEVdHGsu89GbIogniYtKNC_WXDKpyhpJoI/pubhtml)
