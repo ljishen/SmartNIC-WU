@@ -1,0 +1,24 @@
+[WARN] Set defualt destination MAC address to 90:e2:ba:ff:ff:ff
+
+Running (PID=15245) up to 20 seconds... Ctrl-C to stop.
+
+-------------------- RESULTS --------------------
+[IFNAME: p0@0] Result: OK: 20077604(c20076809+d794) usec, 5455440 (512byte,0frags)
+[IFNAME: p0@0]   271717pps 1112Mb/sec (1112952832bps) errors: 0
+[IFNAME: p0@1] Result: OK: 20101935(c20101935+d0) usec, 90461 (512byte,0frags)
+[IFNAME: p0@1]   4500pps 18Mb/sec (18432000bps) errors: 0
+[IFNAME: p0@2] Result: OK: 20111087(c20111087+d0) usec, 126687 (512byte,0frags)
+[IFNAME: p0@2]   6299pps 25Mb/sec (25800704bps) errors: 0
+[IFNAME: p0@3] Result: OK: 20046218(c20046218+d0) usec, 20333 (512byte,0frags)
+[IFNAME: p0@3]   1014pps 4Mb/sec (4153344bps) errors: 0
+[IFNAME: p0@4] Result: OK: 20095292(c20095292+d0) usec, 55507 (512byte,0frags)
+[IFNAME: p0@4]   2762pps 11Mb/sec (11313152bps) errors: 0
+[IFNAME: p0@5] Result: OK: 20073521(c20073459+d61) usec, 5427283 (512byte,0frags)
+[IFNAME: p0@5]   270370pps 1107Mb/sec (1107435520bps) errors: 0
+[IFNAME: p0@6] Result: OK: 20109531(c20109378+d153) usec, 5398165 (512byte,0frags)
+[IFNAME: p0@6]   268438pps 1099Mb/sec (1099522048bps) errors: 0
+[IFNAME: p0@7] Result: OK: 20109531(c20109463+d68) usec, 5465628 (512byte,0frags)
+[IFNAME: p0@7]   271792pps 1113Mb/sec (1113260032bps) errors: 0
+
+
+Total: 4489 Mb/sec

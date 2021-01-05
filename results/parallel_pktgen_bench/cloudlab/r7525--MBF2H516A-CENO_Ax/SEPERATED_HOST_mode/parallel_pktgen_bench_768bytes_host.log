@@ -1,0 +1,18 @@
+[WARN] Set defualt destination MAC address to 90:e2:ba:ff:ff:ff
+
+Running (PID=738729) up to 20 seconds... Ctrl-C to stop.
+
+-------------------- RESULTS --------------------
+[IFNAME: ens5f0@32] Result: OK: 20017337(c20016694+d643) usec, 70882629 (768byte,0frags)
+[IFNAME: ens5f0@32]   3541061pps 21756Mb/sec (21756278784bps) errors: 0
+[IFNAME: ens5f0@33] Result: OK: 20017337(c20011950+d5386) usec, 69131078 (768byte,0frags)
+[IFNAME: ens5f0@33]   3453560pps 21218Mb/sec (21218672640bps) errors: 0
+[IFNAME: ens5f0@34] Result: OK: 19913632(c19910518+d3113) usec, 77891773 (768byte,0frags)
+[IFNAME: ens5f0@34]   3911479pps 24032Mb/sec (24032126976bps) errors: 0
+[IFNAME: ens5f0@35] Result: OK: 20017367(c20013130+d4236) usec, 53023737 (768byte,0frags)
+[IFNAME: ens5f0@35]   2648886pps 16274Mb/sec (16274755584bps) errors: 0
+[IFNAME: ens5f0@36] Result: OK: 20017345(c19979283+d38062) usec, 8585518 (768byte,0frags)
+[IFNAME: ens5f0@36]   428903pps 2635Mb/sec (2635180032bps) errors: 0
+
+
+Total: 85915 Mb/sec
