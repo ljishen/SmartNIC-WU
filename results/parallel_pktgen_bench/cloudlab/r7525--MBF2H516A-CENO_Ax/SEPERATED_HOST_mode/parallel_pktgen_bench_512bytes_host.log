@@ -1,18 +1,39 @@
 [WARN] Set defualt destination MAC address to 90:e2:ba:ff:ff:ff
+[VERBOSE] ---------  |  -----
+[VERBOSE] PARAMETER  |  VALUE
+[VERBOSE] ---------  |  -----
+[VERBOSE] DEV        |  ens5f0
+[VERBOSE] IP6        |  ""
+[VERBOSE] DST_PORT   |  9
+[VERBOSE] CLONE_SKB  |  0
+[VERBOSE] BURST      |  25
+[VERBOSE] XMIT_MODE  |  start_xmit
+[VERBOSE] PKT_SIZE   |  512
+[VERBOSE] THREADS    |  5
+[VERBOSE] F_THREAD   |  32
+[VERBOSE] COUNT      |  0
+[VERBOSE] DELAY      |  0
+[VERBOSE] INTERVAL   |  0
+[VERBOSE] TIMEOUT    |  20
+[VERBOSE] VERBOSE    |  true
+[VERBOSE] DEBUG      |  false
+[VERBOSE] L_THREAD   |  36
+[VERBOSE] DEST_IP    |  10.10.1.2
+[VERBOSE] DST_MAC    |  90:e2:ba:ff:ff:ff
 
-Running (PID=743091) up to 20 seconds... Ctrl-C to stop.
+Running (PID=869011) up to 20 seconds... Ctrl-C to stop.
 
 -------------------- RESULTS --------------------
-[IFNAME: ens5f0@32] Result: OK: 19981270(c19980594+d675) usec, 76073339 (512byte,0frags)
-[IFNAME: ens5f0@32]   3807232pps 15594Mb/sec (15594422272bps) errors: 0
-[IFNAME: ens5f0@33] Result: OK: 19973653(c19962009+d11643) usec, 63869164 (512byte,0frags)
-[IFNAME: ens5f0@33]   3197670pps 13097Mb/sec (13097656320bps) errors: 0
-[IFNAME: ens5f0@34] Result: OK: 19977375(c19973539+d3835) usec, 80791136 (512byte,0frags)
-[IFNAME: ens5f0@34]   4044131pps 16564Mb/sec (16564760576bps) errors: 0
-[IFNAME: ens5f0@35] Result: OK: 19981255(c19972710+d8544) usec, 52450059 (512byte,0frags)
-[IFNAME: ens5f0@35]   2624963pps 10751Mb/sec (10751848448bps) errors: 0
-[IFNAME: ens5f0@36] Result: OK: 19965667(c19933582+d32084) usec, 9896899 (512byte,0frags)
-[IFNAME: ens5f0@36]   495695pps 2030Mb/sec (2030366720bps) errors: 0
+[IFNAME: ens5f0@32] Result: OK: 19949265(c19948470+d795) usec, 72372423 (512byte,0frags)
+[IFNAME: ens5f0@32]   3627823pps 14859Mb/sec (14859563008bps) errors: 0
+[IFNAME: ens5f0@33] Result: OK: 19949314(c19940527+d8786) usec, 65066265 (512byte,0frags)
+[IFNAME: ens5f0@33]   3261579pps 13359Mb/sec (13359427584bps) errors: 0
+[IFNAME: ens5f0@34] Result: OK: 19949291(c19944995+d4295) usec, 78519060 (512byte,0frags)
+[IFNAME: ens5f0@34]   3935932pps 16121Mb/sec (16121577472bps) errors: 0
+[IFNAME: ens5f0@35] Result: OK: 19945308(c19935532+d9776) usec, 52062441 (512byte,0frags)
+[IFNAME: ens5f0@35]   2610259pps 10691Mb/sec (10691620864bps) errors: 0
+[IFNAME: ens5f0@36] Result: OK: 19949270(c19911552+d37718) usec, 9285041 (512byte,0frags)
+[IFNAME: ens5f0@36]   465432pps 1906Mb/sec (1906409472bps) errors: 0
 
 
-Total: 58036 Mb/sec
+Total: 56936 Mb/sec

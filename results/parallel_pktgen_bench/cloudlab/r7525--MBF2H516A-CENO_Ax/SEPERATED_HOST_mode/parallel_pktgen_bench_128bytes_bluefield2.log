@@ -1,24 +1,45 @@
 [WARN] Set defualt destination MAC address to 90:e2:ba:ff:ff:ff
+[VERBOSE] ---------  |  -----
+[VERBOSE] PARAMETER  |  VALUE
+[VERBOSE] ---------  |  -----
+[VERBOSE] DEV        |  p0
+[VERBOSE] IP6        |  ""
+[VERBOSE] DST_PORT   |  9
+[VERBOSE] CLONE_SKB  |  0
+[VERBOSE] BURST      |  25
+[VERBOSE] XMIT_MODE  |  start_xmit
+[VERBOSE] PKT_SIZE   |  128
+[VERBOSE] THREADS    |  8
+[VERBOSE] F_THREAD   |  0
+[VERBOSE] COUNT      |  0
+[VERBOSE] DELAY      |  0
+[VERBOSE] INTERVAL   |  0
+[VERBOSE] TIMEOUT    |  20
+[VERBOSE] VERBOSE    |  true
+[VERBOSE] DEBUG      |  false
+[VERBOSE] L_THREAD   |  7
+[VERBOSE] DEST_IP    |  10.10.1.2
+[VERBOSE] DST_MAC    |  90:e2:ba:ff:ff:ff
 
-Running (PID=16456) up to 20 seconds... Ctrl-C to stop.
+Running (PID=6917) up to 20 seconds... Ctrl-C to stop.
 
 -------------------- RESULTS --------------------
-[IFNAME: p0@0] Result: OK: 19968656(c19965043+d3613) usec, 4947005 (128byte,0frags)
-[IFNAME: p0@0]   247738pps 253Mb/sec (253683712bps) errors: 0
-[IFNAME: p0@1] Result: OK: 19936398(c19936398+d0) usec, 87594 (128byte,0frags)
-[IFNAME: p0@1]   4393pps 4Mb/sec (4498432bps) errors: 0
-[IFNAME: p0@2] Result: OK: 19974218(c19974218+d0) usec, 49204 (128byte,0frags)
-[IFNAME: p0@2]   2463pps 2Mb/sec (2522112bps) errors: 0
-[IFNAME: p0@3] Result: OK: 19949958(c19949958+d0) usec, 22834 (128byte,0frags)
-[IFNAME: p0@3]   1144pps 1Mb/sec (1171456bps) errors: 0
-[IFNAME: p0@4] Result: OK: 19981130(c19981130+d0) usec, 128139 (128byte,0frags)
-[IFNAME: p0@4]   6413pps 6Mb/sec (6566912bps) errors: 0
-[IFNAME: p0@5] Result: OK: 19968650(c19967267+d1382) usec, 4979818 (128byte,0frags)
-[IFNAME: p0@5]   249381pps 255Mb/sec (255366144bps) errors: 0
-[IFNAME: p0@6] Result: OK: 19960705(c19958282+d2423) usec, 5037119 (128byte,0frags)
-[IFNAME: p0@6]   252351pps 258Mb/sec (258407424bps) errors: 0
-[IFNAME: p0@7] Result: OK: 19976646(c19962832+d13813) usec, 5047685 (128byte,0frags)
-[IFNAME: p0@7]   252679pps 258Mb/sec (258743296bps) errors: 0
+[IFNAME: p0@0] Result: OK: 20129440(c20126283+d3157) usec, 5092389 (128byte,0frags)
+[IFNAME: p0@0]   252982pps 259Mb/sec (259053568bps) errors: 0
+[IFNAME: p0@1] Result: OK: 20122823(c20122823+d0) usec, 14239 (128byte,0frags)
+[IFNAME: p0@1]   707pps 0Mb/sec (723968bps) errors: 0
+[IFNAME: p0@2] Result: OK: 20101445(c20101445+d0) usec, 126190 (128byte,0frags)
+[IFNAME: p0@2]   6277pps 6Mb/sec (6427648bps) errors: 0
+[IFNAME: p0@3] Result: OK: 20114574(c20114574+d0) usec, 29363 (128byte,0frags)
+[IFNAME: p0@3]   1459pps 1Mb/sec (1494016bps) errors: 0
+[IFNAME: p0@4] Result: OK: 20111156(c20111156+d0) usec, 47834 (128byte,0frags)
+[IFNAME: p0@4]   2378pps 2Mb/sec (2435072bps) errors: 0
+[IFNAME: p0@5] Result: OK: 20033508(c20033341+d167) usec, 5077235 (128byte,0frags)
+[IFNAME: p0@5]   253437pps 259Mb/sec (259519488bps) errors: 0
+[IFNAME: p0@6] Result: OK: 20125451(c20124617+d833) usec, 4993410 (128byte,0frags)
+[IFNAME: p0@6]   248114pps 254Mb/sec (254068736bps) errors: 0
+[IFNAME: p0@7] Result: OK: 20109443(c20109443+d0) usec, 5046507 (128byte,0frags)
+[IFNAME: p0@7]   250952pps 256Mb/sec (256974848bps) errors: 0
 
 
 Total: 1037 Mb/sec
