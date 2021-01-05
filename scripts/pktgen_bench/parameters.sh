@@ -28,6 +28,10 @@ Usage: $0 -i ethX [OPTIONS]
   -v : (\$VERBOSE)   verbose
   -x : (\$DEBUG)     debug
 
+The TIMEOUT option requires to enable the bash job control (set -m) if the
+program is running in a non-interactive shell (i.e. in a script).
+See https://stackoverflow.com/a/690297
+
 EOF
 }
 
