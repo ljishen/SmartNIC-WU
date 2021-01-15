@@ -25,7 +25,7 @@ ssh \
   -o StrictHostKeyChecking=no \
   -o UserKnownHostsFile=/dev/null \
   ubuntu@192.168.100.2 \
-  sudo "\$HOME"/SmartNIC-WU/scripts/pktgen_bench/xmit_multiqueue.sh \
+  sudo "\$HOME"/SmartNIC-WU/benchmarks/scripts/pktgen_bench/xmit_multiqueue.sh \
   -v -i p0 -d 10.10.1.2 -s "$PKT_SIZE" -e 20 -t "\$(nproc)" -b 25 \
   >"$BLUEFIELD_OUTPUT_FILE" 2>&1 &
 PID_ARR+=($!)
@@ -33,7 +33,7 @@ echo "PID of the BlueField process ${PID_ARR[-1]}"
 
 HOST_OUTPUT_FILE="$OUTPUT_DIR"/parallel_pktgen_bench_${PKT_SIZE}bytes_host.log
 # shellcheck disable=SC2024
-sudo F_THREAD=32 "$HOME"/SmartNIC-WU/scripts/pktgen_bench/xmit_multiqueue.sh \
+sudo F_THREAD=32 "$HOME"/SmartNIC-WU/benchmarks/scripts/pktgen_bench/xmit_multiqueue.sh \
   -v -i ens5f0 -d 10.10.1.2 -s "$PKT_SIZE" -e 20 -t 5 -b 25 \
   >"$HOST_OUTPUT_FILE" 2>&1 &
 PID_ARR+=($!)
