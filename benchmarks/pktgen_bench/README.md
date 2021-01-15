@@ -1,4 +1,4 @@
-## Tests on x86_64 Hosts
+## General Test Configuration
 
 To obtain more accurate results, it is beneficial to
 
@@ -7,7 +7,7 @@ To obtain more accurate results, it is beneficial to
     sudo systemctl stop irqbalance
     sudo mlnx-tools/ofed_scripts/set_irq_affinity.sh <interface or IB device>
     ```
-2. pktgen [add_device](https://www.kernel.org/doc/Documentation/networking/pktgen.txt) to the kernel threads associated with the same NUMA node of the network device. To make this work, you can use the `-f` option (in [xmit_multiqueue.sh](./xmit_multiqueue.sh)), or set the environment variable `F_THREAD` to offset the starting CPU ID (instead of 0) of the test.
+2. make sure pktgen [add_device](https://www.kernel.org/doc/Documentation/networking/pktgen.txt) to the kernel threads associated with the same NUMA node of the network device. To make this work, you can use the `-f` option (in [xmit_multiqueue.sh](./xmit_multiqueue.sh)), or set the environment variable `F_THREAD` to offset the starting CPU ID (instead of 0) of the test.
 
 
 #### References
