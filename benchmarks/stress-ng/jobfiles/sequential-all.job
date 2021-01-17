@@ -42,7 +42,7 @@ run sequential   # run stressors sequentially
 # log-file:
 #   write messages to the specified log file.
 #
-log-file stress-ng.sequential-all.log
+log-file sequential-all.log
 
 #
 # metrics:
@@ -123,7 +123,7 @@ verbose
 # yaml:
 #   output gathered statistics to a YAML formatted file.
 #
-yaml stress-ng.sequential-all.yaml
+yaml sequential-all.yaml
 
 
 #
