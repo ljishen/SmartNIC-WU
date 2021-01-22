@@ -16,9 +16,9 @@ declare -A HEAD_PROFILE_NAME_TO_SUMMARY_FILEPATH
 
 process_file() {
   local -r filepath="$1"
-  local -r dirname="$(dirname "$filepath")"
+  local -r dirname="$(dirname -- "$filepath")"
   local -r platform="${dirname/#$BENCHMARK_RESULT_DIR}"
-  local -r filename="$(basename "$filepath")"
+  local -r filename="$(basename -- "$filepath")"
   # !! we use the dot as the field separator in the filename
   local -ir profile_idx="${filename##*.}"
   local -r jobname="${filename%%.*}"
@@ -100,7 +100,8 @@ print_summary() {
 
     local -i max_profile_idx="$(( profile_idx - 1 ))"
     # print header
-    printf 'STRESSOR\t%s\tAVG\tSTD\n\n' "$(seq -s $'\t' 1 $max_profile_idx)" \
+    printf 'STRESSOR\t%s\tMEAN\tSTDEV\n\n' \
+      "$(seq --format='"%g (raw/z-score)"' --separator=$'\t' 1 $max_profile_idx)" \
       >>"$summary_filepath"
 
     local bogo_ops_per_second
@@ -112,24 +113,47 @@ print_summary() {
         declare -n stressor_to_bogo=$profile_name
         if [[ -v "stressor_to_bogo[$stressor]" ]]; then
           bogo_ops_per_second="${stressor_to_bogo[$stressor]}"
-          if [[ "$bogo_ops_per_second" != "0.000000" ]]; then
-            bogo_ops_ps_cur_stressor+=("$bogo_ops_per_second")
-          fi
         else
-          bogo_ops_per_second="n/a"
+          bogo_ops_per_second="nan"
         fi
-        printf '%s\t' "$bogo_ops_per_second"
+        bogo_ops_ps_cur_stressor+=("$bogo_ops_per_second")
       done
 
-      printf '%s\n' "${bogo_ops_ps_cur_stressor[@]}" | awk '
-        {
-          sum += $0
-          sum_sq += $0 ^ 2
+      awk -v bogo_ops_ps_cur_stressor_str="${bogo_ops_ps_cur_stressor[*]}" '
+        function is_valid_num(bogo_ops_ps) {
+          # bogo_ops_ps can be "nan" or "0.000000"
+          return bogo_ops_ps ~ /^[0-9.]+$/ && bogo_ops_ps != "0.000000"
         }
-        END {
-          printf("%.6f\t%.6f\n",
-            sum / NR,
-            sqrt(sum_sq / NR - (sum / NR) ^ 2))
+
+        BEGIN {
+          split(bogo_ops_ps_cur_stressor_str, bogo_ops_ps_cur_stressor, " ")
+
+          num_val = 0
+          raw_sum = 0
+          raw_sq_sum = 0
+          for (idx = 1; idx <= length(bogo_ops_ps_cur_stressor); idx++) {
+            bogo_ops_ps = bogo_ops_ps_cur_stressor[idx]
+            if (is_valid_num(bogo_ops_ps)) {
+              num_val++
+              raw_sum += bogo_ops_ps
+              raw_sq_sum += bogo_ops_ps ^ 2
+            }
+          }
+
+          raw_mean = raw_sum / num_val
+          raw_stddev = sqrt((raw_sq_sum - num_val * raw_mean ^ 2) / (num_val - 1))
+
+          for (idx = 1; idx <= length(bogo_ops_ps_cur_stressor); idx++) {
+            bogo_ops_ps = bogo_ops_ps_cur_stressor[idx]
+            if (is_valid_num(bogo_ops_ps)) {
+              zscore = (bogo_ops_ps - raw_mean) / raw_stddev
+              printf("%.6f/%.6f\t", bogo_ops_ps, zscore)
+            } else {
+              printf("%s/%s\t", bogo_ops_ps, "nan")
+            }
+          }
+
+          printf("%.6f\t%.6f\n", raw_mean, raw_stddev)
         }
       '
     done >>"$summary_filepath"
