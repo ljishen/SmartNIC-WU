@@ -12,6 +12,7 @@ if ! [[ -d "$BENCHMARK_RESULT_DIR" ]]; then
   exit 1
 fi
 
+
 declare -A HEAD_PROFILE_NAME_TO_SUMMARY_FILEPATH
 
 process_file() {
@@ -30,7 +31,7 @@ process_file() {
   fi
 
   declare -g -A "$profile_name"
-  declare -n stressor_to_bogo=$profile_name
+  local -n stressor_to_bogo=$profile_name
 
   echo "Reading file $filepath ..."
 
@@ -57,18 +58,25 @@ process_file() {
   )
 }
 
+get_profile_name() {
+  local -r head_profile_name="$1"
+  local -ir profile_idx="$2"
+  echo "${head_profile_name/%____[[:digit:]]*/____$profile_idx}"
+}
+
 print_summary() {
-  local head_profile_name
+  local head_profile_name profile_name
   for head_profile_name in "${!HEAD_PROFILE_NAME_TO_SUMMARY_FILEPATH[@]}"; do
     # shellcheck disable=SC2178
-    declare -n stressor_to_bogo=$head_profile_name
+    local -n stressor_to_bogo=$head_profile_name
     local -a all_stressors=("${!stressor_to_bogo[@]}")
 
     local -i profile_idx
     for (( profile_idx = 2; ; profile_idx++ )); do
-      local profile_name="${head_profile_name/%____[[:digit:]]*/____$profile_idx}"
+      profile_name="$(get_profile_name "$head_profile_name" "$profile_idx")"
+
       # shellcheck disable=SC2178
-      declare -n stressor_to_bogo=$profile_name
+      local -n stressor_to_bogo=$profile_name
       if ! [[ -v stressor_to_bogo[@] ]]; then
         # the associative array does not exist
         #   https://stackoverflow.com/a/26931860
@@ -109,8 +117,8 @@ print_summary() {
       printf '%s\t' "$stressor"
       local -a bogo_ops_ps_cur_stressor=()
       for (( profile_idx = 1; profile_idx <= max_profile_idx; profile_idx++ )); do
-        local profile_name="${head_profile_name/%____[[:digit:]]*/____$profile_idx}"
-        declare -n stressor_to_bogo=$profile_name
+        profile_name="$(get_profile_name "$head_profile_name" "$profile_idx")"
+        local -n stressor_to_bogo=$profile_name
         if [[ -v "stressor_to_bogo[$stressor]" ]]; then
           bogo_ops_per_second="${stressor_to_bogo[$stressor]}"
         else
