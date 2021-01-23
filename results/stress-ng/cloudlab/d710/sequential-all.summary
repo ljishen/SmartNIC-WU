@@ -1,4 +1,12 @@
-# This file summarizes stress-ng benchmark results for YAML files cloudlab/d710/sequential-all.yaml.*
+# This file summarizes stress-ng benchmark results for YAML files:
+# cloudlab/d710/sequential-all.yaml.*
+#
+# The values under the indexed columns  (1..n)  are in the format of
+# R/S. For column i,  R is the  bogo-ops-per-second-real-time of the
+# corresponding stressor in the 'i th' test, and S is the z-score of
+# the value in n tests.
+#
+# Number of tests: 5
 
 
 STRESSOR	"1 (raw/z-score)"	"2 (raw/z-score)"	"3 (raw/z-score)"	"4 (raw/z-score)"	"5 (raw/z-score)"	MEAN	STDEV

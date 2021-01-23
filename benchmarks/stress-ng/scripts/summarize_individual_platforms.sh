@@ -30,38 +30,56 @@ process_file() {
     HEAD_PROFILE_NAME_TO_SUMMARY_FILEPATH["$profile_name"]="${filepath/%.*/.summary}"
   fi
 
-  declare -g -A "$profile_name"
-  local -n stressor_to_bogo=$profile_name
-
   echo "Reading file $filepath ..."
 
-  local stressor bogo_ops_per_second
-  # loop over the results from grep
-  #   https://stackoverflow.com/a/16318005
-  # loop without losing the last entry
-  #   https://stackoverflow.com/a/5010679
-  while read -r -d '#' group || [[ -n "$group" ]]; do
-    stressor="$(
-      grep --perl-regexp --only-matching \
-        'stressor: \K[\w-]+' <<< "$group"
-    )"
-    bogo_ops_per_second="$(
-      grep --perl-regexp --only-matching \
-        'bogo-ops-per-second-real-time: \K[\d.]+' <<< "$group"
-    )"
+  # shellcheck disable=SC2140
+  declare -g -A "$profile_name"="($(
+    awk '
+      BEGIN {
+        in_metrics = 0
+        stressor = ""
+        bogo_ops_per_second = ""
+        stressor_to_bogo_str = ""
+      }
 
-    # shellcheck disable=SC2034
-    stressor_to_bogo["$stressor"]=$bogo_ops_per_second
-  done < <(
-    grep "bogo-ops-per-second-real-time: " \
-      --before-context=3 --group-separator='#' "$filepath"
-  )
+      $0 == "metrics:" {
+        in_metrics = 1
+        next
+      }
+
+      !in_metrics { next }
+
+      /^[[:alnum:]]+/ { exit }
+
+      $2 == "stressor:" {
+        stressor = $3
+        next
+      }
+
+      $1 == "bogo-ops-per-second-real-time:" {
+        bogo_ops_per_second = $2
+        stressor_to_bogo_str = stressor_to_bogo_str" ["stressor"]="bogo_ops_per_second
+      }
+
+      END { print stressor_to_bogo_str }
+    ' "$filepath"
+  ))"
 }
 
 get_profile_name() {
   local -r head_profile_name="$1"
   local -ir profile_idx="$2"
   echo "${head_profile_name/%____[[:digit:]]*/____$profile_idx}"
+}
+
+sort_array() {
+  local -n _arr=$1
+  local IFS=$'\n'
+
+  # sort elements in an array
+  #   https://stackoverflow.com/a/11789688
+  # shellcheck disable=SC2207
+  _arr=($(sort <<<"${_arr[*]}"))
 }
 
 print_summary() {
@@ -94,19 +112,25 @@ print_summary() {
         fi
       done
     done
-
-    # sort elements in an array
-    #   https://stackoverflow.com/a/11789688
-    # shellcheck disable=SC2207
-    IFS=$'\n' all_stressors=($(sort <<<"${all_stressors[*]}"))
-    unset IFS
+    sort_array all_stressors
 
     local summary_filepath="${HEAD_PROFILE_NAME_TO_SUMMARY_FILEPATH[$head_profile_name]}"
     local yaml_filepath="${summary_filepath/%.*/.yaml.*}"
-    printf '# This file summarizes stress-ng benchmark results for YAML files %s\n\n\n' \
-      "${yaml_filepath/#$BENCHMARK_RESULT_DIR}" >"$summary_filepath"
-
     local -i max_profile_idx="$(( profile_idx - 1 ))"
+    cat <<EOF >"$summary_filepath"
+# This file summarizes stress-ng benchmark results for YAML files:
+# ${yaml_filepath/#$BENCHMARK_RESULT_DIR}
+#
+# The values under the indexed columns  (1..n)  are in the format of
+# R/S. For column i,  R is the  bogo-ops-per-second-real-time of the
+# corresponding stressor in the 'i th' test, and S is the z-score of
+# the value in n tests.
+#
+# Number of tests: $max_profile_idx
+
+
+EOF
+
     # print header
     printf 'STRESSOR\t%s\tMEAN\tSTDEV\n\n' \
       "$(seq --format='"%g (raw/z-score)"' --separator=$'\t' 1 $max_profile_idx)" \
@@ -137,31 +161,31 @@ print_summary() {
           split(bogo_ops_ps_cur_stressor_str, bogo_ops_ps_cur_stressor, " ")
 
           num_val = 0
-          raw_sum = 0
-          raw_sq_sum = 0
+          sum = 0
+          sq_sum = 0
           for (idx = 1; idx <= length(bogo_ops_ps_cur_stressor); idx++) {
             bogo_ops_ps = bogo_ops_ps_cur_stressor[idx]
             if (is_valid_num(bogo_ops_ps)) {
               num_val++
-              raw_sum += bogo_ops_ps
-              raw_sq_sum += bogo_ops_ps ^ 2
+              sum += bogo_ops_ps
+              sq_sum += bogo_ops_ps ^ 2
             }
           }
 
-          raw_mean = raw_sum / num_val
-          raw_stddev = sqrt((raw_sq_sum - num_val * raw_mean ^ 2) / (num_val - 1))
+          mean = sum / num_val
+          stdev = sqrt((sq_sum - num_val * mean ^ 2) / (num_val - 1))
 
           for (idx = 1; idx <= length(bogo_ops_ps_cur_stressor); idx++) {
             bogo_ops_ps = bogo_ops_ps_cur_stressor[idx]
             if (is_valid_num(bogo_ops_ps)) {
-              zscore = (bogo_ops_ps - raw_mean) / raw_stddev
+              zscore = (bogo_ops_ps - mean) / stdev
               printf("%.6f/%.6f\t", bogo_ops_ps, zscore)
             } else {
               printf("%s/%s\t", bogo_ops_ps, "nan")
             }
           }
 
-          printf("%.6f\t%.6f\n", raw_mean, raw_stddev)
+          printf("%.6f\t%.6f\n", mean, stdev)
         }
       '
     done >>"$summary_filepath"
