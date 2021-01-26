@@ -14,6 +14,9 @@
 #
 #     2. GPVAL_SYSTEM_ERRNO
 #     http://www.gnuplot.info/docs_5.2/Gnuplot_5.2.pdf, p201
+#
+#     3. use data type array[size]
+#     http://www.gnuplot.info/ReleaseNotes_5_2_8.html
 
 if (ARGC != 1) {
   print sprintf("Usage:    %s DATAFILE\n",ARG0)
@@ -35,17 +38,22 @@ if (GPVAL_SYSTEM_ERRNO != 0) {
 output_filepath = datafile.".svg"
 set output output_filepath
 
-# skip the column header so it won't be used as data
+# Skip the column header so it won't be used as data
 #   https://stackoverflow.com/a/35528422
 set key autotitle columnhead
-unset key
 
 set border 10 front linetype black linewidth 1.000 dashtype solid
 set boxwidth 0.5 absolute
 set pointsize 0.5
-set style fill solid 0.50 border lt -1
-set style data boxplot
-set style boxplot range 1.5 outliers pointtype 7 candlesticks
+set style fill solid 0.70 border lt -1
+
+RANGE_FACTOR = 1.5
+set style boxplot range RANGE_FACTOR nooutliers pointtype 7 candlesticks
+
+# Use a preset RGB full-spectrum color gradient. See
+#   gnuplot> help set palette defined
+set palette defined
+unset colorbox
 
 set xtics border nomirror in scale 0,0 rotate autojustify rangelimited
 set ytics border mirror in scale 1.0,0.5 norotate autojustify
@@ -53,6 +61,13 @@ set y2tics border
 set grid xtics ytics
 
 set ylabel "z-score" font ",15"
+
+bluefield_idx = system(sprintf( \
+    "sed '/^[[:blank:]]*\\(#\\|$\\)/d' %s \
+    | cut --fields=1 \
+    | tail --lines=+2 \
+    | grep --line-number 'MBF' \
+    | cut --fields=1 --delimiter=':'", datafile)) - 1
 
 data_header = system("grep --max-count=1 '^[^#]' ".datafile)
 NF = words(data_header)
@@ -69,18 +84,56 @@ set multiplot layout num_plots,1 title \
 zscore(val) = strstrt(val, "nan") != 0 \
   ? 0 : real(substr(val, strstrt(val, "/")+1, -1))
 
+show_zscore(platform_idx, zscore, upper, lower) = \
+  (platform_idx == bluefield_idx \
+  || zscore > upper \
+  || zscore < lower) ? zscore : 1/0
+
 do for [p=1:num_plots] {
   start_col_cur_plot = (p - 1) * STRESSORS_PER_PLOT + SKIP_COLUMNS + 1
   end_col_cur_plot = STRESSORS_PER_PLOT * p > num_stressors \
     ? NF : start_col_cur_plot + STRESSORS_PER_PLOT - 1
 
-  set xtics auto
-  set xrange [0:end_col_cur_plot-start_col_cur_plot+2] noreverse writeback
+  num_stressors_cur_plot = end_col_cur_plot - start_col_cur_plot + 1
 
-  set for [i=1:end_col_cur_plot-start_col_cur_plot+1] \
+  array Upperwhisker[num_stressors_cur_plot]
+  array Lowerwhisker[num_stressors_cur_plot]
+  plot_min = 0
+  plot_max = 0
+
+  # Remove range limit on the y axis. See "gnuplot> help stats".
+  set autoscale y
+
+  do for [i=start_col_cur_plot:end_col_cur_plot] {
+    stats datafile using (zscore(strcol(i))) nooutput
+    if (STATS_min<plot_min) {
+      plot_min=STATS_min
+    }
+    if (STATS_max>plot_max) {
+      plot_max=STATS_max
+    }
+
+    irq = STATS_up_quartile - STATS_lo_quartile
+    Upperwhisker[i-start_col_cur_plot+1] = STATS_up_quartile + irq * RANGE_FACTOR
+    Lowerwhisker[i-start_col_cur_plot+1] = STATS_lo_quartile - irq * RANGE_FACTOR
+  }
+
+  # restore the default behavior, we can then add tic labels
+  set xtics autojustify
+
+  set xrange [0:num_stressors_cur_plot+1] noreverse writeback
+  set yrange [floor(plot_min):ceil(plot_max)] noreverse nowriteback
+
+  set for [i=1:num_stressors_cur_plot] \
     xtics add (word(data_header, start_col_cur_plot+(i-1)) i)
-  plot for [i=1:end_col_cur_plot-start_col_cur_plot+1] \
-    datafile using (i):(zscore(strcol(start_col_cur_plot+(i-1))))
+
+  plot for [i=1:num_stressors_cur_plot] \
+    datafile using (i):(zscore(strcol(start_col_cur_plot+(i-1)))) with boxplot, \
+       for [i=1:num_stressors_cur_plot] \
+    datafile using (i):(show_zscore(column(0), \
+      zscore(strcol(start_col_cur_plot+(i-1))), \
+      Upperwhisker[i], Lowerwhisker[i])):0 \
+      with points pointtype 7 pointsize 0.8 palette
 }
 
 print "Written to output file: ".output_filepath
