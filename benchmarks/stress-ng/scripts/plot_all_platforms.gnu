@@ -28,9 +28,15 @@ if (ARGC != 1) {
 }
 
 datafile = ARG1
+file_ext = system(sprintf("echo '%s' | rev | cut -d'.' -f1 | rev", datafile))
+if (file_ext ne "platforms_summary") {
+  printerr sprintf("[ERROR] Unsupport datafile: %s", datafile)
+  exit status 1
+}
+
 system("test -f ".datafile)
 if (GPVAL_SYSTEM_ERRNO != 0) {
-  printerr sprintf("[ERROR] Cannot find datafile: %s",datafile)
+  printerr sprintf("[ERROR] Cannot find datafile: %s", datafile)
   exit status GPVAL_SYSTEM_ERRNO
 }
 

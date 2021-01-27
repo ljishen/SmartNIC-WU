@@ -1,5 +1,5 @@
 # This file summarizes stress-ng benchmark results for YAML files:
-# cloudlab/c8220/sequential-all.yaml.*
+# cloudlab/c8220/sequential-all_60s.yaml.*
 #
 # The values under the indexed columns  (1..n)  are in the format of
 # R/S. For column i,  R is the  bogo-ops-per-second-real-time of the
