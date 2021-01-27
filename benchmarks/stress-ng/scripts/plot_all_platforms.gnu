@@ -81,8 +81,8 @@ set multiplot layout num_plots,1 title \
   "Performnace variability of different stressors on different platforms\n" \
   font ",15"
 
-zscore(val) = strstrt(val, "nan") != 0 \
-  ? 0 : real(substr(val, strstrt(val, "/")+1, -1))
+zscore(strval) = strstrt(strval, "nan") != 0 \
+  ? 0 : real(substr(strval, strstrt(strval, "/")+1, -1))
 
 BLUEFIELD_IDX = system(sprintf( \
     "sed '/^[[:blank:]]*\\(#\\|$\\)/d' %s \
@@ -94,8 +94,9 @@ BLUEFIELD_IDX = system(sprintf( \
 # platform_idx starts from 0
 should_highlight(platform_idx) = \
   platform_idx == BLUEFIELD_IDX
-highlight(platform_idx, zscore) = \
-  should_highlight(platform_idx) ? zscore : 1/0
+highlight(platform_idx, strval) = \
+  should_highlight(platform_idx) && strstrt(strval, "nan") == 0 \
+  ? zscore(strval) : 1/0
 POINTTYPE_HIGHLIGHT = 9
 POINTTYPE_NORMAL = 7
 
@@ -162,7 +163,7 @@ do for [p=1:num_plots] {
             with points pointtype POINTTYPE_NORMAL palette, \
        for [i=1:num_stressors_cur_plot] \
           datafile using (i):(highlight(column(0), \
-            zscore(strcol(start_col_cur_plot+(i-1))))):0 \
+            strcol(start_col_cur_plot+(i-1)))):0 \
             with points pointtype POINTTYPE_HIGHLIGHT palette, \
        for [i=1:num_platforms] \
           datafile using (num_stressors_cur_plot+10):(floor(plot_min)):(i-1)  \
