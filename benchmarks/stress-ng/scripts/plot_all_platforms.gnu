@@ -40,11 +40,12 @@ set output output_filepath
 
 # Skip the column header so it won't be used as data
 #   https://stackoverflow.com/a/35528422
-set key autotitle columnhead
+set key autotitle columnheader
+set key at graph 0.8,1.025 left top Left reverse font ",10"
 
-set border 10 front linetype black linewidth 1.000 dashtype solid
+set border 2 front linetype black linewidth 1.000 dashtype solid
 set boxwidth 0.5 absolute
-set pointsize 0.5
+set pointsize 0.8
 set style fill solid 0.70 border lt -1
 
 RANGE_FACTOR = 1.5
@@ -56,18 +57,10 @@ set palette defined
 unset colorbox
 
 set xtics border nomirror in scale 0,0 rotate autojustify rangelimited
-set ytics border mirror in scale 1.0,0.5 norotate autojustify
-set y2tics border
+set ytics border nomirror in scale 1.0,0.5 norotate autojustify
 set grid xtics ytics
 
 set ylabel "z-score" font ",15"
-
-bluefield_idx = system(sprintf( \
-    "sed '/^[[:blank:]]*\\(#\\|$\\)/d' %s \
-    | cut --fields=1 \
-    | tail --lines=+2 \
-    | grep --line-number 'MBF' \
-    | cut --fields=1 --delimiter=':'", datafile)) - 1
 
 data_header = system("grep --max-count=1 '^[^#]' ".datafile)
 NF = words(data_header)
@@ -77,17 +70,36 @@ STRESSORS_PER_PLOT=32
 num_stressors = NF - SKIP_COLUMNS
 num_plots = ceil(num_stressors * 1.0 / STRESSORS_PER_PLOT)
 
-set terminal svg enhanced font "arial,12" fontscale 1.0 size 800,400*num_plots
+set terminal svg enhanced font "arial,12" fontscale 1.0 size 1000,400*num_plots
 set multiplot layout num_plots,1 title \
   "Distribution of energy usage explicitly ordered by name of energy source\n"
 
 zscore(val) = strstrt(val, "nan") != 0 \
   ? 0 : real(substr(val, strstrt(val, "/")+1, -1))
 
+BLUEFIELD_IDX = system(sprintf( \
+    "sed '/^[[:blank:]]*\\(#\\|$\\)/d' %s \
+    | cut --fields=1 \
+    | tail --lines=+2 \
+    | grep --line-number 'MBF' \
+    | cut --fields=1 --delimiter=':'", datafile)) - 1
+
 show_zscore(platform_idx, zscore, upper, lower) = \
-  (platform_idx == bluefield_idx \
+  (platform_idx == BLUEFIELD_IDX \
   || zscore > upper \
   || zscore < lower) ? zscore : 1/0
+
+num_platforms = system(sprintf( \
+    "sed '/^[[:blank:]]*\\(#\\|$\\)/d' %s \
+    | tail --lines=+2 \
+    | wc --lines", datafile))
+
+# idx start from 1
+platform_name(idx) = system(sprintf( \
+    "sed '/^[[:blank:]]*\\(#\\|$\\)/d' %s \
+    | cut --fields=1 \
+    | tail --lines=+2 \
+    | sed --quiet '%dp'", datafile, idx))
 
 do for [p=1:num_plots] {
   start_col_cur_plot = (p - 1) * STRESSORS_PER_PLOT + SKIP_COLUMNS + 1
@@ -118,22 +130,26 @@ do for [p=1:num_plots] {
     Lowerwhisker[i-start_col_cur_plot+1] = STATS_lo_quartile - irq * RANGE_FACTOR
   }
 
-  # restore the default behavior, we can then add tic labels
-  set xtics autojustify
+  # Restore the default behavior, we can then add tic labels
+  set xtic ("" 1)
 
-  set xrange [0:num_stressors_cur_plot+1] noreverse writeback
+  # Extend the xrange to the right by 10 to contain the legend
+  set xrange [0:num_stressors_cur_plot+10] noreverse writeback
   set yrange [floor(plot_min):ceil(plot_max)] noreverse nowriteback
 
   set for [i=1:num_stressors_cur_plot] \
     xtics add (word(data_header, start_col_cur_plot+(i-1)) i)
 
   plot for [i=1:num_stressors_cur_plot] \
-    datafile using (i):(zscore(strcol(start_col_cur_plot+(i-1)))) with boxplot, \
+          datafile using (i):(zscore(strcol(start_col_cur_plot+(i-1)))) with boxplot, \
        for [i=1:num_stressors_cur_plot] \
-    datafile using (i):(show_zscore(column(0), \
-      zscore(strcol(start_col_cur_plot+(i-1))), \
-      Upperwhisker[i], Lowerwhisker[i])):0 \
-      with points pointtype 7 pointsize 0.8 palette
+          datafile using (i):(show_zscore(column(0), \
+            zscore(strcol(start_col_cur_plot+(i-1))), \
+            Upperwhisker[i], Lowerwhisker[i])):0 \
+            with points pointtype 7 palette, \
+       for [i=1:num_platforms] \
+          datafile using (num_stressors_cur_plot+10):(floor(plot_min)):(i-1)  \
+            with points pointtype 7 palette title platform_name(i)
 }
 
 print "Written to output file: ".output_filepath
