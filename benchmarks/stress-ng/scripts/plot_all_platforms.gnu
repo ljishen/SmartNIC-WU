@@ -41,7 +41,7 @@ set output output_filepath
 # Skip the column header so it won't be used as data
 #   https://stackoverflow.com/a/35528422
 set key autotitle columnheader
-set key at graph 0.8,1.025 left top Left reverse font ",10"
+set key at graph 0.8,1.025 left top Left noenhanced reverse font ",10"
 
 set border 2 front linetype black linewidth 1.000 dashtype solid
 set boxwidth 0.5 absolute
@@ -84,10 +84,16 @@ BLUEFIELD_IDX = system(sprintf( \
     | grep --line-number 'MBF' \
     | cut --fields=1 --delimiter=':'", datafile)) - 1
 
-show_zscore(platform_idx, zscore, upper, lower) = \
-  (platform_idx == BLUEFIELD_IDX \
-  || zscore > upper \
-  || zscore < lower) ? zscore : 1/0
+# platform_idx starts from 0
+should_highlight(platform_idx) = \
+  platform_idx == BLUEFIELD_IDX
+highlight(platform_idx, zscore) = \
+  should_highlight(platform_idx) ? zscore : 1/0
+POINTTYPE_HIGHLIGHT = 9
+POINTTYPE_NORMAL = 7
+
+outlier(zscore, upper, lower) = \
+  (zscore > upper || zscore < lower) ? zscore : 1/0
 
 num_platforms = system(sprintf( \
     "sed '/^[[:blank:]]*\\(#\\|$\\)/d' %s \
@@ -143,13 +149,19 @@ do for [p=1:num_plots] {
   plot for [i=1:num_stressors_cur_plot] \
           datafile using (i):(zscore(strcol(start_col_cur_plot+(i-1)))) with boxplot, \
        for [i=1:num_stressors_cur_plot] \
-          datafile using (i):(show_zscore(column(0), \
+          datafile using (i):(outlier( \
             zscore(strcol(start_col_cur_plot+(i-1))), \
             Upperwhisker[i], Lowerwhisker[i])):0 \
-            with points pointtype 7 palette, \
+            with points pointtype POINTTYPE_NORMAL palette, \
+       for [i=1:num_stressors_cur_plot] \
+          datafile using (i):(highlight(column(0), \
+            zscore(strcol(start_col_cur_plot+(i-1))))):0 \
+            with points pointtype POINTTYPE_HIGHLIGHT palette, \
        for [i=1:num_platforms] \
           datafile using (num_stressors_cur_plot+10):(floor(plot_min)):(i-1)  \
-            with points pointtype 7 palette title platform_name(i)
+            with points \
+            pointtype should_highlight(i-1)?POINTTYPE_HIGHLIGHT:POINTTYPE_NORMAL \
+            palette title platform_name(i)
 }
 
 print "Written to output file: ".output_filepath
