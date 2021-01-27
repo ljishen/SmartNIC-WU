@@ -72,7 +72,8 @@ num_plots = ceil(num_stressors * 1.0 / STRESSORS_PER_PLOT)
 
 set terminal svg enhanced font "arial,12" fontscale 1.0 size 1000,400*num_plots
 set multiplot layout num_plots,1 title \
-  "Distribution of energy usage explicitly ordered by name of energy source\n"
+  "Performnace variability of different stressors on different platforms\n" \
+  font ",15"
 
 zscore(val) = strstrt(val, "nan") != 0 \
   ? 0 : real(substr(val, strstrt(val, "/")+1, -1))
