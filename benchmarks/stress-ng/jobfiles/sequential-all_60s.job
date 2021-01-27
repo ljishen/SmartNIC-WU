@@ -1,0 +1,131 @@
+#!/usr/bin/awk BEGIN { cmd = "dirname '"ARGV[1]"'"; cmd | getline dir; close(cmd); cmd = "uname -m"; cmd | getline machine; close(cmd); system("mkdir -p /tmp/stress-ng && "dir"/../packages/latest/"machine"/stress-ng --job "ARGV[1]) }
+
+#
+# Sequentially run all stressors on all online CPUs.
+#
+# The number of instances of each of the individual  stressors to be
+# started is the number of online CPUs.
+#
+# Various options have been commented out, one can remove the
+# proceeding comment to enable these options if required.
+
+run sequential   # run stressors sequentially
+
+#
+# aggressive:
+#   enables more file, cache and memory aggressive options. This may
+#   slow tests down, increase latencies and  reduce  the  number  of
+#   bogo  ops as well as changing the balance of user time vs system
+#   time used depending on the type of stressor being used.
+#
+# aggressive
+
+#
+# ignite-cpu:
+#   alter kernel controls to try and maximize the CPU. This requires
+#   root  privilege  to alter various /sys interface controls.  Cur‐
+#   rently this only works for Intel P-State enabled x86 systems  on
+#   Linux.
+#
+# ignite-cpu
+
+#
+# keep-name:
+#   by  default,  stress-ng  will  attempt to change the name of the
+#   stress processes according to their functionality;  this  option
+#   disables  this and keeps the process names to be the name of the
+#   parent process, that is, stress-ng.
+#
+# keep-name
+
+#
+# log-file:
+#   write messages to the specified log file.
+#
+log-file sequential-all_60s.log
+
+#
+# metrics:
+#   output number of bogo operations in total performed by the stre-
+#   ss processes.  Note  that  these  are  not a  reliable metric of
+#   performance or throughput  and have not been designed to be used
+#   for  benchmarking  whatsoever. The metrics are just a useful way
+#   to observe how a system behaves when under various kinds of load.
+#
+#   The following columns of information are output:
+#   bogo ops, real time (secs), usr time (secs), sys time (secs),
+#   bogo ops/s (real time), bogo ops/s (usr+sys time).
+#
+metrics
+
+#
+# no-rand-seed:
+#   Do not seed the stress-ng pseudo-random number  generator with a
+#   quasi random start seed, but instead seed it with  constant val-
+#   ues. This forces  tests  to  run  each time using the same start
+#   conditions  which  can be useful  when one requires reproducible
+#   stress tests.
+#
+no-rand-seed
+
+#
+# sequential
+#   sequentially run all the stressors one by one for a default  of 60
+#   seconds. The number of instances of each of the individual stress-
+#   ors to be started is N. If N is less than zero, then the number of
+#   CPUs online is  used for the  number of  instances.  If N is zero,
+#   then the number of CPUs in the system is used.
+#
+sequential -1
+
+#
+# temp-path:
+#   specify  a path for stress-ng  temporary  directories and tempo-
+#   rary files; the default  path is the current  working directory.
+#   This path must have read and write access for the stress-ng str-
+#   ess processes.
+#
+temp-path /tmp/stress-ng
+
+#
+# timeout:
+#  run each of the tests for 60 seconds
+#  stop stress test after N seconds. One can also specify the units
+#  of time in seconds, minutes, hours, days or years with the  suf‐
+#  fix s, m, h, d or y.
+#
+timeout 60s
+
+#
+# times:
+#   show  the  cumulative  user  and system  times of all  the child
+#   processes at the end of the stress run.  The percentage of util-
+#   isation of available CPU time is also calculated from the number
+#   of on-line CPUs in the system.
+#
+times
+
+#
+# tz:
+#   collect  temperatures  from the  available thermal zones on  the
+#   machine (Linux only).  Some devices may have one or more thermal
+#   zones, where as others  may have none.
+#
+tz
+
+#
+# verbose:
+#   show all debug, warnings and normal information output.
+#
+verbose
+
+#
+# yaml:
+#   output gathered statistics to a YAML formatted file.
+#
+yaml sequential-all_60s.yaml
+
+
+#
+# per stressor options start here
+#

@@ -42,7 +42,7 @@ run sequential   # run stressors sequentially
 # log-file:
 #   write messages to the specified log file.
 #
-log-file sequential-all.log
+log-file sequential-all_10s.log
 
 #
 # metrics:
@@ -89,12 +89,12 @@ temp-path /tmp/stress-ng
 
 #
 # timeout:
-#  run each of the tests for 60 seconds
+#  run each of the tests for 10 seconds
 #  stop stress test after N seconds. One can also specify the units
 #  of time in seconds, minutes, hours, days or years with the  suf‐
 #  fix s, m, h, d or y.
 #
-timeout 60s
+timeout 10s
 
 #
 # times:
@@ -123,7 +123,7 @@ verbose
 # yaml:
 #   output gathered statistics to a YAML formatted file.
 #
-yaml sequential-all.yaml
+yaml sequential-all_10s.yaml
 
 
 #
