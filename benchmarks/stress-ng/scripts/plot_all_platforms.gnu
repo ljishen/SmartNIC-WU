@@ -100,8 +100,9 @@ highlight(platform_idx, strval) = \
 POINTTYPE_HIGHLIGHT = 9
 POINTTYPE_NORMAL = 7
 
-outlier(zscore, upper, lower) = \
-  (zscore > upper || zscore < lower) ? zscore : 1/0
+outlier(platform_idx, zscore, upper, lower) = \
+  (!should_highlight(platform_idx) \
+  && (zscore > upper || zscore < lower)) ? zscore : 1/0
 
 num_platforms = system(sprintf( \
     "sed '/^[[:blank:]]*\\(#\\|$\\)/d' %s \
@@ -157,7 +158,7 @@ do for [p=1:num_plots] {
   plot for [i=1:num_stressors_cur_plot] \
           datafile using (i):(zscore(strcol(start_col_cur_plot+(i-1)))) with boxplot, \
        for [i=1:num_stressors_cur_plot] \
-          datafile using (i):(outlier( \
+          datafile using (i):(outlier(column(0), \
             zscore(strcol(start_col_cur_plot+(i-1))), \
             Upperwhisker[i], Lowerwhisker[i])):0 \
             with points pointtype POINTTYPE_NORMAL palette, \
