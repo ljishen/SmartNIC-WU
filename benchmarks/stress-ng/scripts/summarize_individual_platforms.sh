@@ -33,8 +33,7 @@ process_file() {
   echo "Reading file $filepath ..."
 
   # shellcheck disable=SC2140
-  declare -g -A "$profile_name"="($(
-    awk '
+  declare -g -A "$profile_name"="($(awk '
       BEGIN {
         in_metrics = 0
         stressor = ""
@@ -42,14 +41,17 @@ process_file() {
         stressor_to_bogo_str = ""
       }
 
-      $0 == "metrics:" {
+      !in_metrics && $0 == "metrics:" {
         in_metrics = 1
         next
       }
 
       !in_metrics { next }
 
-      /^[[:alnum:]]+/ { exit }
+      /^[[:alnum:]]+/ {
+        print stressor_to_bogo_str
+        exit
+      }
 
       $2 == "stressor:" {
         stressor = $3
@@ -60,10 +62,7 @@ process_file() {
         bogo_ops_per_second = $2
         stressor_to_bogo_str = stressor_to_bogo_str" ["stressor"]="bogo_ops_per_second
       }
-
-      END { print stressor_to_bogo_str }
-    ' "$filepath"
-  ))"
+    ' "$filepath"))"
 }
 
 get_profile_name() {

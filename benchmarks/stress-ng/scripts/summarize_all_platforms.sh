@@ -37,8 +37,7 @@ process_file() {
   echo "Reading file $filepath ..."
 
   # shellcheck disable=SC2140
-  declare -g -A "$profile_name"="($(
-    awk -F $'\t' '
+  declare -g -A "$profile_name"="($(awk -F $'\t' '
       BEGIN {
         mean_field = 0
         stressor_to_bogo_str = ""
@@ -59,8 +58,7 @@ process_file() {
       }
 
       END { print stressor_to_bogo_str }
-    ' "$filepath"
-  ))"
+    ' "$filepath"))"
 }
 
 sort_array() {
@@ -204,25 +202,23 @@ EOF
     done
 
     # print summary
-    {
-      for platform in "${platforms[@]}"; do
-        printf '%s\t' "$platform"
+    for platform in "${platforms[@]}"; do
+      printf '%s\t' "$platform"
 
-        profile_name="$(get_profile_name "$jobname" "$platform")"
-        # shellcheck disable=SC2178
-        local -n stressor_to_bogo=$profile_name
+      profile_name="$(get_profile_name "$jobname" "$platform")"
+      # shellcheck disable=SC2178
+      local -n stressor_to_bogo=$profile_name
 
-        local -i stressor_idx
-        for (( stressor_idx = 0; stressor_idx < ${#all_stressors[@]}; stressor_idx++ )); do
-          stressor="${all_stressors[$stressor_idx]}"
-          if (( stressor_idx < ${#all_stressors[@]} - 1 )); then
-            printf '%s\t' "${stressor_to_bogo[$stressor]}"
-          else
-            printf '%s\n' "${stressor_to_bogo[$stressor]}"
-          fi
-        done
+      local -i stressor_idx
+      for (( stressor_idx = 0; stressor_idx < ${#all_stressors[@]}; stressor_idx++ )); do
+        stressor="${all_stressors[$stressor_idx]}"
+        if (( stressor_idx < ${#all_stressors[@]} - 1 )); then
+          printf '%s\t' "${stressor_to_bogo[$stressor]}"
+        else
+          printf '%s\n' "${stressor_to_bogo[$stressor]}"
+        fi
       done
-    } >>"$summary_filepath"
+    done >>"$summary_filepath"
   done
 }
 
