@@ -27,7 +27,7 @@ process_file() {
   local -r dirname="$(dirname -- "$filepath")"
   local -r platform="${dirname/#$BENCHMARK_RESULT_DIR}"
   local -r filename="$(basename -- "$filepath")"
-  # !! we use the dot as the field separator in the filename
+  # !! We use the dot as the field separator in the filename
   local -r jobname="${filename%%.*}"
   local profile_name
   profile_name="$(get_profile_name "$jobname" "$platform")"
@@ -65,7 +65,7 @@ sort_array() {
   local -n _arr=$1
   local IFS=$'\n'
 
-  # sort elements in an array
+  # Sort elements in an array
   #   https://stackoverflow.com/a/11789688
   # shellcheck disable=SC2207
   _arr=($(sort <<<"${_arr[*]}"))
@@ -133,7 +133,7 @@ print_summary() {
         all_stressors=("${!stressor_to_bogo[@]}")
       else
         for stressor in "${!stressor_to_bogo[@]}"; do
-          # check if an element in an array
+          # Check if an element in an array
           #   https://stackoverflow.com/a/15394738
           # shellcheck disable=SC2076,SC2199
           if ! [[ " ${all_stressors[@]} " =~ " $stressor " ]]; then
@@ -164,7 +164,7 @@ print_summary() {
 
 EOF
 
-    # print header
+    # Print header
     # shellcheck disable=SC2116
     printf 'PLATFORM\t%s\n\n' "$(IFS=$'\t' && echo "${all_stressors[*]}")" \
       >>"$summary_filepath"
@@ -187,7 +187,7 @@ EOF
       IFS=' ' read -r -a bogo_ops_ps_with_zscore \
         <<< "$(calculate_zscore bogo_ops_ps_cur_stressor)"
 
-      # update the stressor_to_bogo array for the
+      # Update the stressor_to_bogo array for the
       # current stressor by adding zscores
       local -i platform_idx
       for (( platform_idx = 0;
@@ -201,7 +201,7 @@ EOF
       done
     done
 
-    # print summary
+    # Print summary
     for platform in "${platforms[@]}"; do
       printf '%s\t' "$platform"
 

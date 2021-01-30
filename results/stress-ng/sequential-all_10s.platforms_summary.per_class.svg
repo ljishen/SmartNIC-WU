@@ -1,0 +1,598 @@
+<?xml version="1.0" encoding="utf-8"  standalone="no"?>
+<svg 
+ width="1680" height="500"
+ viewBox="0 0 1680 500"
+ xmlns="http://www.w3.org/2000/svg"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+>
+
+<title>Gnuplot</title>
+<desc>Produced by GNUPLOT 5.2 patchlevel 8 </desc>
+
+<g id="gnuplot_canvas">
+
+<rect x="0" y="0" width="1680" height="500" fill="none"/>
+<defs>
+
+	<circle id='gpDot' r='0.5' stroke-width='0.5' stroke='currentColor'/>
+	<path id='gpPt0' stroke-width='0.222' stroke='currentColor' d='M-1,0 h2 M0,-1 v2'/>
+	<path id='gpPt1' stroke-width='0.222' stroke='currentColor' d='M-1,-1 L1,1 M1,-1 L-1,1'/>
+	<path id='gpPt2' stroke-width='0.222' stroke='currentColor' d='M-1,0 L1,0 M0,-1 L0,1 M-1,-1 L1,1 M-1,1 L1,-1'/>
+	<rect id='gpPt3' stroke-width='0.222' stroke='currentColor' x='-1' y='-1' width='2' height='2'/>
+	<rect id='gpPt4' stroke-width='0.222' stroke='currentColor' fill='currentColor' x='-1' y='-1' width='2' height='2'/>
+	<circle id='gpPt5' stroke-width='0.222' stroke='currentColor' cx='0' cy='0' r='1'/>
+	<use xlink:href='#gpPt5' id='gpPt6' fill='currentColor' stroke='none'/>
+	<path id='gpPt7' stroke-width='0.222' stroke='currentColor' d='M0,-1.33 L-1.33,0.67 L1.33,0.67 z'/>
+	<use xlink:href='#gpPt7' id='gpPt8' fill='currentColor' stroke='none'/>
+	<use xlink:href='#gpPt7' id='gpPt9' stroke='currentColor' transform='rotate(180)'/>
+	<use xlink:href='#gpPt9' id='gpPt10' fill='currentColor' stroke='none'/>
+	<use xlink:href='#gpPt3' id='gpPt11' stroke='currentColor' transform='rotate(45)'/>
+	<use xlink:href='#gpPt11' id='gpPt12' fill='currentColor' stroke='none'/>
+	<path id='gpPt13' stroke-width='0.222' stroke='currentColor' d='M0,1.330 L1.265,0.411 L0.782,-1.067 L-0.782,-1.076 L-1.265,0.411 z'/>
+	<use xlink:href='#gpPt13' id='gpPt14' fill='currentColor' stroke='none'/>
+	<filter id='textbox' filterUnits='objectBoundingBox' x='0' y='0' height='1' width='1'>
+	  <feFlood flood-color='white' flood-opacity='1' result='bgnd'/>
+	  <feComposite in='SourceGraphic' in2='bgnd' operator='atop'/>
+	</filter>
+	<filter id='greybox' filterUnits='objectBoundingBox' x='0' y='0' height='1' width='1'>
+	  <feFlood flood-color='lightgrey' flood-opacity='1' result='grey'/>
+	  <feComposite in='SourceGraphic' in2='grey' operator='atop'/>
+	</filter>
+</defs>
+<g fill="none" color="white" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M71.9,326.9 L1655.0,326.9  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M71.9,326.9  '/>	<g transform="translate(63.6,330.8)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="end">
+		<text><tspan font-family="arial" >-300</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M71.9,292.6 L1655.0,292.6  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M71.9,292.6  '/>	<g transform="translate(63.6,296.5)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="end">
+		<text><tspan font-family="arial" >-250</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M71.9,258.3 L1655.0,258.3  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M71.9,258.3  '/>	<g transform="translate(63.6,262.2)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="end">
+		<text><tspan font-family="arial" >-200</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M71.9,224.0 L1655.0,224.0  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M71.9,224.0  '/>	<g transform="translate(63.6,227.9)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="end">
+		<text><tspan font-family="arial" >-150</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M71.9,189.7 L1655.0,189.7  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M71.9,189.7  '/>	<g transform="translate(63.6,193.6)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="end">
+		<text><tspan font-family="arial" >-100</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M71.9,155.3 L1655.0,155.3  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M71.9,155.3  '/>	<g transform="translate(63.6,159.2)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="end">
+		<text><tspan font-family="arial" >-50</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M71.9,121.0 L1655.0,121.0  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M71.9,121.0  '/>	<g transform="translate(63.6,124.9)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="end">
+		<text><tspan font-family="arial" > 0</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M71.9,86.7 L1655.0,86.7  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M71.9,86.7  '/>	<g transform="translate(63.6,90.6)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="end">
+		<text><tspan font-family="arial" > 50</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M71.9,52.4 L1655.0,52.4  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M71.9,52.4  '/>	<g transform="translate(63.6,56.3)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="end">
+		<text><tspan font-family="arial" > 100</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M71.9,18.1 L1655.0,18.1  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M71.9,18.1  '/>	<g transform="translate(63.6,22.0)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="end">
+		<text><tspan font-family="arial" > 150</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M193.7,326.9  '/>	<g transform="translate(193.7,348.8)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="middle">
+		<text>DEV</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M315.5,326.9  '/>	<g transform="translate(315.5,348.8)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="middle">
+		<text>PIPE_IO</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M437.2,326.9  '/>	<g transform="translate(437.2,348.8)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="middle">
+		<text>MEMORY</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M559.0,326.9  '/>	<g transform="translate(559.0,348.8)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="middle">
+		<text>INTERRUPT</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M680.8,326.9  '/>	<g transform="translate(680.8,348.8)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="middle">
+		<text>CPU</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M802.6,326.9  '/>	<g transform="translate(802.6,348.8)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="middle">
+		<text>OS</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M924.3,326.9  '/>	<g transform="translate(924.3,348.8)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="middle">
+		<text>NETWORK</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M1046.1,326.9  '/>	<g transform="translate(1046.1,348.8)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="middle">
+		<text>VM</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M1167.9,326.9  '/>	<g transform="translate(1167.9,348.8)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="middle">
+		<text>CPU_CACHE</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M1289.7,326.9  '/>	<g transform="translate(1289.7,348.8)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="middle">
+		<text>FILESYSTEM</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M1411.4,326.9  '/>	<g transform="translate(1411.4,348.8)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="middle">
+		<text>IO</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M1533.2,326.9  '/>	<g transform="translate(1533.2,348.8)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="middle">
+		<text>SCHEDULER</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M71.9,18.1 L71.9,326.9 L1655.0,326.9 M1655.0,18.1 M71.9,18.1  '/></g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g transform="translate(19.0,172.5) rotate(270)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="middle">
+		<text><tspan font-family="arial" >accumulated z-score</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g transform="translate(863.4,375.8)" stroke="none" fill="black" font-family="arial" font-size="12.00"  text-anchor="middle">
+		<text><tspan font-family="arial" >stressor class</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+	<g id="gnuplot_plot_1" ><title>cloudlab/m400</title>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g transform="translate(99.8,412.1)" stroke="none" fill="black" font-family="arial" font-size="11.00"  text-anchor="start">
+		<text>cloudlab/m400</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g stroke='none' shape-rendering='crispEdges'>
+		<polygon fill = 'rgb(148,   0, 211)' points = '52.3,412.6 92.1,412.6 92.1,404.4 52.3,404.4 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '149.1,123.3 155.0,123.3 155.0,120.9 149.1,120.9 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '270.9,123.9 276.8,123.9 276.8,120.9 270.9,120.9 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '392.7,139.9 398.6,139.9 398.6,120.9 392.7,120.9 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '514.5,137.8 520.3,137.8 520.3,120.9 514.5,120.9 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '636.2,136.0 642.1,136.0 642.1,120.9 636.2,120.9 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '758.0,211.0 763.9,211.0 763.9,120.9 758.0,120.9 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '879.8,128.6 885.7,128.6 885.7,120.9 879.8,120.9 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '1001.6,132.8 1007.4,132.8 1007.4,120.9 1001.6,120.9 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '1123.3,128.3 1129.2,128.3 1129.2,120.9 1123.3,120.9 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '1245.1,141.0 1251.0,141.0 1251.0,120.9 1245.1,120.9 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '1366.9,122.4 1372.8,122.4 1372.8,120.9 1366.9,120.9 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '1488.7,143.0 1494.5,143.0 1494.5,120.9 1488.7,120.9 '/>
+	</g>
+</g>
+	</g>
+	<g id="gnuplot_plot_2" ><title>cloudlab/dss7500</title>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g transform="translate(99.8,428.6)" stroke="none" fill="black" font-family="arial" font-size="11.00"  text-anchor="start">
+		<text>cloudlab/dss7500</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g stroke='none' shape-rendering='crispEdges'>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '52.3,429.1 92.1,429.1 92.1,420.9 52.3,420.9 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '155.5,121.0 161.4,121.0 161.4,116.9 155.5,116.9 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '277.3,121.0 283.2,121.0 283.2,120.5 277.3,120.5 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '399.1,121.0 405.0,121.0 405.0,112.2 399.1,112.2 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '520.9,121.0 526.7,121.0 526.7,116.6 520.9,116.6 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '642.6,121.0 648.5,121.0 648.5,116.8 642.6,116.8 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '764.4,121.0 770.3,121.0 770.3,89.0 764.4,89.0 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '886.2,121.0 892.1,121.0 892.1,119.0 886.2,119.0 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '1008.0,121.0 1013.8,121.0 1013.8,114.8 1008.0,114.8 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '1129.8,121.0 1135.6,121.0 1135.6,118.2 1129.8,118.2 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '1251.5,121.0 1257.4,121.0 1257.4,114.8 1251.5,114.8 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '1373.3,121.4 1379.2,121.4 1379.2,120.9 1373.3,120.9 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '1495.1,121.0 1501.0,121.0 1501.0,115.5 1495.1,115.5 '/>
+	</g>
+</g>
+	</g>
+	<g id="gnuplot_plot_3" ><title>cloudlab/c6220</title>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g transform="translate(99.8,445.1)" stroke="none" fill="black" font-family="arial" font-size="11.00"  text-anchor="start">
+		<text>cloudlab/c6220</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g stroke='none' shape-rendering='crispEdges'>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '52.3,445.6 92.1,445.6 92.1,437.4 52.3,437.4 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '162.0,121.0 167.8,121.0 167.8,117.5 162.0,117.5 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '283.7,121.0 289.6,121.0 289.6,117.5 283.7,117.5 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '405.5,121.0 411.4,121.0 411.4,102.1 405.5,102.1 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '527.3,121.0 533.1,121.0 533.1,106.7 527.3,106.7 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '649.1,121.0 654.9,121.0 654.9,104.7 649.1,104.7 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '770.8,121.0 776.7,121.0 776.7,57.1 770.8,57.1 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '892.6,121.0 898.5,121.0 898.5,115.5 892.6,115.5 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '1014.4,121.0 1020.3,121.0 1020.3,114.2 1014.4,114.2 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '1136.2,121.0 1142.0,121.0 1142.0,112.4 1136.2,112.4 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '1257.9,121.0 1263.8,121.0 1263.8,113.4 1257.9,113.4 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '1379.7,121.8 1385.6,121.8 1385.6,120.9 1379.7,120.9 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '1501.5,121.0 1507.4,121.0 1507.4,102.7 1501.5,102.7 '/>
+	</g>
+</g>
+	</g>
+	<g id="gnuplot_plot_4" ><title>cloudlab/d710</title>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g transform="translate(99.8,461.6)" stroke="none" fill="black" font-family="arial" font-size="11.00"  text-anchor="start">
+		<text>cloudlab/d710</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g stroke='none' shape-rendering='crispEdges'>
+		<polygon fill = 'rgb(230, 159,   0)' points = '52.3,462.1 92.1,462.1 92.1,453.9 52.3,453.9 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '168.4,123.9 174.2,123.9 174.2,120.9 168.4,120.9 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '290.1,124.3 296.0,124.3 296.0,120.9 290.1,120.9 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '411.9,146.1 417.8,146.1 417.8,120.9 411.9,120.9 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '533.7,132.0 539.6,132.0 539.6,120.9 533.7,120.9 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '655.5,143.0 661.3,143.0 661.3,120.9 655.5,120.9 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '777.2,200.7 783.1,200.7 783.1,120.9 777.2,120.9 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '899.0,127.4 904.9,127.4 904.9,120.9 899.0,120.9 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '1020.8,136.3 1026.7,136.3 1026.7,120.9 1020.8,120.9 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '1142.6,134.3 1148.4,134.3 1148.4,120.9 1142.6,120.9 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '1264.4,135.6 1270.2,135.6 1270.2,120.9 1264.4,120.9 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '1386.1,122.1 1392.0,122.1 1392.0,120.9 1386.1,120.9 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '1507.9,140.3 1513.8,140.3 1513.8,120.9 1507.9,120.9 '/>
+	</g>
+</g>
+	</g>
+	<g id="gnuplot_plot_5" ><title>cloudlab/d430</title>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g transform="translate(509.2,412.1)" stroke="none" fill="black" font-family="arial" font-size="11.00"  text-anchor="start">
+		<text>cloudlab/d430</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g stroke='none' shape-rendering='crispEdges'>
+		<polygon fill = 'rgb(240, 228,  66)' points = '461.7,412.6 501.5,412.6 501.5,404.4 461.7,404.4 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '174.8,121.0 180.6,121.0 180.6,119.3 174.8,119.3 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '296.5,121.0 302.4,121.0 302.4,120.0 296.5,120.0 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '418.3,121.0 424.2,121.0 424.2,102.2 418.3,102.2 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '540.1,121.0 546.0,121.0 546.0,112.4 540.1,112.4 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '661.9,121.0 667.7,121.0 667.7,106.8 661.9,106.8 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '783.7,121.0 789.5,121.0 789.5,60.9 783.7,60.9 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '905.4,121.0 911.3,121.0 911.3,116.3 905.4,116.3 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '1027.2,121.0 1033.1,121.0 1033.1,105.4 1027.2,105.4 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '1149.0,121.0 1154.9,121.0 1154.9,112.8 1149.0,112.8 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '1270.8,121.0 1276.6,121.0 1276.6,108.8 1270.8,108.8 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '1392.5,121.0 1398.4,121.0 1398.4,120.7 1392.5,120.7 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '1514.3,121.0 1520.2,121.0 1520.2,107.6 1514.3,107.6 '/>
+	</g>
+</g>
+	</g>
+	<g id="gnuplot_plot_6" ><title>cloudlab/c220g1</title>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g transform="translate(509.2,428.6)" stroke="none" fill="black" font-family="arial" font-size="11.00"  text-anchor="start">
+		<text>cloudlab/c220g1</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g stroke='none' shape-rendering='crispEdges'>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '461.7,429.1 501.5,429.1 501.5,420.9 461.7,420.9 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '181.2,121.0 187.0,121.0 187.0,118.7 181.2,118.7 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '303.0,121.0 308.8,121.0 308.8,118.9 303.0,118.9 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '424.7,121.0 430.6,121.0 430.6,103.4 424.7,103.4 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '546.5,121.0 552.4,121.0 552.4,111.3 546.5,111.3 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '668.3,121.0 674.2,121.0 674.2,106.2 668.3,106.2 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '790.1,121.0 795.9,121.0 795.9,68.4 790.1,68.4 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '911.8,121.0 917.7,121.0 917.7,115.4 911.8,115.4 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '1033.6,121.0 1039.5,121.0 1039.5,114.5 1033.6,114.5 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '1155.4,121.0 1161.3,121.0 1161.3,112.8 1155.4,112.8 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '1277.2,121.0 1283.0,121.0 1283.0,116.4 1277.2,116.4 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '1398.9,121.0 1404.8,121.0 1404.8,120.8 1398.9,120.8 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '1520.7,121.0 1526.6,121.0 1526.6,105.2 1520.7,105.2 '/>
+	</g>
+</g>
+	</g>
+	<g id="gnuplot_plot_7" ><title>cloudlab/pc3000</title>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g transform="translate(509.2,445.1)" stroke="none" fill="black" font-family="arial" font-size="11.00"  text-anchor="start">
+		<text>cloudlab/pc3000</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g stroke='none' shape-rendering='crispEdges'>
+		<polygon fill = 'rgb(229,  30,  16)' points = '461.7,445.6 501.5,445.6 501.5,437.4 461.7,437.4 '/>
+		<polygon fill = 'rgb(229,  30,  16)' points = '187.6,126.0 193.5,126.0 193.5,120.9 187.6,120.9 '/>
+		<polygon fill = 'rgb(229,  30,  16)' points = '309.4,128.6 315.2,128.6 315.2,120.9 309.4,120.9 '/>
+		<polygon fill = 'rgb(229,  30,  16)' points = '431.1,162.4 437.0,162.4 437.0,120.9 431.1,120.9 '/>
+		<polygon fill = 'rgb(229,  30,  16)' points = '552.9,148.7 558.8,148.7 558.8,120.9 552.9,120.9 '/>
+		<polygon fill = 'rgb(229,  30,  16)' points = '674.7,154.0 680.6,154.0 680.6,120.9 674.7,120.9 '/>
+		<polygon fill = 'rgb(229,  30,  16)' points = '796.5,293.7 802.3,293.7 802.3,120.9 796.5,120.9 '/>
+		<polygon fill = 'rgb(229,  30,  16)' points = '918.2,135.8 924.1,135.8 924.1,120.9 918.2,120.9 '/>
+		<polygon fill = 'rgb(229,  30,  16)' points = '1040.0,144.5 1045.9,144.5 1045.9,120.9 1040.0,120.9 '/>
+		<polygon fill = 'rgb(229,  30,  16)' points = '1161.8,137.1 1167.7,137.1 1167.7,120.9 1161.8,120.9 '/>
+		<polygon fill = 'rgb(229,  30,  16)' points = '1283.6,157.8 1289.4,157.8 1289.4,120.9 1283.6,120.9 '/>
+		<polygon fill = 'rgb(229,  30,  16)' points = '1405.4,123.9 1411.2,123.9 1411.2,120.9 1405.4,120.9 '/>
+		<polygon fill = 'rgb(229,  30,  16)' points = '1527.1,161.0 1533.0,161.0 1533.0,120.9 1527.1,120.9 '/>
+	</g>
+</g>
+	</g>
+	<g id="gnuplot_plot_8" ><title>cloudlab/c220g2</title>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g transform="translate(509.2,461.6)" stroke="none" fill="black" font-family="arial" font-size="11.00"  text-anchor="start">
+		<text>cloudlab/c220g2</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g stroke='none' shape-rendering='crispEdges'>
+		<polygon fill = 'rgb(  0,   0,   0)' points = '461.7,462.1 501.5,462.1 501.5,453.9 461.7,453.9 '/>
+		<polygon fill = 'rgb(  0,   0,   0)' points = '194.0,121.0 199.9,121.0 199.9,118.6 194.0,118.6 '/>
+		<polygon fill = 'rgb(  0,   0,   0)' points = '315.8,121.0 321.6,121.0 321.6,115.8 315.8,115.8 '/>
+		<polygon fill = 'rgb(  0,   0,   0)' points = '437.6,121.0 443.4,121.0 443.4,92.4 437.6,92.4 '/>
+		<polygon fill = 'rgb(  0,   0,   0)' points = '559.3,121.0 565.2,121.0 565.2,105.0 559.3,105.0 '/>
+		<polygon fill = 'rgb(  0,   0,   0)' points = '681.1,121.0 687.0,121.0 687.0,91.9 681.1,91.9 '/>
+		<polygon fill = 'rgb(  0,   0,   0)' points = '802.9,121.0 808.8,121.0 808.8,41.3 802.9,41.3 '/>
+		<polygon fill = 'rgb(  0,   0,   0)' points = '924.7,121.0 930.5,121.0 930.5,112.1 924.7,112.1 '/>
+		<polygon fill = 'rgb(  0,   0,   0)' points = '1046.4,121.0 1052.3,121.0 1052.3,109.7 1046.4,109.7 '/>
+		<polygon fill = 'rgb(  0,   0,   0)' points = '1168.2,121.0 1174.1,121.0 1174.1,106.4 1168.2,106.4 '/>
+		<polygon fill = 'rgb(  0,   0,   0)' points = '1290.0,121.0 1295.9,121.0 1295.9,111.6 1290.0,111.6 '/>
+		<polygon fill = 'rgb(  0,   0,   0)' points = '1411.8,121.9 1417.6,121.9 1417.6,120.9 1411.8,120.9 '/>
+		<polygon fill = 'rgb(  0,   0,   0)' points = '1533.5,121.0 1539.4,121.0 1539.4,101.2 1533.5,101.2 '/>
+	</g>
+</g>
+	</g>
+	<g id="gnuplot_plot_9" ><title>cloudlab/m510</title>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g transform="translate(918.6,412.1)" stroke="none" fill="black" font-family="arial" font-size="11.00"  text-anchor="start">
+		<text>cloudlab/m510</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g stroke='none' shape-rendering='crispEdges'>
+		<polygon fill = 'rgb(148,   0, 211)' points = '871.1,412.6 910.9,412.6 910.9,404.4 871.1,404.4 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '200.4,122.2 206.3,122.2 206.3,120.9 200.4,120.9 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '322.2,122.2 328.1,122.2 328.1,120.9 322.2,120.9 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '444.0,134.8 449.8,134.8 449.8,120.9 444.0,120.9 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '565.7,124.0 571.6,124.0 571.6,120.9 565.7,120.9 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '687.5,134.6 693.4,134.6 693.4,120.9 687.5,120.9 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '809.3,122.0 815.2,122.0 815.2,120.9 809.3,120.9 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '931.1,121.6 936.9,121.6 936.9,120.9 931.1,120.9 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '1052.8,123.0 1058.7,123.0 1058.7,120.9 1052.8,120.9 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '1174.6,128.9 1180.5,128.9 1180.5,120.9 1174.6,120.9 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '1296.4,121.0 1302.3,121.0 1302.3,112.6 1296.4,112.6 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '1418.2,121.0 1424.0,121.0 1424.0,119.3 1418.2,119.3 '/>
+		<polygon fill = 'rgb(148,   0, 211)' points = '1540.0,122.2 1545.8,122.2 1545.8,120.9 1540.0,120.9 '/>
+	</g>
+</g>
+	</g>
+	<g id="gnuplot_plot_10" ><title>cloudlab/c8220</title>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g transform="translate(918.6,428.6)" stroke="none" fill="black" font-family="arial" font-size="11.00"  text-anchor="start">
+		<text>cloudlab/c8220</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g stroke='none' shape-rendering='crispEdges'>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '871.1,429.1 910.9,429.1 910.9,420.9 871.1,420.9 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '206.8,121.0 212.7,121.0 212.7,119.6 206.8,119.6 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '328.6,121.0 334.5,121.0 334.5,119.3 328.6,119.3 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '450.4,121.0 456.2,121.0 456.2,106.5 450.4,106.5 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '572.1,121.0 578.0,121.0 578.0,111.8 572.1,111.8 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '693.9,121.0 699.8,121.0 699.8,108.5 693.9,108.5 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '815.7,121.0 821.6,121.0 821.6,82.5 815.7,82.5 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '937.5,121.0 943.3,121.0 943.3,116.9 937.5,116.9 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '1059.3,121.0 1065.1,121.0 1065.1,114.2 1059.3,114.2 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '1181.0,121.0 1186.9,121.0 1186.9,113.0 1181.0,113.0 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '1302.8,121.0 1308.7,121.0 1308.7,120.8 1302.8,120.8 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '1424.6,122.5 1430.5,122.5 1430.5,120.9 1424.6,120.9 '/>
+		<polygon fill = 'rgb(  0, 158, 115)' points = '1546.4,121.0 1552.2,121.0 1552.2,110.4 1546.4,110.4 '/>
+	</g>
+</g>
+	</g>
+	<g id="gnuplot_plot_11" ><title>cloudlab/c220g5</title>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g transform="translate(918.6,445.1)" stroke="none" fill="black" font-family="arial" font-size="11.00"  text-anchor="start">
+		<text>cloudlab/c220g5</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g stroke='none' shape-rendering='crispEdges'>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '871.1,445.6 910.9,445.6 910.9,437.4 871.1,437.4 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '213.2,121.0 219.1,121.0 219.1,120.5 213.2,120.5 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '335.0,121.0 340.9,121.0 340.9,117.6 335.0,117.6 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '456.8,121.0 462.6,121.0 462.6,94.3 456.8,94.3 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '578.6,121.0 584.4,121.0 584.4,108.9 578.6,108.9 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '700.3,121.0 706.2,121.0 706.2,95.7 700.3,95.7 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '822.1,121.0 828.0,121.0 828.0,45.6 822.1,45.6 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '943.9,121.0 949.8,121.0 949.8,114.1 943.9,114.1 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '1065.7,121.0 1071.5,121.0 1071.5,103.0 1065.7,103.0 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '1187.4,121.0 1193.3,121.0 1193.3,105.5 1187.4,105.5 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '1309.2,121.0 1315.1,121.0 1315.1,106.0 1309.2,106.0 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '1431.0,121.0 1436.9,121.0 1436.9,120.0 1431.0,120.0 '/>
+		<polygon fill = 'rgb( 86, 180, 233)' points = '1552.8,121.0 1558.6,121.0 1558.6,107.1 1552.8,107.1 '/>
+	</g>
+</g>
+	</g>
+	<g id="gnuplot_plot_12" ><title>cloudlab/xl170</title>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g transform="translate(918.6,461.6)" stroke="none" fill="black" font-family="arial" font-size="11.00"  text-anchor="start">
+		<text>cloudlab/xl170</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g stroke='none' shape-rendering='crispEdges'>
+		<polygon fill = 'rgb(230, 159,   0)' points = '871.1,462.1 910.9,462.1 910.9,453.9 871.1,453.9 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '219.6,121.2 225.5,121.2 225.5,120.9 219.6,120.9 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '341.4,121.0 347.3,121.0 347.3,119.9 341.4,119.9 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '463.2,121.8 469.1,121.8 469.1,120.9 463.2,120.9 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '585.0,121.0 590.8,121.0 590.8,115.6 585.0,115.6 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '706.7,125.6 712.6,125.6 712.6,120.9 706.7,120.9 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '828.5,121.0 834.4,121.0 834.4,63.4 828.5,63.4 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '950.3,121.0 956.2,121.0 956.2,117.7 950.3,117.7 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '1072.1,121.0 1077.9,121.0 1077.9,117.2 1072.1,117.2 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '1193.9,123.8 1199.7,123.8 1199.7,120.9 1193.9,120.9 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '1315.6,121.0 1321.5,121.0 1321.5,92.8 1315.6,92.8 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '1437.4,121.0 1443.3,121.0 1443.3,118.5 1437.4,118.5 '/>
+		<polygon fill = 'rgb(230, 159,   0)' points = '1559.2,121.0 1565.0,121.0 1565.0,108.1 1559.2,108.1 '/>
+	</g>
+</g>
+	</g>
+	<g id="gnuplot_plot_13" ><title>cloudlab/r320</title>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g transform="translate(1328.0,412.1)" stroke="none" fill="black" font-family="arial" font-size="11.00"  text-anchor="start">
+		<text>cloudlab/r320</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g stroke='none' shape-rendering='crispEdges'>
+		<polygon fill = 'rgb(240, 228,  66)' points = '1280.5,412.6 1320.3,412.6 1320.3,404.4 1280.5,404.4 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '226.0,122.2 231.9,122.2 231.9,120.9 226.0,120.9 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '347.8,122.2 353.7,122.2 353.7,120.9 347.8,120.9 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '469.6,134.7 475.5,134.7 475.5,120.9 469.6,120.9 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '591.4,124.5 597.2,124.5 597.2,120.9 591.4,120.9 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '713.2,133.5 719.0,133.5 719.0,120.9 713.2,120.9 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '834.9,144.7 840.8,144.7 840.8,120.9 834.9,120.9 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '956.7,123.0 962.6,123.0 962.6,120.9 956.7,120.9 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '1078.5,130.6 1084.4,130.6 1084.4,120.9 1078.5,120.9 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '1200.3,128.8 1206.1,128.8 1206.1,120.9 1200.3,120.9 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '1322.0,123.4 1327.9,123.4 1327.9,120.9 1322.0,120.9 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '1443.8,121.1 1449.7,121.1 1449.7,120.9 1443.8,120.9 '/>
+		<polygon fill = 'rgb(240, 228,  66)' points = '1565.6,124.3 1571.5,124.3 1571.5,120.9 1565.6,120.9 '/>
+	</g>
+</g>
+	</g>
+	<g id="gnuplot_plot_14" ><title>cloudlab/MBF2H516A-CENO_Ax/SEPERATED_HOST_mode</title>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g transform="translate(1328.0,428.6)" stroke="none" fill="black" font-family="arial" font-size="11.00"  text-anchor="start">
+		<text>cloudlab/MBF2H516A-CENO_Ax/SEPERATED_HOST_mode</text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g stroke='none' shape-rendering='crispEdges'>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '1280.5,429.1 1320.3,429.1 1320.3,420.9 1280.5,420.9 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '232.5,123.9 238.3,123.9 238.3,120.9 232.5,120.9 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '354.2,123.1 360.1,123.1 360.1,120.9 354.2,120.9 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '476.0,141.1 481.9,141.1 481.9,120.9 476.0,120.9 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '597.8,138.4 603.7,138.4 603.7,120.9 597.8,120.9 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '719.6,136.6 725.4,136.6 725.4,120.9 719.6,120.9 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '841.3,213.6 847.2,213.6 847.2,120.9 841.3,120.9 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '963.1,130.1 969.0,130.1 969.0,120.9 963.1,120.9 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '1084.9,133.5 1090.8,133.5 1090.8,120.9 1084.9,120.9 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '1206.7,131.5 1212.5,131.5 1212.5,120.9 1206.7,120.9 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '1328.4,138.5 1334.3,138.5 1334.3,120.9 1328.4,120.9 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '1450.2,121.0 1456.1,121.0 1456.1,117.7 1450.2,117.7 '/>
+		<polygon fill = 'rgb(  0, 114, 178)' points = '1572.0,145.2 1577.9,145.2 1577.9,120.9 1572.0,120.9 '/>
+	</g>
+</g>
+	</g>
+<g fill="none" color="white" stroke="rgb(  0, 114, 178)" stroke-width="2.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="2.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M71.9,18.1 L71.9,326.9 L1655.0,326.9 M1655.0,18.1 M71.9,18.1  '/></g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+</g>
+</svg>
+

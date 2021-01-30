@@ -20,7 +20,7 @@ process_file() {
   local -r dirname="$(dirname -- "$filepath")"
   local -r platform="${dirname/#$BENCHMARK_RESULT_DIR}"
   local -r filename="$(basename -- "$filepath")"
-  # !! we use the dot as the field separator in the filename
+  # !! We use the dot as the field separator in the filename
   local -ir profile_idx="${filename##*.}"
   local -r jobname="${filename%%.*}"
   local profile_name="$platform"____"$jobname"____"$profile_idx"
@@ -75,7 +75,7 @@ sort_array() {
   local -n _arr=$1
   local IFS=$'\n'
 
-  # sort elements in an array
+  # Sort elements in an array
   #   https://stackoverflow.com/a/11789688
   # shellcheck disable=SC2207
   _arr=($(sort <<<"${_arr[*]}"))
@@ -95,14 +95,14 @@ print_summary() {
       # shellcheck disable=SC2178
       local -n stressor_to_bogo=$profile_name
       if ! [[ -v stressor_to_bogo[@] ]]; then
-        # the associative array does not exist
+        # The associative array does not exist
         #   https://stackoverflow.com/a/26931860
         break
       fi
 
       local stressor
       for stressor in "${!stressor_to_bogo[@]}"; do
-        # check if an element in an array
+        # Check if an element in an array
         #   https://stackoverflow.com/a/15394738
         # shellcheck disable=SC2076,SC2199
         if ! [[ " ${all_stressors[@]} " =~ " $stressor " ]]; then
@@ -130,7 +130,7 @@ print_summary() {
 
 EOF
 
-    # print header
+    # Print header
     printf 'STRESSOR\t%s\tMEAN\tSTDEV\n\n' \
       "$(seq --format='"%g (raw/z-score)"' --separator=$'\t' 1 $max_profile_idx)" \
       >>"$summary_filepath"
