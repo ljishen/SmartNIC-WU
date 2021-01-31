@@ -58,8 +58,9 @@ set style data histogram
 set style histogram clustered gap 5
 
 set xtics border in scale 0,0 nomirror norotate autojustify noenhanced
-set ytics border in scale 0,0 nomirror norotate autojustify
-set grid ytics
+set ytics border in scale 1.0,0.5 nomirror norotate autojustify
+set mytics 2
+set grid ytics mytics
 
 set label font ",15"
 set xlabel "stressor class"
