@@ -15,12 +15,23 @@ fi
 
 DATAFILE="$1"
 if ! [[ -f "$DATAFILE" ]]; then
-  echo "[ERROR] DATAFILE does not exist: $DATAFILE" >&2  
+  echo "[ERROR] DATAFILE does not exist: $DATAFILE" >&2
   exit 1
 fi
 
 if [[ "${DATAFILE##*.}" != "platforms_summary" ]]; then
   echo "[ERROR] Unsupport datafile: $DATAFILE" >&2
+  exit 1
+fi
+
+if ! command -v gawk >/dev/null 2>&1; then
+  echo "[ERROR] Please install gawk of version >= 4.0"
+  exit 2
+fi
+
+vergte() { printf '%s\n%s' "$1" "$2" | sort -rCV; }
+if ! vergte "$(gawk 'BEGIN { print PROCINFO["version"] }')" "4.0"; then
+  echo "[ERROR] Please update gawk to version >= 4.0"
   exit 2
 fi
 
@@ -28,7 +39,7 @@ fi
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 STRESSOR_CLASSES_FILE="$SCRIPT_DIR"/stressor_classes.txt
 
-STRESSOR_TO_CLASSES_STR="$(awk '
+STRESSOR_TO_CLASSES_STR="$(gawk '
   BEGIN { stressor_to_classes_str = "" }
 
   /^[[:alnum:]-]+/ {
@@ -55,9 +66,9 @@ cat <<EOF >"$SUMMARY_FILEPATH"
 #
 EOF
 
-awk -v stressor_to_classes_str="$STRESSOR_TO_CLASSES_STR" '
+gawk -v stressor_to_classes_str="$STRESSOR_TO_CLASSES_STR" '
   BEGIN {
-    split(stressor_to_classes_str, stressor_to_classes_arr, " ")  
+    split(stressor_to_classes_str, stressor_to_classes_arr, " ")
     for (i = 1; i <= length(stressor_to_classes_arr); i++) {
       split(stressor_to_classes_arr[i], sc, "=")
       stressor = sc[1]
@@ -83,7 +94,7 @@ awk -v stressor_to_classes_str="$STRESSOR_TO_CLASSES_STR" '
     } else {
       platform = $1
       platforms[platform] = ""
-      
+
       for (i = 2; i <= NF; i++) {
         stressor = stressors[i]
 
