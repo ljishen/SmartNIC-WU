@@ -1,0 +1,79 @@
+# Network Device Information (via lshw)
+# ========================================
+# description: Ethernet interface
+# product: MT42822 BlueField-2 integrated ConnectX-6 Dx network controller
+# vendor: Mellanox Technologies
+# physical id: 0
+# bus info: pci@0000:03:00.0
+# logical name: p0
+# version: 00
+# serial: 0c:42:a1:a4:8a:80
+# capacity: 40Gbit/s
+# width: 64 bits
+# clock: 33MHz
+# capabilities: pciexpress vpd msix pm bus_master cap_list rom ethernet physical 1000bt-fd 10000bt-fd 25000bt-fd 40000bt-fd autonegotiation
+# configuration: autonegotiation=on broadcast=yes driver=mlx5_core driverversion=5.2-1.0.4 duplex=full firmware=24.29.1016 (MT_0000000477) ip=10.10.1.4 latency=0 link=yes multicast=yes
+# resources: iomemory:e20-e1f iomemory:e20-e1f irq:64 memory:e200000000-e201ffffff memory:e204000000-e2047fffff memory:e000000000-e0000fffff memory:e205000000-e206ffffff
+#
+# Device speed: 100000 Mbit/s
+# Device mtu: 1500 bytes
+# Device tx_queue_len: 1000
+# ========================================
+#
+# CPU Information (via dmidecode)
+# ========================================
+# Getting SMBIOS data from sysfs.
+# SMBIOS 3.1.1 present.
+# 
+# Handle 0x0004, DMI type 4, 48 bytes
+# Processor Information
+# 	Socket Designation: Socket 0
+# 	Type: Central Processor
+# 	Family: ARMv8
+# 	Manufacturer: https://www.mellanox.com
+# 	ID: 80 D0 1F 41 00 00 00 00
+# 	Signature: Implementor 0x41, Variant 0x1, Architecture 15, Part 0xd08, Revision 0
+# 	Version: Mellanox BlueField-2 [A0] A72(D08) r1p0
+# 	Voltage: 0.8 V
+# 	External Clock: 200 MHz
+# 	Max Speed: 2500 MHz
+# 	Current Speed: 2500 MHz
+# 	Status: Populated, Enabled
+# 	Upgrade: Other
+# 	L1 Cache Handle: 0x0005
+# 	L2 Cache Handle: 0x0006
+# 	L3 Cache Handle: 0x0007
+# 	Serial Number: Unspecified Serial Number
+# 	Asset Tag: Unspecified Asset Tag
+# 	Part Number: OPN: MBF2H516A-CENO
+# 	Core Count: 8
+# 	Core Enabled: 8
+# 	Characteristics:
+# 		64-bit capable
+# 		Multi-Core
+# 		Hardware Thread
+# 		Enhanced Virtualization
+# ========================================
+#
+# Memory Information
+# ========================================
+# Node 0 MemTotal:       16345580 kB
+# ========================================
+#
+# System Information
+# ========================================
+# Linux localhost.localdomain 5.4.0-1007-bluefield #10-Ubuntu SMP PREEMPT Fri Nov 27 14:48:47 UTC 2020 aarch64 aarch64 aarch64 GNU/Linux
+# ========================================
+#
+# Start of test: 2021-02-02T03:10:03,454933996+00:00
+
+"DELAY (ns)"	THREADS	CLONE_SKB	BURST	"THROUGHPUT (Mb/sec)"	STD
+128000	8	0	25	65645.67	2685.48
+192000	8	0	25	60969.67	2017.55
+256000	8	0	25	57584.33	1383.37
+320000	8	0	25	49996.33	0.47
+384000	8	0	25	41662.33	0.47
+448000	8	0	25	35711.33	0.94
+512000	8	0	25	31247.00	0.00
+
+# End of test: 2021-02-02T03:17:52,953407652+00:00
