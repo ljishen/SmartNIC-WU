@@ -47,7 +47,8 @@ set output output_filepath
 # Skip the column header so it won't be used as data
 #   https://stackoverflow.com/a/35528422
 set key autotitle columnheader
-set key at graph 0.8,1.025 left top Left noenhanced reverse font ",10"
+set key at screen 0.57,1 center top vertical Left noenhanced \
+  reverse width -7 font ",14" maxrows 4
 
 set border 2 front linetype black linewidth 1.000 dashtype solid
 set boxwidth 0.5 absolute
@@ -73,13 +74,16 @@ NF = words(data_header)
 
 SKIP_COLUMNS = 1
 STRESSORS_PER_PLOT=32
+NUM_COLS = 2
 num_stressors = NF - SKIP_COLUMNS
 num_plots = ceil(num_stressors * 1.0 / STRESSORS_PER_PLOT)
+num_rows = ceil(num_plots * 1.0 / NUM_COLS)
 
-set terminal svg enhanced font "arial,12" fontscale 1.0 size 1000,400*num_plots
-set multiplot layout num_plots,1 title \
-  "Performnace variability of different stressors on different platforms\n" \
-  font ",15"
+set terminal svg enhanced font "arial,12" fontscale 1.0 size 1600,470*num_rows
+set multiplot layout num_rows,NUM_COLS margins char 6,3,5,7 spacing char 8,7
+# set multiplot title \
+#  "Performnace variability of different stressors on different platforms\n" \
+#  font ",15"
 
 zscore(strval) = strstrt(strval, "nan") != 0 \
   ? 0 : real(substr(strval, strstrt(strval, "/")+1, -1))
@@ -148,8 +152,8 @@ do for [p=1:num_plots] {
   # Restore the default behavior, we can then add tic labels
   set xtic ("" 1)
 
-  # Extend the xrange to the right by 10 to contain the legend
-  set xrange [0:num_stressors_cur_plot+10] noreverse writeback
+  # Extend the xrange to the left and right by 1 (plot starts at x = 1)
+  set xrange [0:num_stressors_cur_plot+1] noreverse writeback
   set yrange [floor(plot_min):ceil(plot_max)] noreverse nowriteback
 
   set for [i=1:num_stressors_cur_plot] \
@@ -167,7 +171,7 @@ do for [p=1:num_plots] {
             strcol(start_col_cur_plot+(i-1)))):0 \
             with points pointtype POINTTYPE_HIGHLIGHT palette, \
        for [i=1:num_platforms] \
-          datafile using (num_stressors_cur_plot+10):(floor(plot_min)):(i-1)  \
+          datafile using (num_stressors_cur_plot+1):(floor(plot_min)):(i-1)  \
             with points \
             pointtype should_highlight(i-1)?POINTTYPE_HIGHLIGHT:POINTTYPE_NORMAL \
             palette title platform_name(i)

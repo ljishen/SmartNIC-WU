@@ -44,7 +44,9 @@ set output output_filepath
 # Mark the first row to be the column header
 #   https://stackoverflow.com/a/35528422
 set key autotitle columnheader
-set key bmargin center horizontal Left noenhanced reverse height 3 font ",11"
+set key at screen 0.45,1 center top vertical Left noenhanced \
+  reverse width -20 font ",14" maxrows 4
+set tmargin 7
 
 data_header = system("grep --max-count=1 '^[^#]' ".datafile)
 NF = words(data_header)
@@ -62,9 +64,8 @@ set ytics border in scale 1.0,0.5 nomirror norotate autojustify
 set mytics 2
 set grid ytics mytics
 
-set label font ",15"
-set xlabel "stressor class"
-set ylabel "accumulated z-score"
+set xlabel "stressor class" font ",15"
+set ylabel "accumulated z-score"  font ",15"
 
 plot for [i=2:NF] datafile using i:xtic(1)
 
