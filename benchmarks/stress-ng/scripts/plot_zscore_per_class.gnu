@@ -53,7 +53,7 @@ NF = words(data_header)
 SKIP_COLUMNS = 2
 num_platforms = NF - SKIP_COLUMNS
 
-set terminal svg enhanced font "arial,12" fontscale 1.0 size num_platforms*12*13,500
+set terminal svg enhanced font "arial,12" fontscale 1.0 size num_platforms*12*13,800
 
 set border 3 front linetype black linewidth 1.000 dashtype solid
 set style fill solid 1.00 noborder
@@ -70,7 +70,7 @@ set mytics 2
 set grid ytics mytics
 
 set xlabel "stressor class" font ",15"
-set ylabel "average z-score" font ",15"
+set ylabel "normalized z-score" font ",15"
 
 avg_zscore(strval) = real(system(sprintf( \
   "echo %s | cut --delimiter='/' --fields=1", strval)))
