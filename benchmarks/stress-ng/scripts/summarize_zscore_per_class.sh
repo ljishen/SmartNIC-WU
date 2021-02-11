@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+#
+# This script requires gawk >= 4.0 to support:
+#   Arrays of arrays
+#
+# See "History of gawk Features":
+#   https://www.gnu.org/software/gawk/manual/html_node/Feature-History.html
 
 set -euo pipefail
 
@@ -62,14 +68,36 @@ cat <<EOF >"$SUMMARY_FILEPATH"
 # for platform results summarized in file:
 # $(basename -- "$DATAFILE")
 #
-# Each value starting from column 3 is in the form of A/B/C, where A
-# is the  average z-score of all stressors in a given stressor class
-# for a particular platform, and B and C are the minimum and maximum
-# z-sccore of this class w.r.t. this platform, respectively.
+# Each value starting from column 3 is in the form of A/B/C/D, where
+# A is the average z-score of all stressors in a given stressor cla-
+# ss for a particular platform, B is the corresponding sample stand-
+# ard deviation, and finally, C and D are the minimum and maximum z-
+# sccore of this class w.r.t. this platform, respectively.
 #
 EOF
 
-gawk -v stressor_to_classes_str="$STRESSOR_TO_CLASSES_STR" '
+IGNORE_STRESSOR_IDXES_STR="$(gawk '
+  /^[[:alnum:]_\/-]+\t/ {
+    if ($1 == "PLATFORM")
+      next
+
+    for (i = 2; i <= NF; i++) {
+      if ($i ~ /\ynan$/)
+        ignore_stressors[i] = ""
+    }
+  }
+
+  END {
+    for (idx in ignore_stressors)
+      ignore_stressor_idxes_str = ignore_stressor_idxes_str" "idx
+
+    print ignore_stressor_idxes_str
+  }
+' "$DATAFILE")"
+
+gawk \
+  -v stressor_to_classes_str="$STRESSOR_TO_CLASSES_STR" \
+  -v ignore_stressor_idxes_str="$IGNORE_STRESSOR_IDXES_STR" '
   BEGIN {
     split(stressor_to_classes_str, stressor_to_classes_arr, " ")
     for (i = 1; i <= length(stressor_to_classes_arr); i++) {
@@ -85,6 +113,11 @@ gawk -v stressor_to_classes_str="$STRESSOR_TO_CLASSES_STR" '
         stressor_to_classes[stressor][classes_arr[j]] = ""
       }
     }
+
+    split(ignore_stressor_idxes_str, ignore_stressor_idxes_arr, " ")
+    for (i = 1; i < length(stressor_to_classes_arr); i++) {
+      ignore_stressor_idxes[ignore_stressor_idxes_arr[i]] = ""
+    }
   }
 
   /^[[:alnum:]_\/-]+\t/ {
@@ -92,6 +125,9 @@ gawk -v stressor_to_classes_str="$STRESSOR_TO_CLASSES_STR" '
       for (i = 2; i <= NF; i++) {
         # Map stressor column idx to stressor name
         stressors[i] = $i
+
+        if (i in ignore_stressor_idxes)
+          print "Ignore stressor: "$i > "/dev/stderr"
       }
       next
     } else {
@@ -99,23 +135,24 @@ gawk -v stressor_to_classes_str="$STRESSOR_TO_CLASSES_STR" '
       platforms[platform] = ""
 
       for (i = 2; i <= NF; i++) {
+        if (i in ignore_stressor_idxes)
+          continue
+
         stressor = stressors[i]
 
         zscore = $i
         sub(/^[[:digit:].]+\//, "", zscore)
-        if (zscore ~ /nan/)
-          zscore = 0
-        else {
-          # This is important because it explicitly tells awk
-          # that we are using it as a number, and not a string.
-          # Otherwise, the following zscore comparision may
-          # work as string comparision.
-          zscore *= 1.0
-        }
+
+        # This is important because it explicitly tells awk
+        # that we are using it as a number, and not a string.
+        # Otherwise, the following zscore comparision may
+        # work as string comparision.
+        zscore *= 1.0
 
         for (class in stressor_to_classes[stressor]) {
           all_classes[class][stressor] = ""
           platform_to_class_zscore[platform][class]["sum"] += zscore
+          platform_to_class_zscore[platform][class]["sq_sum"] += zscore ^ 2
 
           if ("min" in platform_to_class_zscore[platform][class]) {
             if (zscore < platform_to_class_zscore[platform][class]["min"])
@@ -149,8 +186,14 @@ gawk -v stressor_to_classes_str="$STRESSOR_TO_CLASSES_STR" '
     for (class in all_classes) {
       printf "%s\t%d", class, length(all_classes[class])
       for (platform in platforms) {
-        printf "\t%.6f/%.6f/%.6f",
-          platform_to_class_zscore[platform][class]["sum"] / length(all_classes[class]),
+        sq_sum = platform_to_class_zscore[platform][class]["sq_sum"]
+        num_val = length(all_classes[class])
+        mean = platform_to_class_zscore[platform][class]["sum"] / num_val
+        stdev = sqrt((sq_sum - num_val * mean ^ 2) / (num_val - 1))
+
+        printf "\t%.6f/%.6f/%.6f/%.6f",
+          mean,
+          stdev,
           platform_to_class_zscore[platform][class]["min"],
           platform_to_class_zscore[platform][class]["max"]
       }
@@ -159,4 +202,4 @@ gawk -v stressor_to_classes_str="$STRESSOR_TO_CLASSES_STR" '
   }
 ' "$DATAFILE" >>"$SUMMARY_FILEPATH"
 
-echo "Written summary file to $SUMMARY_FILEPATH"
+printf '\nWritten summary file to %s\n' "$SUMMARY_FILEPATH"
