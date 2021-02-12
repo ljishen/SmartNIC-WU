@@ -44,35 +44,34 @@ set output output_filepath
 # Mark the first row to be the column header
 #   https://stackoverflow.com/a/35528422
 set key autotitle columnheader
-set key at screen 0.47,1 center top vertical Left noenhanced \
-  reverse width -13 font ",16" maxrows 4
-set tmargin 7
+set key at screen 0.5,1 center top vertical Left noenhanced \
+  reverse width -11 font ",16" maxrows 4
 
 data_header = system("grep --max-count=1 '^[^#]' ".datafile)
 NF = words(data_header)
 SKIP_COLUMNS = 2
 num_platforms = NF - SKIP_COLUMNS
 
-set terminal svg enhanced font "arial,14" fontscale 1.0 size num_platforms*12*13,1000
-
-set border 1+2+8 front linetype black linewidth 1.000 dashtype solid
-set style fill solid 1.00 noborder
+set terminal svg enhanced font "arial,14" fontscale 1.0 size num_platforms*12*13,1100
+set multiplot layout 2,1 margins char 8,3,0,7
 
 GAPSIZE = 7
 # gapsize does not support to be specified by a variable
-set style histogram clustered gap 7
+set style histogram clustered gap 7 # =GAPSIZE
 
 boxwidth = 1.0 / (num_platforms + GAPSIZE)
 
-set xtics border in scale 0,0 nomirror norotate autojustify noenhanced
+set style fill solid 1.00 noborder
+set format y "%.1f"
 set ytics border in scale 1.0,0.5 nomirror norotate autojustify
-set y2tics border in scale 1.0,0.5 nomirror norotate autojustify
 set mytics 2
 set grid ytics mytics
 
-set xlabel "stressor class" font ",17"
+set border 1+2 front linetype black linewidth 1.000 dashtype solid
+set xrange [ -1 : * ]
+set xtics border in scale 0,0 nomirror norotate autojustify noenhanced
+set bmargin at screen 0.24
 set ylabel "z-score" font ",17"
-set y2label "standard deviation" font ",17"
 
 avg_zscore(strval) = real(system(sprintf( \
   "echo %s | cut --delimiter='/' --fields=1", strval)))
@@ -90,10 +89,19 @@ plot for [i=PLATFORM_START_COLUMN:NF] \
           with yerrorbars linecolor rgbcolor "light-gray" pointtype -1, \
      for [i=PLATFORM_START_COLUMN:NF] \
         datafile using (avg_zscore(strcol(i))):xtic(strcol(1)." (".strcol(2).")") \
-          with histograms title columnheader(i), \
-     for [i=PLATFORM_START_COLUMN:NF] \
-        datafile using \
-          (column(0)-(num_platforms/2.0)*boxwidth+(i-PLATFORM_START_COLUMN)*boxwidth+boxwidth/2):(stdev(strcol(i))) \
-          with points linecolor rgbcolor "grey" pointtype 7 pointsize 0.6 axes x1y2
+          with histograms title columnheader(i)
+
+unset xtics
+set border 2+4
+set x2range [ -1 : * ]
+set x2tics border in scale 0,0 nomirror norotate autojustify noenhanced
+set format x2 ""
+set tmargin at screen 0.2
+set yrange [ * : * ] reverse
+set ylabel "standard deviation"
+
+plot for [i=PLATFORM_START_COLUMN:NF] \
+        datafile using (stdev(strcol(i))) \
+          with histograms title columnheader(i) axes x2y1
 
 print "Written to output file: ".output_filepath
