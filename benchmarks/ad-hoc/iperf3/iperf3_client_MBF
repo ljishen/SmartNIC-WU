@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+rm -f iperf3_*.log
+
+PIDS=()
+
+for id in {0..7}; do
+  port=510"$(( id + 32 ))"
+  logfile=iperf3_"$port".log
+
+  iperf3 \
+    --port "$port" \
+    --client 10.10.1.2 \
+    --bind 10.10.1.3 \
+    --interval 0 \
+    --affinity "$id" \
+    --logfile "$logfile" \
+    --forceflush \
+    --udp \
+    --bitrate 0 \
+    --length 65507 \
+    --parallel 2 \
+    --set-mss 9216 \
+    --zerocopy \
+    --omit 2 \
+    --repeating-payload \
+    --title "$port" &
+
+  PIDS+=($!)
+done
+
+echo
+echo "Waiting for processes to finish..."
+for PID in "${PIDS[@]}"; do
+  wait "$PID"
+done
+echo "Done!"
+
+echo
+find . -type f -name '*.log' -exec awk '$2 ~ /SUM/ { print $0; exit }' {} \;

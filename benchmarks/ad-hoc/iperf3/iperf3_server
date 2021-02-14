@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+for id in {32..39}; do
+  port=510"$id"
+  iperf3 \
+    --interval 1 \
+    --affinity "$id" \
+    --server \
+    --bind 10.10.1.2 \
+    --port "$port" &
+done
