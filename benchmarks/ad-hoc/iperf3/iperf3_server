@@ -2,6 +2,19 @@
 
 set -euo pipefail
 
+if ! command -v iperf3 >/dev/null 2>&1; then
+  echo "Please first install iperf3" >&2
+  exit 1
+fi
+
+echo "Cleaning up iperf3 processes..."
+pkill iperf3 || true
+
+if pgrep iperf3 >/dev/null; then
+  echo "iperf3 process is still running in the background." >&2
+  exit 2
+fi
+
 for id in {32..39}; do
   port=510"$id"
   iperf3 \
