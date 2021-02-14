@@ -1,4 +1,4 @@
-These scripts are for testing throughput between two r7525 nodes from CloudLab using the BlueField-2 network cards. The BlueField-2 card is installed on NUMA node 1 of the host (two NUMA nodes 0 and 1).
+These scripts are for testing throughput (client sends, server receives) between two r7525 nodes from CloudLab using the BlueField-2 network cards. The BlueField-2 card is installed on NUMA node 1 of the host (two NUMA nodes 0 and 1).
 
 For the test between two hosts, we need to first configure the IRQ affinity for the network adapter using the `set_irq_affinity_bynode.sh` script from the repository [Mellanox/mlnx-tools](https://github.com/Mellanox/mlnx-tools), then enable the jumbo frame on the corresponding network interface.
 
@@ -16,7 +16,7 @@ net.ipv4.tcp_wmem = 4096 65536 2147483647
 
 ---
 
-My recent test results is ~95 Gbits/sec between two hosts, and ~30 Gbits/sec between a host and the card, using iperf 3.7 (cJSON 1.5.2).
+My most recent test results are ~95 Gbits/sec between two hosts, and ~30 Gbits/sec between a host and the card, based on iperf 3.7 (cJSON 1.5.2).
 
 Following is the `uname -a` information of the systems under test:
 

@@ -3,7 +3,7 @@
 set -euo pipefail
 
 if ! command -v iperf3 >/dev/null 2>&1; then
-  echo "Please first install iperf3" >&2
+  echo "[ERROR] Please first install iperf3" >&2
   exit 1
 fi
 
@@ -25,13 +25,14 @@ for id in {0..7}; do
     --forceflush \
     --udp \
     --bitrate 0 \
+    --time 10 \
     --length 65507 \
     --parallel 2 \
     --set-mss 9216 \
     --zerocopy \
     --omit 2 \
     --repeating-payload \
-    --title "$port" &
+    --title "stream_$port" &
 
   PIDS+=($!)
 done

@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+NUTTCP_BIN=/users/ljishen/nuttcp-8.2.2/nuttcp-8.2.2
+NUTTCP_FILE="$(basename -- "$NUTTCP_BIN")"
+
+if ! [[ -x "$NUTTCP_BIN" ]]; then
+  echo "[ERROR] nuttcp binary file '$NUTTCP_BIN' does not exist or is not executable." >&2
+  exit 1
+fi
+
+echo "Cleaning up nuttcp processes..."
+pkill "$NUTTCP_FILE" || true
+echo
+
+if pgrep --list-full "$NUTTCP_FILE"; then                                                                                                                                        
+  echo "[ERROR] nuttcp process is still running in the background." >&2                                                                                                         
+  exit 2                                                                                                                                                                
+fi 
+
+for id in {0..7}; do
+  port=500"$id"
+  "$NUTTCP_BIN" \
+    -S \
+    -4 \
+    -P "$port" \
+    -xc"$(( id + 32 ))" &
+  echo "Started nuttcp process $!"
+done

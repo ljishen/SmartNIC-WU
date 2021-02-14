@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+NUTTCP_BIN=/users/ljishen/nuttcp-8.2.2/nuttcp-8.2.2
+
+if ! [[ -x "$NUTTCP_BIN" ]]; then
+  echo "[ERROR] nuttcp binary file '$NUTTCP_BIN' does not exist or is not executable." >&2
+  exit 1
+fi
+
+rm -f nuttcp_*.log
+
+PIDS=()
+
+for id in {0..4}; do
+  send_port=5"$(( id + 1 ))"01
+  control_port=500"$id"
+  "$NUTTCP_BIN" \
+    -4 \
+    -l16K \
+    -p"$send_port" \
+    -P"$control_port" \
+    -u \
+    -N4 \
+    -Ri0 \
+    -T10 \
+    -i2 \
+    -I"stream_$control_port" \
+    -xc"$(( id + 32 ))" \
+    -vv \
+    --packet-burst 2 \
+    10.10.1.2 >nuttcp_"$control_port".log &
+
+  PIDS+=($!)
+done
+
+echo
+echo "Waiting for processes to finish..."
+for PID in "${PIDS[@]}"; do
+  wait "$PID"
+done
+echo "Done!"
+
+echo
+find . -type f -name '*.log' -exec \
+  awk '$0 ~ /^nuttcp-t-.+ Mbps/ { print $0; exit }' {} \; |
+  awk '{ print $0; sum += $(NF - 1) }; END { print "Total:", sum, "Mbps" }'
