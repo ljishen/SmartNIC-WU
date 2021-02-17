@@ -28,6 +28,7 @@ for id in {32..35}; do
     --time 10 \
     --length 65507 \
     --parallel 4 \
+    --window 416K \
     --set-mss 9216 \
     --zerocopy \
     --omit 2 \

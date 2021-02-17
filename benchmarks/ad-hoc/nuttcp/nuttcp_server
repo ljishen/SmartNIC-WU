@@ -14,10 +14,10 @@ echo "Cleaning up nuttcp processes..."
 pkill "$NUTTCP_FILE" || true
 echo
 
-if pgrep --list-full "$NUTTCP_FILE"; then                                                                                                                                        
-  echo "[ERROR] nuttcp process is still running in the background." >&2                                                                                                         
-  exit 2                                                                                                                                                                
-fi 
+if pgrep --list-full "$NUTTCP_FILE"; then
+  echo "[ERROR] nuttcp process is still running in the background." >&2
+  exit 2
+fi
 
 for id in {0..7}; do
   port=500"$id"

@@ -16,7 +16,7 @@ net.ipv4.tcp_wmem = 4096 65536 2147483647
 
 ---
 
-My most recent test results are ~95 Gbits/sec between two hosts, and ~30 Gbits/sec between a host and the card, based on iperf 3.7 (cJSON 1.5.2).
+My most recent test results are 98.8 Gbits/sec between two hosts, and ~30 Gbits/sec between a host and the card, based on iperf 3.7 (cJSON 1.5.2).
 
 Following is the `uname -a` information of the systems under test:
 
