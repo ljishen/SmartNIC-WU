@@ -4,11 +4,12 @@ set -euo pipefail
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 BENCHMARK_RESULT_DIR="$(readlink --canonicalize "$SCRIPT_DIR"/../../../results/stress-ng)/"
+REFERENCE_PLATFORM=ikoula/pi4_4gb
 
 printf 'Working on result directory: %s\n\n' "$BENCHMARK_RESULT_DIR"
 
 if ! [[ -d "$BENCHMARK_RESULT_DIR" ]]; then
-  echo "Result directory does not exist!" >&2
+  echo "[ERROR] Result directory does not exist!" >&2
   exit 1
 fi
 
@@ -71,11 +72,15 @@ sort_array() {
   _arr=($(sort <<<"${_arr[*]}"))
 }
 
-calculate_zscore() {
+calculate_bogo_ops_based_results() {
+  # Increase the value by one because awk's index starts from 1
+  local -ir reference_platform_idx="$(( $1 + 1 ))"
   # shellcheck disable=SC2178
-  local -n _arr=$1
+  local -n _arr=$2
 
-  awk -v bogo_ops_ps_cur_stressor_str="${_arr[*]}" '
+  awk \
+    -v reference_platform_idx="$reference_platform_idx" \
+    -v bogo_ops_ps_cur_stressor_str="${_arr[*]}" '
     function is_valid_num(bogo_ops_ps) {
       # bogo_ops_ps can be "nan" or "0.000000"
       return bogo_ops_ps ~ /^[0-9.]+$/ && bogo_ops_ps != "0.000000"
@@ -99,18 +104,21 @@ calculate_zscore() {
       mean = sum / num_val
       stdev = sqrt((sq_sum - num_val * mean ^ 2) / (num_val - 1))
 
-      bogo_ops_ps_with_zscore = ""
+      bogo_ops_based_results = ""
       for (idx = 1; idx <= length(bogo_ops_ps_cur_stressor); idx++) {
         bogo_ops_ps = bogo_ops_ps_cur_stressor[idx]
+        reference_val = bogo_ops_ps_cur_stressor[reference_platform_idx]
+
+        zscore = "nan"
+        relative_val = "nan"
         if (is_valid_num(bogo_ops_ps)) {
           zscore = (bogo_ops_ps - mean) / stdev
-        } else {
-          zscore = "nan"
+          relative_val = bogo_ops_ps / reference_val
         }
-        bogo_ops_ps_with_zscore = bogo_ops_ps_with_zscore" "bogo_ops_ps"/"zscore
+        bogo_ops_based_results = bogo_ops_based_results" "bogo_ops_ps"/"zscore"/"relative_val
       }
 
-      print bogo_ops_ps_with_zscore
+      print bogo_ops_based_results
     }
   '
 }
@@ -121,9 +129,17 @@ print_summary() {
     local -a platforms="(${JOBNAME_TO_PLATFORMS[$jobname]})"
     sort_array platforms
 
+    local -i platform_idx reference_platform_idx=-1
     local platform profile_name stressor
     local -a all_stressors=()
-    for platform in "${platforms[@]}"; do
+    for (( platform_idx = 0;
+           platform_idx < ${#platforms[@]};
+           platform_idx++ )); do
+      platform="${platforms[$platform_idx]}"
+      if [[ "$platform" == "$REFERENCE_PLATFORM" ]]; then
+        reference_platform_idx=$platform_idx
+      fi
+
       profile_name="$(get_profile_name "$jobname" "$platform")"
 
       # shellcheck disable=SC2178
@@ -143,8 +159,13 @@ print_summary() {
         done
       fi
     done
+
+    if (( reference_platform_idx < 0 )); then
+      echo "[ERROR] Cannot find results of the reference platform" \
+        "'$REFERENCE_PLATFORM' for job '$jobname'"
+      exit 2
+    fi
     sort_array all_stressors
-    echo
 
     local summary_filepath="${BENCHMARK_RESULT_DIR}${jobname}".platforms_summary
     echo "Writing summary to $summary_filepath"
@@ -153,13 +174,15 @@ print_summary() {
 # This file summarizes  stress-ng benchmark results of all platforms
 # under the directory of this file.
 #
-# The value of each stressor is in the format of B/S, where B is the
-# average  bogo-ops-per-second-real-time  of  multiple  tests on the
-# the same platform,  and S is the  z-score of the value in tests of
-# all platforms with respect to the same stressor.
+# The value of each stressor is in the format of  B/Z/R, where  B is
+# the average bogo-ops-per-second-real-time of multiple tests on the
+# same platform,  Z is the z-score of the current value with respect
+# to results of the same stressor from all platforms, and finally, R
+# is the relative value to the result of the reference platform.
 #
 # Number of stressors: ${#all_stressors[@]}
 # Number of platforms: ${#platforms[@]}
+# Reference platform : $REFERENCE_PLATFORM
 
 
 EOF
@@ -183,21 +206,23 @@ EOF
         fi
       done
 
-      local -a bogo_ops_ps_with_zscore
-      IFS=' ' read -r -a bogo_ops_ps_with_zscore \
-        <<< "$(calculate_zscore bogo_ops_ps_cur_stressor)"
+      local -a bogo_ops_based_results
+      IFS=' ' read -r -a bogo_ops_based_results \
+        <<< "$(calculate_bogo_ops_based_results \
+               reference_platform_idx \
+               bogo_ops_ps_cur_stressor)"
 
       # Update the stressor_to_bogo array for the
       # current stressor by adding zscores
       local -i platform_idx
       for (( platform_idx = 0;
-        platform_idx < ${#platforms[@]};
-        platform_idx++ )); do
+             platform_idx < ${#platforms[@]};
+             platform_idx++ )); do
         platform="${platforms[$platform_idx]}"
         profile_name="$(get_profile_name "$jobname" "$platform")"
         # shellcheck disable=SC2178
         local -n stressor_to_bogo=$profile_name
-        stressor_to_bogo["$stressor"]="${bogo_ops_ps_with_zscore[$platform_idx]}"
+        stressor_to_bogo["$stressor"]="${bogo_ops_based_results[$platform_idx]}"
       done
     done
 
@@ -210,7 +235,9 @@ EOF
       local -n stressor_to_bogo=$profile_name
 
       local -i stressor_idx
-      for (( stressor_idx = 0; stressor_idx < ${#all_stressors[@]}; stressor_idx++ )); do
+      for (( stressor_idx = 0;
+             stressor_idx < ${#all_stressors[@]};
+             stressor_idx++ )); do
         stressor="${all_stressors[$stressor_idx]}"
         if (( stressor_idx < ${#all_stressors[@]} - 1 )); then
           printf '%s\t' "${stressor_to_bogo[$stressor]}"
@@ -219,6 +246,8 @@ EOF
         fi
       done
     done >>"$summary_filepath"
+
+    echo
   done
 }
 
@@ -231,6 +260,5 @@ done < <(
 echo
 
 print_summary
-echo
 
 echo 'Done!'
