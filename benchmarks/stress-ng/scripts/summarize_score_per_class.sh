@@ -68,11 +68,21 @@ cat <<EOF >"$SUMMARY_FILEPATH"
 # for platform results summarized in file:
 # $(basename -- "$DATAFILE")
 #
-# Each value starting from column 3 is in the form of A/B/C/D, where
-# A is the average z-score of all stressors in a given stressor cla-
-# ss for a particular platform, B is the corresponding sample stand-
-# ard deviation, and finally, C and D are the minimum and maximum z-
-# sccore of this class w.r.t. this platform, respectively.
+# Each value starting from column 3 is in the form of:
+# A/B/C/D/E/F/G/H, where A-D are statistics for the z-scores of str-
+# essors and E-H are statistics for the relative performance of str-
+# essors to the reference platform.
+#
+# Specifically, in the first group,  A is the average z-score of all
+# stressors in a given stressor class  for a particular platform. B,
+# C,  and D are the corresponding sample standard deviation, minimum
+# and maximum z-score, respectively.
+#
+# In the second group, the meaning of the corresponding value is the
+# same as that of in the first group, except that each value is cal-
+# culated in terms of the relative bogo_ops_ps to the reference pla-
+# tform.  For example, E is the average relative  bogo_ops_ps of all
+# stressors in a given stressor class for a particular platform.
 #
 EOF
 
@@ -120,6 +130,25 @@ gawk \
     }
   }
 
+  function update_statistics(platform, class, type, value) {
+    platform_to_class_statistics[platform][class][type]["sum"] += value
+    platform_to_class_statistics[platform][class][type]["sq_sum"] += value ^ 2
+
+    if ("min" in platform_to_class_statistics[platform][class][type]) {
+      if (value < platform_to_class_statistics[platform][class][type]["min"])
+        platform_to_class_statistics[platform][class][type]["min"] = value
+    } else {
+      platform_to_class_statistics[platform][class][type]["min"] = value
+    }
+
+    if ("max" in platform_to_class_statistics[platform][class][type]) {
+      if (value > platform_to_class_statistics[platform][class][type]["max"])
+        platform_to_class_statistics[platform][class][type]["max"] = value
+    } else {
+      platform_to_class_statistics[platform][class][type]["max"] = value
+    }
+  }
+
   /^[[:alnum:]_\/-]+\t/ {
     if ($1 == "PLATFORM") {
       for (i = 2; i <= NF; i++) {
@@ -140,36 +169,38 @@ gawk \
 
         stressor = stressors[i]
 
-        zscore = $i
-        sub(/^[[:digit:].]+\//, "", zscore)
+        split($i, tuple, "/")
+        zscore = tuple[2]
+        relative_value = tuple[3]
 
-        # This is important because it explicitly tells awk
-        # that we are using it as a number, and not a string.
-        # Otherwise, the following zscore comparision may
-        # work as string comparision.
+        # This is important because it explicitly tells awk that
+        # we are using it as a number, and not as a string.
+        # Otherwise, the following number comparision operations
+        # may work as string comparision.
         zscore *= 1.0
+        relative_value *= 1.0
 
         for (class in stressor_to_classes[stressor]) {
           all_classes[class][stressor] = ""
-          platform_to_class_zscore[platform][class]["sum"] += zscore
-          platform_to_class_zscore[platform][class]["sq_sum"] += zscore ^ 2
 
-          if ("min" in platform_to_class_zscore[platform][class]) {
-            if (zscore < platform_to_class_zscore[platform][class]["min"])
-              platform_to_class_zscore[platform][class]["min"] = zscore
-          } else {
-            platform_to_class_zscore[platform][class]["min"] = zscore
-          }
-
-          if ("max" in platform_to_class_zscore[platform][class]) {
-            if (zscore > platform_to_class_zscore[platform][class]["max"])
-              platform_to_class_zscore[platform][class]["max"] = zscore
-          } else {
-            platform_to_class_zscore[platform][class]["max"] = zscore
-          }
+          update_statistics(platform, class, "zscore", zscore)
+          update_statistics(platform, class, "relative_value", relative_value)
         }
       }
     }
+  }
+
+  function print_values(platform, class, type) {
+    sq_sum = platform_to_class_statistics[platform][class][type]["sq_sum"]
+    num_val = length(all_classes[class])
+    mean = platform_to_class_statistics[platform][class][type]["sum"] / num_val
+    stdev = sqrt((sq_sum - num_val * mean ^ 2) / (num_val - 1))
+
+    printf "%.6f/%.6f/%.6f/%.6f",
+      mean,
+      stdev,
+      platform_to_class_statistics[platform][class][type]["min"],
+      platform_to_class_statistics[platform][class][type]["max"]
   }
 
   END {
@@ -186,16 +217,10 @@ gawk \
     for (class in all_classes) {
       printf "%s\t%d", class, length(all_classes[class])
       for (platform in platforms) {
-        sq_sum = platform_to_class_zscore[platform][class]["sq_sum"]
-        num_val = length(all_classes[class])
-        mean = platform_to_class_zscore[platform][class]["sum"] / num_val
-        stdev = sqrt((sq_sum - num_val * mean ^ 2) / (num_val - 1))
-
-        printf "\t%.6f/%.6f/%.6f/%.6f",
-          mean,
-          stdev,
-          platform_to_class_zscore[platform][class]["min"],
-          platform_to_class_zscore[platform][class]["max"]
+        printf "\t"
+        print_values(platform, class, "zscore")
+        printf "/"
+        print_values(platform, class, "relative_value")
       }
       printf "\n"
     }
