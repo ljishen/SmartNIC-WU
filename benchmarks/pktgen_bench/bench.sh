@@ -48,7 +48,7 @@ err() {
 
 
 if [[ "$#" -lt 2 ]]; then
-  echo "Usage: $0 ifname pkt_size [dest_ip]"
+  echo "Usage: $0 ifname pkt_size [dest_ip [dst_mac]]"
   exit
 fi
 
@@ -59,6 +59,7 @@ fi
 readonly IFNAME="$1"
 readonly PKT_SIZE="$2"  # in bytes
 readonly DEST_IP="${3:-}"
+readonly DST_MAC="${4:-}"
 
 if ! [[ -d /sys/class/net/"$IFNAME" ]]; then
   err 2 "Network device $IFNAME is not available."
@@ -320,6 +321,7 @@ for d in "${ARR_DELAY[@]}"; do
             "$SCRIPT_DIR"/xmit_multiqueue.sh -v \
               -i "$IFNAME" \
               -d "$DEST_IP" \
+              -a "$DST_MAC" \
               -s "$PKT_SIZE" \
               -e "$RUNTIME" \
               -l "$d" \
