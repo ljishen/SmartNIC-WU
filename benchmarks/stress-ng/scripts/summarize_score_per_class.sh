@@ -84,6 +84,7 @@ cat <<EOF >"$SUMMARY_FILEPATH"
 # tform.  For example, E is the average relative  bogo_ops_ps of all
 # stressors in a given stressor class for a particular platform.
 #
+$(grep '^# Reference platform : ' "$DATAFILE")
 EOF
 
 IGNORE_STRESSOR_IDXES_STR="$(gawk '

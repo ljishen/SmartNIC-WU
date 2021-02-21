@@ -19,8 +19,8 @@ if (ARGC != 1) {
   print sprintf("Usage:    %s DATAFILE\n",ARG0)
   print \
     "DATAFILE:\n", \
-    "    a datafile summarizes z-score per stressor class for all\n", \
-    "    platforms, typically ending with '.platforms_summary.per_class'."
+    "    a datafile summarizes performance statistics per stressor class\n", \
+    "    for each platform, typically ending with '.platforms_summary.per_class'."
   exit
 }
 
@@ -71,24 +71,24 @@ set border 1+2 front linetype black linewidth 1.000 dashtype solid
 set xrange [ -1 : * ]
 set xtics border in scale 0,0 nomirror norotate autojustify noenhanced
 set bmargin at screen 0.24
-set ylabel "z-score" font ",17"
+set ylabel "Average Performance" font ",17"
 
-avg_zscore(strval) = real(system(sprintf( \
-  "echo %s | cut --delimiter='/' --fields=1", strval)))
+avg_val(strval) = real(system(sprintf( \
+  "echo %s | cut --delimiter='/' --fields=5", strval)))
 stdev(strval) = real(system(sprintf( \
-  "echo %s | cut --delimiter='/' --fields=2", strval)))
-min_zscore(strval) = real(system(sprintf( \
-  "echo %s | cut --delimiter='/' --fields=3", strval)))
-max_zscore(strval) = real(system(sprintf( \
-  "echo %s | cut --delimiter='/' --fields=4", strval)))
+  "echo %s | cut --delimiter='/' --fields=6", strval)))
+min_val(strval) = real(system(sprintf( \
+  "echo %s | cut --delimiter='/' --fields=7", strval)))
+max_val(strval) = real(system(sprintf( \
+  "echo %s | cut --delimiter='/' --fields=8", strval)))
 
 PLATFORM_START_COLUMN = 1 + SKIP_COLUMNS
 plot for [i=PLATFORM_START_COLUMN:NF] \
         datafile using \
-          (column(0)-(num_platforms/2.0)*boxwidth+(i-PLATFORM_START_COLUMN)*boxwidth+boxwidth/2):(min_zscore(strcol(i))):(min_zscore(strcol(i))):(max_zscore(strcol(i))) \
+          (column(0)-(num_platforms/2.0)*boxwidth+(i-PLATFORM_START_COLUMN)*boxwidth+boxwidth/2):(min_val(strcol(i))):(min_val(strcol(i))):(max_val(strcol(i))) \
           with yerrorbars linecolor rgbcolor "light-gray" pointtype -1, \
      for [i=PLATFORM_START_COLUMN:NF] \
-        datafile using (avg_zscore(strcol(i))):xtic(strcol(1)." (".strcol(2).")") \
+        datafile using (avg_val(strcol(i))):xtic(strcol(1)." (".strcol(2).")") \
           with histograms title columnheader(i)
 
 unset xtics

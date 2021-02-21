@@ -101,8 +101,10 @@ calculate_bogo_ops_based_results() {
         }
       }
 
-      mean = sum / num_val
-      stdev = sqrt((sq_sum - num_val * mean ^ 2) / (num_val - 1))
+      if (num_val > 0) {
+        mean = sum / num_val
+        stdev = sqrt((sq_sum - num_val * mean ^ 2) / (num_val - 1))
+      }
 
       bogo_ops_based_results = ""
       for (idx = 1; idx <= length(bogo_ops_ps_cur_stressor); idx++) {
@@ -113,7 +115,9 @@ calculate_bogo_ops_based_results() {
         relative_val = "nan"
         if (is_valid_num(bogo_ops_ps)) {
           zscore = (bogo_ops_ps - mean) / stdev
-          relative_val = bogo_ops_ps / reference_val
+          if (is_valid_num(reference_val)) {
+            relative_val = bogo_ops_ps / reference_val
+          }
         }
         bogo_ops_based_results = bogo_ops_based_results" "bogo_ops_ps"/"zscore"/"relative_val
       }
@@ -180,9 +184,9 @@ print_summary() {
 # to results of the same stressor from all platforms, and finally, R
 # is the relative value to the result of the reference platform.
 #
+# Reference platform : $REFERENCE_PLATFORM
 # Number of stressors: ${#all_stressors[@]}
 # Number of platforms: ${#platforms[@]}
-# Reference platform : $REFERENCE_PLATFORM
 
 
 EOF
