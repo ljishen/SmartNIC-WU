@@ -67,7 +67,11 @@ set xtics border nomirror in scale 0,0 rotate autojustify rangelimited
 set ytics border nomirror in scale 1.0,0.5 norotate autojustify
 set grid xtics ytics
 
-set ylabel "z-score" font ",15"
+# REFERENCE_PLATFORM cannot be the BlueField2 platform
+REFERENCE_PLATFORM = system(sprintf( \
+  "grep --perl-regexp --only-matching \
+  '^# Reference platform : \\K.*' %s", datafile))
+set ylabel "Performance (vs. ".REFERENCE_PLATFORM.")" font ",15"
 
 data_header = system("grep --max-count=1 '^[^#]' ".datafile)
 NF = words(data_header)
@@ -80,45 +84,57 @@ num_plots = ceil(num_stressors * 1.0 / STRESSORS_PER_PLOT)
 num_rows = ceil(num_plots * 1.0 / NUM_COLS)
 
 set terminal svg enhanced font "arial,12" fontscale 1.0 size 1600,470*num_rows
-set multiplot layout num_rows,NUM_COLS margins char 6,3,5,7 spacing char 8,7
+set multiplot layout num_rows,NUM_COLS margins char 9,2,5,7 spacing char 10,7
 # set multiplot title \
 #  "Performnace variability of different stressors on different platforms\n" \
 #  font ",15"
 
-zscore(strval) = strstrt(strval, "nan") != 0 \
-  ? 0 : real(substr(strval, strstrt(strval, "/")+1, -1))
-
-BLUEFIELD_IDX = system(sprintf( \
+is_nan_str(str) = strstrt(str, "nan") > 0
+relative_val_str(strval) = system(sprintf( \
+  "echo %s | cut --delimiter='/' --fields=3", strval))
+stressor_val(strval, platform_idx) = \
+  platform_idx == REFERENCE_PLATFORM_IDX ? NaN \
+  : (is_nan_str(relative_val_str(strval)) ? 0 \
+      : real(relative_val_str(strval)))
+platform_idx(platform_str) = system(sprintf( \
     "sed '/^[[:blank:]]*\\(#\\|$\\)/d' %s \
     | cut --fields=1 \
     | tail --lines=+2 \
-    | grep --line-number 'MBF' \
-    | cut --fields=1 --delimiter=':'", datafile)) - 1
+    | grep --line-number '%s' \
+    | cut --fields=1 --delimiter=':'", datafile, platform_str)) - 1
+BLUEFIELD_PLATFORM_IDX = platform_idx('MBF')
+REFERENCE_PLATFORM_IDX = platform_idx(REFERENCE_PLATFORM)
 
-# platform_idx starts from 0
+# platform_idx starts from 0. See column(0) from
+#   gnuplot> help pseudocolumns
 should_highlight(platform_idx) = \
-  platform_idx == BLUEFIELD_IDX
-highlight(platform_idx, strval) = \
-  should_highlight(platform_idx) && strstrt(strval, "nan") == 0 \
-  ? zscore(strval) : 1/0
+  platform_idx == BLUEFIELD_PLATFORM_IDX
+highlight_val(strval, platform_idx) = \
+  should_highlight(platform_idx) \
+  && platform_idx != REFERENCE_PLATFORM_IDX \
+  && stressor_val(strval, platform_idx) > 0 \
+  ? stressor_val(strval, platform_idx) : NaN
 POINTTYPE_HIGHLIGHT = 9
 POINTTYPE_NORMAL = 7
 
-outlier(platform_idx, zscore, upper, lower) = \
+outlier_val(platform_idx, strval, upper, lower) = \
   (!should_highlight(platform_idx) \
-  && (zscore > upper || zscore < lower)) ? zscore : 1/0
+    && platform_idx != REFERENCE_PLATFORM_IDX \
+    && !is_nan_str(relative_val_str(strval)) \
+    && (stressor_val(strval, platform_idx) > upper \
+      || stressor_val(strval, platform_idx) < lower)) \
+  ? stressor_val(strval, platform_idx) : NaN
 
 num_platforms = system(sprintf( \
     "sed '/^[[:blank:]]*\\(#\\|$\\)/d' %s \
     | tail --lines=+2 \
     | wc --lines", datafile))
 
-# idx start from 1
-platform_name(idx) = system(sprintf( \
+platform_name(platform_idx) = system(sprintf( \
     "sed '/^[[:blank:]]*\\(#\\|$\\)/d' %s \
     | cut --fields=1 \
     | tail --lines=+2 \
-    | sed --quiet '%dp'", datafile, idx))
+    | sed --quiet '%dp'", datafile, platform_idx+1))
 
 do for [p=1:num_plots] {
   start_col_cur_plot = (p - 1) * STRESSORS_PER_PLOT + SKIP_COLUMNS + 1
@@ -136,7 +152,7 @@ do for [p=1:num_plots] {
   set autoscale y
 
   do for [i=start_col_cur_plot:end_col_cur_plot] {
-    stats datafile using (zscore(strcol(i))) nooutput
+    stats datafile using (stressor_val(strcol(i), column(0))) nooutput
     if (STATS_min<plot_min) {
       plot_min=STATS_min
     }
@@ -160,21 +176,26 @@ do for [p=1:num_plots] {
     xtics add (word(data_header, start_col_cur_plot+(i-1)) i)
 
   plot for [i=1:num_stressors_cur_plot] \
-          datafile using (i):(zscore(strcol(start_col_cur_plot+(i-1)))) with boxplot, \
+          datafile using (i):(stressor_val(strcol(start_col_cur_plot+(i-1)), \
+            column(0))) with boxplot, \
        for [i=1:num_stressors_cur_plot] \
-          datafile using (i):(outlier(column(0), \
-            zscore(strcol(start_col_cur_plot+(i-1))), \
+          datafile using (i):(outlier_val(column(0), \
+            strcol(start_col_cur_plot+(i-1)), \
             Upperwhisker[i], Lowerwhisker[i])):0 \
             with points pointtype POINTTYPE_NORMAL palette, \
        for [i=1:num_stressors_cur_plot] \
-          datafile using (i):(highlight(column(0), \
-            strcol(start_col_cur_plot+(i-1)))):0 \
+          datafile using (i):(highlight_val(strcol(start_col_cur_plot+(i-1)), \
+            column(0))):0 \
             with points pointtype POINTTYPE_HIGHLIGHT palette, \
-       for [i=1:num_platforms] \
-          datafile using (num_stressors_cur_plot+1):(floor(plot_min)):(i-1)  \
+       for [i=0:num_platforms-1] \
+          datafile using (num_stressors_cur_plot+1):(i==REFERENCE_PLATFORM_IDX \
+            ? NaN : floor(plot_min)):(i)  \
             with points \
-            pointtype should_highlight(i-1)?POINTTYPE_HIGHLIGHT:POINTTYPE_NORMAL \
+            pointtype should_highlight(i)?POINTTYPE_HIGHLIGHT:POINTTYPE_NORMAL \
             palette title platform_name(i)
+
+  # We only want one legend
+  unset key
 }
 
 print "Written to output file: ".output_filepath
