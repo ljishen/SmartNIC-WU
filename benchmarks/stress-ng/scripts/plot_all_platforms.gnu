@@ -188,11 +188,11 @@ do for [p=1:num_plots] {
             column(0))):0 \
             with points pointtype POINTTYPE_HIGHLIGHT palette, \
        for [i=0:num_platforms-1] \
-          datafile using (num_stressors_cur_plot+1):(i==REFERENCE_PLATFORM_IDX \
-            ? NaN : floor(plot_min)):(i)  \
+          datafile using (num_stressors_cur_plot+1):( \
+            i==REFERENCE_PLATFORM_IDX?NaN:floor(plot_min)):(i)  \
             with points \
             pointtype should_highlight(i)?POINTTYPE_HIGHLIGHT:POINTTYPE_NORMAL \
-            palette title platform_name(i)
+            palette title i==REFERENCE_PLATFORM_IDX?"":platform_name(i)
 
   # We only want one legend
   unset key
