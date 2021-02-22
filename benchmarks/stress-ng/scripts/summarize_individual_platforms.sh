@@ -121,8 +121,8 @@ print_summary() {
 # ${yaml_filepath/#$BENCHMARK_RESULT_DIR}
 #
 # The values under the indexed columns  (1..n)  are in the format of
-# R/S. For column i,  R is the  bogo-ops-per-second-real-time of the
-# corresponding stressor in the 'i th' test, and S is the z-score of
+# R/Z. For column i,  R is the  bogo-ops-per-second-real-time of the
+# corresponding stressor in the 'i th' test, and Z is the z-score of
 # the value in n tests.
 #
 # Number of tests: $max_profile_idx
@@ -171,12 +171,17 @@ EOF
             }
           }
 
-          mean = sum / num_val
-          stdev = sqrt((sq_sum - num_val * mean ^ 2) / (num_val - 1))
+          mean = stdev = "nan"
+          if (num_val > 0) {
+            mean = sum / num_val
+            if (num_val > 1) {
+              stdev = sqrt((sq_sum - num_val * mean ^ 2) / (num_val - 1))
+            }
+          }
 
           for (idx = 1; idx <= length(bogo_ops_ps_cur_stressor); idx++) {
             bogo_ops_ps = bogo_ops_ps_cur_stressor[idx]
-            if (is_valid_num(bogo_ops_ps)) {
+            if (is_valid_num(bogo_ops_ps) && stdev != "nan") {
               zscore = (bogo_ops_ps - mean) / stdev
               printf("%.6f/%.6f\t", bogo_ops_ps, zscore)
             } else {
@@ -184,7 +189,10 @@ EOF
             }
           }
 
-          printf("%.6f\t%.6f\n", mean, stdev)
+          printf(mean != "nan" ? "%.6f" : "%s", mean)
+          printf("\t")
+          printf(stdev != "nan" ? "%.6f" : "%s", stdev)
+          printf("\n")
         }
       '
     done >>"$summary_filepath"

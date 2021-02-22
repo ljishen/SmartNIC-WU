@@ -101,9 +101,12 @@ calculate_bogo_ops_based_results() {
         }
       }
 
+      mean = stdev = "nan"
       if (num_val > 0) {
         mean = sum / num_val
-        stdev = sqrt((sq_sum - num_val * mean ^ 2) / (num_val - 1))
+        if (num_val > 1) {
+          stdev = sqrt((sq_sum - num_val * mean ^ 2) / (num_val - 1))
+        }
       }
 
       bogo_ops_based_results = ""
@@ -114,7 +117,9 @@ calculate_bogo_ops_based_results() {
         zscore = "nan"
         relative_val = "nan"
         if (is_valid_num(bogo_ops_ps)) {
-          zscore = (bogo_ops_ps - mean) / stdev
+          if (stdev != "nan") {
+            zscore = (bogo_ops_ps - mean) / stdev
+          }
           if (is_valid_num(reference_val)) {
             relative_val = bogo_ops_ps / reference_val
           }
