@@ -52,8 +52,7 @@ NF = words(data_header)
 SKIP_COLUMNS = 2
 num_platforms = NF - SKIP_COLUMNS
 
-set terminal svg enhanced font "arial,14" fontscale 1.0 size num_platforms*12*13,1100
-set multiplot layout 2,1 margins char 10,1,1,7
+set terminal svg size num_platforms*12*13,1100 font "arial,14" enhanced fontscale 1.0
 
 GAPSIZE = 7
 # gapsize does not support to be specified by a variable
@@ -62,7 +61,7 @@ set style histogram clustered gap 7 # =GAPSIZE
 boxwidth = 1.0 / (num_platforms + GAPSIZE)
 
 set style fill solid 1.00 noborder
-set format y "%.1f"
+# set format y "%.1f"
 set ytics border in scale 1.0,0.5 nomirror norotate autojustify
 set mytics 2
 set grid ytics mytics
@@ -70,12 +69,12 @@ set grid ytics mytics
 set border 1+2 front linetype black linewidth 1.000 dashtype solid
 set xrange [ -1 : * ]
 set xtics border in scale 0,0 nomirror norotate autojustify noenhanced
-set bmargin at screen 0.24
+set tmargin at screen 0.88
 
 REFERENCE_PLATFORM = system(sprintf( \
   "grep --perl-regexp --only-matching \
   '^# Reference platform : \\K.*' %s", datafile))
-set ylabel "Average Performance (vs. ".REFERENCE_PLATFORM.")" font ",17"
+set ylabel "Average Performance (vs. ".REFERENCE_PLATFORM.")" font ",17" noenhanced
 
 avg_val(strval) = real(system(sprintf( \
   "echo %s | cut --delimiter='/' --fields=5", strval)))
@@ -87,30 +86,12 @@ max_val(strval) = real(system(sprintf( \
   "echo %s | cut --delimiter='/' --fields=8", strval)))
 
 PLATFORM_START_COLUMN = 1 + SKIP_COLUMNS
-# plot for [i=PLATFORM_START_COLUMN:NF] \
-#         datafile using \
-#           (column(0)-(num_platforms/2.0)*boxwidth+(i-PLATFORM_START_COLUMN)*boxwidth+boxwidth/2):(min_val(strcol(i))):(min_val(strcol(i))):(max_val(strcol(i))) \
-#           with yerrorbars linecolor rgbcolor "light-gray" pointtype -1, \
-#      for [i=PLATFORM_START_COLUMN:NF] \
-#         datafile using (avg_val(strcol(i))):xtic(strcol(1)." (".strcol(2).")") \
-#           with histograms title columnheader(i)
 plot for [i=PLATFORM_START_COLUMN:NF] \
+        datafile using \
+          (column(0)-(num_platforms/2.0)*boxwidth+(i-PLATFORM_START_COLUMN)*boxwidth+boxwidth/2):(avg_val(strcol(i))):(stdev(strcol(i))) \
+          with yerrorbars linecolor rgbcolor "light-gray" pointtype -1, \
+     for [i=PLATFORM_START_COLUMN:NF] \
         datafile using (avg_val(strcol(i))):xtic(strcol(1)." (".strcol(2).")") \
           with histograms title columnheader(i)
-
-
-unset key
-unset xtics
-set border 2+4
-set x2range [ -1 : * ]
-set x2tics border in scale 0,0 nomirror norotate autojustify noenhanced
-set format x2 ""
-set tmargin at screen 0.2
-set yrange [ * : * ] reverse
-set ylabel "Standard Deviation"
-
-plot for [i=PLATFORM_START_COLUMN:NF] \
-        datafile using (stdev(strcol(i))) \
-          with histograms title columnheader(i) axes x2y1
 
 print "Written to output file: ".output_filepath

@@ -47,7 +47,7 @@ set output output_filepath
 # Skip the column header so it won't be used as data
 #   https://stackoverflow.com/a/35528422
 set key autotitle columnheader
-set key at screen 0.57,1 center top vertical Left noenhanced \
+set key at screen 0.59,1 center top vertical Left noenhanced \
   reverse width -7 font ",14" maxrows 4
 
 set border 2 front linetype black linewidth 1.000 dashtype solid
@@ -71,7 +71,10 @@ set grid xtics ytics
 REFERENCE_PLATFORM = system(sprintf( \
   "grep --perl-regexp --only-matching \
   '^# Reference platform : \\K.*' %s", datafile))
-set ylabel "Performance (vs. ".REFERENCE_PLATFORM.")" font ",15"
+set ylabel "Performance (vs. ".REFERENCE_PLATFORM.")" font ",15" noenhanced
+
+LOG_BASE = 10
+set logscale y LOG_BASE
 
 data_header = system("grep --max-count=1 '^[^#]' ".datafile)
 NF = words(data_header)
@@ -83,8 +86,8 @@ num_stressors = NF - SKIP_COLUMNS
 num_plots = ceil(num_stressors * 1.0 / STRESSORS_PER_PLOT)
 num_rows = ceil(num_plots * 1.0 / NUM_COLS)
 
-set terminal svg enhanced font "arial,12" fontscale 1.0 size 1600,470*num_rows
-set multiplot layout num_rows,NUM_COLS margins char 9,2,5,7 spacing char 10,7
+set terminal svg size 1600,470*num_rows font "arial,12" enhanced fontscale 1.0
+set multiplot layout num_rows,NUM_COLS margins char 10,2,5,7 spacing char 10,7
 # set multiplot title \
 #  "Performnace variability of different stressors on different platforms\n" \
 #  font ",15"
@@ -145,19 +148,17 @@ do for [p=1:num_plots] {
 
   array Upperwhisker[num_stressors_cur_plot]
   array Lowerwhisker[num_stressors_cur_plot]
-  plot_min = 0
-  plot_max = 0
 
   # Remove range limit on the y axis. See "gnuplot> help stats".
   set autoscale y
 
   do for [i=start_col_cur_plot:end_col_cur_plot] {
     stats datafile using (stressor_val(strcol(i), column(0))) nooutput
-    if (STATS_min<plot_min) {
-      plot_min=STATS_min
+    if (!exists("cur_plot_data_min") || STATS_min<cur_plot_data_min) {
+      cur_plot_data_min=STATS_min
     }
-    if (STATS_max>plot_max) {
-      plot_max=STATS_max
+    if (!exists("cur_plot_data_max") || STATS_max>cur_plot_data_max) {
+      cur_plot_data_max=STATS_max
     }
 
     irq = STATS_up_quartile - STATS_lo_quartile
@@ -170,7 +171,17 @@ do for [p=1:num_plots] {
 
   # Extend the xrange to the left and right by 1 (plot starts at x = 1)
   set xrange [0:num_stressors_cur_plot+1] noreverse writeback
-  set yrange [floor(plot_min):ceil(plot_max)] noreverse nowriteback
+
+  if (cur_plot_data_min == 0) {
+    # We will ignore (not plot) data points that are < 0.1,
+    # as we think they are not significant.
+    cur_plot_min = 0.1
+  } else {
+    cur_plot_min = real(system(sprintf( \
+      "awk 'BEGIN { print %d ^ int(log(%f) / log(%d) - 1) }'", \
+      LOG_BASE, cur_plot_data_min, LOG_BASE)))
+  }
+  set yrange [cur_plot_min:ceil(cur_plot_data_max)] noreverse nowriteback
 
   set for [i=1:num_stressors_cur_plot] \
     xtics add (word(data_header, start_col_cur_plot+(i-1)) i)
@@ -189,7 +200,7 @@ do for [p=1:num_plots] {
             with points pointtype POINTTYPE_HIGHLIGHT palette, \
        for [i=0:num_platforms-1] \
           datafile using (num_stressors_cur_plot+1):( \
-            i==REFERENCE_PLATFORM_IDX?NaN:floor(plot_min)):(i)  \
+            i==REFERENCE_PLATFORM_IDX?NaN:cur_plot_min):(i)  \
             with points \
             pointtype should_highlight(i)?POINTTYPE_HIGHLIGHT:POINTTYPE_NORMAL \
             palette title i==REFERENCE_PLATFORM_IDX?"":platform_name(i)
