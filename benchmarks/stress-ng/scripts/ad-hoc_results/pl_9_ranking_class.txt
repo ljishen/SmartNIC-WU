@@ -1,0 +1,175 @@
+access		FILESYSTEM | OS	12
+af-alg		CPU | OS	9
+affinity	SCHEDULER	11
+bad-altstack	VM | MEMORY | OS	12
+bigheap		OS | VM	1
+branch		CPU	13
+brk		OS | VM	2
+bsearch		CPU_CACHE | CPU | MEMORY	13
+cache		CPU_CACHE	2
+chattr		FILESYSTEM | OS	7
+chmod		FILESYSTEM | OS	9
+chown		FILESYSTEM | OS	11
+clock		INTERRUPT | OS	13
+clone		SCHEDULER | OS	12
+close		SCHEDULER | OS	12
+context		MEMORY | CPU	13
+copy-file	FILESYSTEM | OS	8
+cpu		CPU	14
+daemon		SCHEDULER | OS	13
+dentry		FILESYSTEM | OS	12
+dev		DEV | OS	3
+dev-shm		VM | OS	14
+dir		FILESYSTEM | OS	12
+dirdeep		FILESYSTEM | OS	6
+dnotify		FILESYSTEM | SCHEDULER | OS	13
+dup		FILESYSTEM | OS	13
+enosys		OS	12
+env		OS | VM	5
+epoll		NETWORK | OS	12
+eventfd		FILESYSTEM | SCHEDULER | OS	12
+exec		SCHEDULER | OS	12
+fault		INTERRUPT | SCHEDULER | OS	13
+fcntl		FILESYSTEM | OS	11
+fiemap		FILESYSTEM | OS	13
+fifo		PIPE_IO | OS | SCHEDULER	12
+file-ioctl	FILESYSTEM | OS	12
+filename	FILESYSTEM | OS	12
+flock		FILESYSTEM | OS	12
+fork		SCHEDULER | OS	12
+fp-error	CPU	8
+fstat		FILESYSTEM | OS	12
+full		DEV | MEMORY | OS	12
+funccall	CPU	12
+funcret		CPU	13
+futex		SCHEDULER | OS	13
+get		OS	14
+getdent		FILESYSTEM | OS	13
+getrandom	OS | CPU	13
+handle		FILESYSTEM | OS	12
+hdd		IO | OS	8
+hrtimers	SCHEDULER	13
+hsearch		CPU_CACHE | CPU | MEMORY	13
+icache		CPU_CACHE	12
+inode-flags	OS | FILESYSTEM	10
+inotify		FILESYSTEM | SCHEDULER | OS	13
+io		FILESYSTEM | OS	2
+ioprio		FILESYSTEM | OS	7
+itimer		INTERRUPT | OS	13
+kcmp		OS	14
+kill		INTERRUPT | SCHEDULER | OS	14
+klog		OS	4
+lease		FILESYSTEM | OS	13
+link		FILESYSTEM | OS	12
+locka		FILESYSTEM | OS	12
+lockbus		CPU_CACHE | MEMORY	2
+lockf		FILESYSTEM | OS	13
+lockofd		FILESYSTEM | OS	12
+longjmp		CPU	13
+lsearch		CPU_CACHE | CPU | MEMORY	12
+madvise		VM | OS	3
+malloc		CPU_CACHE | MEMORY | VM | OS	12
+matrix		CPU | CPU_CACHE | MEMORY	11
+matrix-3d	CPU | CPU_CACHE | MEMORY	11
+mcontend	MEMORY	2
+membarrier	CPU_CACHE | MEMORY	11
+memcpy		CPU_CACHE | MEMORY	11
+memfd		OS | MEMORY	12
+memrate		MEMORY	10
+memthrash	MEMORY	11
+mincore		OS | MEMORY	12
+mknod		FILESYSTEM | OS	11
+mmap		VM | OS	7
+mmapaddr	VM | OS	12
+mmapfixed	VM | OS	12
+mmapfork	SCHEDULER | VM | OS	14
+mmapmany	VM | OS	12
+mq		SCHEDULER | OS	12
+mremap		VM | OS	1
+msg		SCHEDULER | OS	12
+msync		VM | OS	9
+nanosleep	INTERRUPT | SCHEDULER | OS	12
+netdev		NETWORK	9
+nice		SCHEDULER | OS	12
+nop		CPU	9
+null		DEV | MEMORY | OS	12
+opcode		CPU | OS	12
+open		FILESYSTEM | OS	13
+personality	OS	9
+pipe		PIPE_IO | MEMORY | OS	11
+pipeherd	PIPE_IO | MEMORY | OS	12
+poll		SCHEDULER | OS	13
+prctl		OS	12
+procfs		FILESYSTEM | OS	13
+pthread		SCHEDULER | OS	12
+ptrace		OS	13
+pty		OS	11
+qsort		CPU_CACHE | CPU | MEMORY	12
+readahead	IO | OS	12
+reboot		OS	12
+remap		MEMORY | OS	12
+rename		FILESYSTEM | OS	8
+resources	MEMORY | OS	4
+revio		IO | OS	13
+rseq		CPU	11
+schedpolicy	INTERRUPT | SCHEDULER | OS	5
+seal		OS	13
+seek		IO | OS	10
+sem		OS | SCHEDULER	12
+sem-sysv	OS | SCHEDULER	1
+sendfile	PIPE_IO | OS	13
+session		SCHEDULER | OS	11
+set		OS	12
+shellsort	CPU_CACHE | CPU | MEMORY	11
+shm		VM | OS	12
+shm-sysv	VM | OS	12
+sigabrt		INTERRUPT | OS	12
+sigchld		INTERRUPT | OS	2
+sigfd		INTERRUPT | OS	12
+sigio		INTERRUPT | OS	13
+signal		INTERRUPT | OS	13
+sigpending	INTERRUPT | OS	13
+sigpipe		INTERRUPT | OS	13
+sigq		INTERRUPT | OS	12
+sigrt		INTERRUPT | OS	13
+sigsegv		INTERRUPT | OS	13
+sigsuspend	INTERRUPT | OS	13
+sigtrap		INTERRUPT | OS	13
+skiplist	CPU_CACHE | CPU | MEMORY	12
+sleep		INTERRUPT | SCHEDULER | OS	13
+sock		NETWORK | OS	12
+sockabuse	NETWORK | OS	12
+sockmany	NETWORK | OS	12
+spawn		SCHEDULER | OS	12
+splice		PIPE_IO | OS	2
+stack		VM | MEMORY	2
+stackmmap	VM | MEMORY	9
+str		CPU | CPU_CACHE | MEMORY	13
+stream		CPU | CPU_CACHE | MEMORY	8
+switch		SCHEDULER | OS	12
+symlink		FILESYSTEM | OS	14
+sysbadaddr	OS	12
+sysfs		OS	13
+sysinfo		OS	11
+tee		PIPE_IO | OS | SCHEDULER	12
+timer		INTERRUPT | OS	13
+timerfd		INTERRUPT | OS	13
+tlb-shootdown	OS | MEMORY	11
+tsearch		CPU_CACHE | CPU | MEMORY	12
+udp		NETWORK | OS	12
+udp-flood	NETWORK | OS	12
+unshare		OS	12
+urandom		DEV | OS	8
+utime		FILESYSTEM | OS	14
+vecmath		CPU | CPU_CACHE	12
+vfork		SCHEDULER | OS	10
+vforkmany	SCHEDULER | OS	13
+vm		VM | MEMORY | OS	12
+vm-addr		VM | MEMORY | OS	13
+vm-rw		VM | MEMORY | OS	11
+vm-segv		VM | MEMORY | OS	12
+vm-splice	VM | PIPE_IO | OS	12
+xattr		FILESYSTEM | OS	10
+yield		SCHEDULER | OS	12
+zero		DEV | MEMORY | OS	12
+zombie		SCHEDULER | OS	12

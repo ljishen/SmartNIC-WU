@@ -1,0 +1,175 @@
+access		FILESYSTEM | OS	14
+af-alg		CPU | OS	14
+affinity	SCHEDULER	14
+bad-altstack	VM | MEMORY | OS	13
+bigheap		OS | VM	14
+branch		CPU	14
+brk		OS | VM	14
+bsearch		CPU_CACHE | CPU | MEMORY	14
+cache		CPU_CACHE	10
+chattr		FILESYSTEM | OS	14
+chmod		FILESYSTEM | OS	14
+chown		FILESYSTEM | OS	14
+clock		INTERRUPT | OS	14
+clone		SCHEDULER | OS	14
+close		SCHEDULER | OS	14
+context		MEMORY | CPU	14
+copy-file	FILESYSTEM | OS	14
+cpu		CPU	12
+daemon		SCHEDULER | OS	14
+dentry		FILESYSTEM | OS	14
+dev		DEV | OS	14
+dev-shm		VM | OS	13
+dir		FILESYSTEM | OS	14
+dirdeep		FILESYSTEM | OS	7
+dnotify		FILESYSTEM | SCHEDULER | OS	14
+dup		FILESYSTEM | OS	14
+enosys		OS	14
+env		OS | VM	14
+epoll		NETWORK | OS	14
+eventfd		FILESYSTEM | SCHEDULER | OS	14
+exec		SCHEDULER | OS	14
+fault		INTERRUPT | SCHEDULER | OS	14
+fcntl		FILESYSTEM | OS	14
+fiemap		FILESYSTEM | OS	14
+fifo		PIPE_IO | OS | SCHEDULER	14
+file-ioctl	FILESYSTEM | OS	14
+filename	FILESYSTEM | OS	14
+flock		FILESYSTEM | OS	14
+fork		SCHEDULER | OS	14
+fp-error	CPU	13
+fstat		FILESYSTEM | OS	14
+full		DEV | MEMORY | OS	14
+funccall	CPU	14
+funcret		CPU	14
+futex		SCHEDULER | OS	14
+get		OS	10
+getdent		FILESYSTEM | OS	14
+getrandom	OS | CPU	1
+handle		FILESYSTEM | OS	14
+hdd		IO | OS	14
+hrtimers	SCHEDULER	14
+hsearch		CPU_CACHE | CPU | MEMORY	14
+icache		CPU_CACHE	14
+inode-flags	OS | FILESYSTEM	13
+inotify		FILESYSTEM | SCHEDULER | OS	12
+io		FILESYSTEM | OS	3
+ioprio		FILESYSTEM | OS	10
+itimer		INTERRUPT | OS	14
+kcmp		OS	2
+kill		INTERRUPT | SCHEDULER | OS	9
+klog		OS	2
+lease		FILESYSTEM | OS	14
+link		FILESYSTEM | OS	14
+locka		FILESYSTEM | OS	14
+lockbus		CPU_CACHE | MEMORY	3
+lockf		FILESYSTEM | OS	14
+lockofd		FILESYSTEM | OS	14
+longjmp		CPU	14
+lsearch		CPU_CACHE | CPU | MEMORY	14
+madvise		VM | OS	8
+malloc		CPU_CACHE | MEMORY | VM | OS	14
+matrix		CPU | CPU_CACHE | MEMORY	14
+matrix-3d	CPU | CPU_CACHE | MEMORY	14
+mcontend	MEMORY	13
+membarrier	CPU_CACHE | MEMORY	14
+memcpy		CPU_CACHE | MEMORY	14
+memfd		OS | MEMORY	14
+memrate		MEMORY	14
+memthrash	MEMORY	14
+mincore		OS | MEMORY	14
+mknod		FILESYSTEM | OS	13
+mmap		VM | OS	14
+mmapaddr	VM | OS	14
+mmapfixed	VM | OS	14
+mmapfork	SCHEDULER | VM | OS	13
+mmapmany	VM | OS	14
+mq		SCHEDULER | OS	14
+mremap		VM | OS	13
+msg		SCHEDULER | OS	14
+msync		VM | OS	11
+nanosleep	INTERRUPT | SCHEDULER | OS	14
+netdev		NETWORK	1
+nice		SCHEDULER | OS	14
+nop		CPU	14
+null		DEV | MEMORY | OS	14
+opcode		CPU | OS	14
+open		FILESYSTEM | OS	14
+personality	OS	14
+pipe		PIPE_IO | MEMORY | OS	14
+pipeherd	PIPE_IO | MEMORY | OS	14
+poll		SCHEDULER | OS	14
+prctl		OS	14
+procfs		FILESYSTEM | OS	14
+pthread		SCHEDULER | OS	14
+ptrace		OS	14
+pty		OS	14
+qsort		CPU_CACHE | CPU | MEMORY	14
+readahead	IO | OS	14
+reboot		OS	14
+remap		MEMORY | OS	14
+rename		FILESYSTEM | OS	13
+resources	MEMORY | OS	1
+revio		IO | OS	14
+rseq		CPU	13
+schedpolicy	INTERRUPT | SCHEDULER | OS	13
+seal		OS	14
+seek		IO | OS	14
+sem		OS | SCHEDULER	14
+sem-sysv	OS | SCHEDULER	7
+sendfile	PIPE_IO | OS	14
+session		SCHEDULER | OS	14
+set		OS	14
+shellsort	CPU_CACHE | CPU | MEMORY	14
+shm		VM | OS	14
+shm-sysv	VM | OS	14
+sigabrt		INTERRUPT | OS	13
+sigchld		INTERRUPT | OS	13
+sigfd		INTERRUPT | OS	14
+sigio		INTERRUPT | OS	14
+signal		INTERRUPT | OS	14
+sigpending	INTERRUPT | OS	14
+sigpipe		INTERRUPT | OS	14
+sigq		INTERRUPT | OS	14
+sigrt		INTERRUPT | OS	14
+sigsegv		INTERRUPT | OS	14
+sigsuspend	INTERRUPT | OS	14
+sigtrap		INTERRUPT | OS	14
+skiplist	CPU_CACHE | CPU | MEMORY	14
+sleep		INTERRUPT | SCHEDULER | OS	14
+sock		NETWORK | OS	14
+sockabuse	NETWORK | OS	14
+sockmany	NETWORK | OS	14
+spawn		SCHEDULER | OS	14
+splice		PIPE_IO | OS	4
+stack		VM | MEMORY	3
+stackmmap	VM | MEMORY	6
+str		CPU | CPU_CACHE | MEMORY	14
+stream		CPU | CPU_CACHE | MEMORY	14
+switch		SCHEDULER | OS	14
+symlink		FILESYSTEM | OS	13
+sysbadaddr	OS	14
+sysfs		OS	14
+sysinfo		OS	6
+tee		PIPE_IO | OS | SCHEDULER	14
+timer		INTERRUPT | OS	14
+timerfd		INTERRUPT | OS	14
+tlb-shootdown	OS | MEMORY	14
+tsearch		CPU_CACHE | CPU | MEMORY	14
+udp		NETWORK | OS	14
+udp-flood	NETWORK | OS	14
+unshare		OS	14
+urandom		DEV | OS	14
+utime		FILESYSTEM | OS	13
+vecmath		CPU | CPU_CACHE	14
+vfork		SCHEDULER | OS	14
+vforkmany	SCHEDULER | OS	1
+vm		VM | MEMORY | OS	14
+vm-addr		VM | MEMORY | OS	9
+vm-rw		VM | MEMORY | OS	14
+vm-segv		VM | MEMORY | OS	14
+vm-splice	VM | PIPE_IO | OS	14
+xattr		FILESYSTEM | OS	14
+yield		SCHEDULER | OS	14
+zero		DEV | MEMORY | OS	14
+zombie		SCHEDULER | OS	14

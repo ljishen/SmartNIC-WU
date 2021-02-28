@@ -1,0 +1,175 @@
+access		FILESYSTEM | OS	3
+af-alg		CPU | OS	8
+affinity	SCHEDULER	2
+bad-altstack	VM | MEMORY | OS	9
+bigheap		OS | VM	10
+branch		CPU	10
+brk		OS | VM	5
+bsearch		CPU_CACHE | CPU | MEMORY	10
+cache		CPU_CACHE	5
+chattr		FILESYSTEM | OS	6
+chmod		FILESYSTEM | OS	2
+chown		FILESYSTEM | OS	2
+clock		INTERRUPT | OS	10
+clone		SCHEDULER | OS	9
+close		SCHEDULER | OS	8
+context		MEMORY | CPU	11
+copy-file	FILESYSTEM | OS	3
+cpu		CPU	10
+daemon		SCHEDULER | OS	9
+dentry		FILESYSTEM | OS	2
+dev		DEV | OS	8
+dev-shm		VM | OS	11
+dir		FILESYSTEM | OS	1
+dirdeep		FILESYSTEM | OS	5
+dnotify		FILESYSTEM | SCHEDULER | OS	3
+dup		FILESYSTEM | OS	10
+enosys		OS	10
+env		OS | VM	4
+epoll		NETWORK | OS	9
+eventfd		FILESYSTEM | SCHEDULER | OS	9
+exec		SCHEDULER | OS	10
+fault		INTERRUPT | SCHEDULER | OS	8
+fcntl		FILESYSTEM | OS	2
+fiemap		FILESYSTEM | OS	9
+fifo		PIPE_IO | OS | SCHEDULER	11
+file-ioctl	FILESYSTEM | OS	11
+filename	FILESYSTEM | OS	2
+flock		FILESYSTEM | OS	10
+fork		SCHEDULER | OS	3
+fp-error	CPU	12
+fstat		FILESYSTEM | OS	9
+full		DEV | MEMORY | OS	5
+funccall	CPU	10
+funcret		CPU	10
+futex		SCHEDULER | OS	6
+get		OS	4
+getdent		FILESYSTEM | OS	9
+getrandom	OS | CPU	10
+handle		FILESYSTEM | OS	3
+hdd		IO | OS	2
+hrtimers	SCHEDULER	9
+hsearch		CPU_CACHE | CPU | MEMORY	10
+icache		CPU_CACHE	10
+inode-flags	OS | FILESYSTEM	8
+inotify		FILESYSTEM | SCHEDULER | OS	9
+io		FILESYSTEM | OS	14
+ioprio		FILESYSTEM | OS	5
+itimer		INTERRUPT | OS	9
+kcmp		OS	4
+kill		INTERRUPT | SCHEDULER | OS	2
+klog		OS	11
+lease		FILESYSTEM | OS	9
+link		FILESYSTEM | OS	1
+locka		FILESYSTEM | OS	11
+lockbus		CPU_CACHE | MEMORY	7
+lockf		FILESYSTEM | OS	9
+lockofd		FILESYSTEM | OS	11
+longjmp		CPU	9
+lsearch		CPU_CACHE | CPU | MEMORY	10
+madvise		VM | OS	1
+malloc		CPU_CACHE | MEMORY | VM | OS	10
+matrix		CPU | CPU_CACHE | MEMORY	9
+matrix-3d	CPU | CPU_CACHE | MEMORY	9
+mcontend	MEMORY	12
+membarrier	CPU_CACHE | MEMORY	12
+memcpy		CPU_CACHE | MEMORY	9
+memfd		OS | MEMORY	9
+memrate		MEMORY	9
+memthrash	MEMORY	9
+mincore		OS | MEMORY	9
+mknod		FILESYSTEM | OS	5
+mmap		VM | OS	3
+mmapaddr	VM | OS	7
+mmapfixed	VM | OS	9
+mmapfork	SCHEDULER | VM | OS	11
+mmapmany	VM | OS	9
+mq		SCHEDULER | OS	9
+mremap		VM | OS	2
+msg		SCHEDULER | OS	9
+msync		VM | OS	5
+nanosleep	INTERRUPT | SCHEDULER | OS	10
+netdev		NETWORK	3
+nice		SCHEDULER | OS	9
+nop		CPU	11
+null		DEV | MEMORY | OS	10
+opcode		CPU | OS	10
+open		FILESYSTEM | OS	2
+personality	OS	13
+pipe		PIPE_IO | MEMORY | OS	5
+pipeherd	PIPE_IO | MEMORY | OS	9
+poll		SCHEDULER | OS	10
+prctl		OS	10
+procfs		FILESYSTEM | OS	9
+pthread		SCHEDULER | OS	7
+ptrace		OS	6
+pty		OS	7
+qsort		CPU_CACHE | CPU | MEMORY	9
+readahead	IO | OS	10
+reboot		OS	2
+remap		MEMORY | OS	11
+rename		FILESYSTEM | OS	2
+resources	MEMORY | OS	9
+revio		IO | OS	1
+rseq		CPU	9
+schedpolicy	INTERRUPT | SCHEDULER | OS	4
+seal		OS	9
+seek		IO | OS	4
+sem		OS | SCHEDULER	10
+sem-sysv	OS | SCHEDULER	12
+sendfile	PIPE_IO | OS	10
+session		SCHEDULER | OS	10
+set		OS	3
+shellsort	CPU_CACHE | CPU | MEMORY	9
+shm		VM | OS	9
+shm-sysv	VM | OS	9
+sigabrt		INTERRUPT | OS	6
+sigchld		INTERRUPT | OS	10
+sigfd		INTERRUPT | OS	10
+sigio		INTERRUPT | OS	10
+signal		INTERRUPT | OS	10
+sigpending	INTERRUPT | OS	10
+sigpipe		INTERRUPT | OS	2
+sigq		INTERRUPT | OS	10
+sigrt		INTERRUPT | OS	10
+sigsegv		INTERRUPT | OS	11
+sigsuspend	INTERRUPT | OS	10
+sigtrap		INTERRUPT | OS	10
+skiplist	CPU_CACHE | CPU | MEMORY	10
+sleep		INTERRUPT | SCHEDULER | OS	10
+sock		NETWORK | OS	9
+sockabuse	NETWORK | OS	9
+sockmany	NETWORK | OS	9
+spawn		SCHEDULER | OS	9
+splice		PIPE_IO | OS	14
+stack		VM | MEMORY	4
+stackmmap	VM | MEMORY	7
+str		CPU | CPU_CACHE | MEMORY	9
+stream		CPU | CPU_CACHE | MEMORY	9
+switch		SCHEDULER | OS	9
+symlink		FILESYSTEM | OS	1
+sysbadaddr	OS	10
+sysfs		OS	9
+sysinfo		OS	3
+tee		PIPE_IO | OS | SCHEDULER	3
+timer		INTERRUPT | OS	10
+timerfd		INTERRUPT | OS	11
+tlb-shootdown	OS | MEMORY	6
+tsearch		CPU_CACHE | CPU | MEMORY	10
+udp		NETWORK | OS	10
+udp-flood	NETWORK | OS	9
+unshare		OS	7
+urandom		DEV | OS	12
+utime		FILESYSTEM | OS	3
+vecmath		CPU | CPU_CACHE	10
+vfork		SCHEDULER | OS	2
+vforkmany	SCHEDULER | OS	10
+vm		VM | MEMORY | OS	9
+vm-addr		VM | MEMORY | OS	10
+vm-rw		VM | MEMORY | OS	9
+vm-segv		VM | MEMORY | OS	8
+vm-splice	VM | PIPE_IO | OS	10
+xattr		FILESYSTEM | OS	7
+yield		SCHEDULER | OS	10
+zero		DEV | MEMORY | OS	9
+zombie		SCHEDULER | OS	2
