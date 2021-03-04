@@ -1,0 +1,226 @@
+# Network Device Information (via lshw)
+# ========================================
+# description: Ethernet interface
+# product: MT42822 BlueField-2 integrated ConnectX-6 Dx network controller
+# vendor: Mellanox Technologies
+# physical id: 0
+# bus info: pci@0000:81:00.0
+# logical name: ens5f0
+# version: 00
+# serial: 0c:42:a1:da:aa:46
+# capacity: 40Gbit/s
+# width: 64 bits
+# clock: 33MHz
+# capabilities: pciexpress vpd msix pm bus_master cap_list ethernet physical 1000bt-fd 10000bt-fd 25000bt-fd 40000bt-fd autonegotiation
+# configuration: autonegotiation=on broadcast=yes driver=mlx5_core driverversion=5.0-0 duplex=full firmware=24.29.2002 (MT_0000000477) ip=10.10.1.2 latency=0 link=yes multicast=yes
+# resources: iomemory:71d0-71cf iomemory:71d0-71cf irq:238 memory:71d84000000-71d85ffffff memory:71d86800000-71d86ffffff memory:71d89000000-71d8affffff
+#
+# Device speed: 100000 Mbit/s
+# Device mtu: 9000 bytes
+# Device tx_queue_len: 1000
+# ========================================
+#
+# CPU Information (via dmidecode)
+# ========================================
+# Getting SMBIOS data from sysfs.
+# SMBIOS 3.3 present.
+# 
+# Handle 0x0400, DMI type 4, 48 bytes
+# Processor Information
+# 	Socket Designation: CPU1
+# 	Type: Central Processor
+# 	Family: Zen
+# 	Manufacturer: AMD
+# 	ID: 10 0F 83 00 FF FB 8B 17
+# 	Signature: Family 23, Model 49, Stepping 0
+# 	Flags:
+# 		FPU (Floating-point unit on-chip)
+# 		VME (Virtual mode extension)
+# 		DE (Debugging extension)
+# 		PSE (Page size extension)
+# 		TSC (Time stamp counter)
+# 		MSR (Model specific registers)
+# 		PAE (Physical address extension)
+# 		MCE (Machine check exception)
+# 		CX8 (CMPXCHG8 instruction supported)
+# 		APIC (On-chip APIC hardware supported)
+# 		SEP (Fast system call)
+# 		MTRR (Memory type range registers)
+# 		PGE (Page global enable)
+# 		MCA (Machine check architecture)
+# 		CMOV (Conditional move instruction supported)
+# 		PAT (Page attribute table)
+# 		PSE-36 (36-bit page size extension)
+# 		CLFSH (CLFLUSH instruction supported)
+# 		MMX (MMX technology supported)
+# 		FXSR (FXSAVE and FXSTOR instructions supported)
+# 		SSE (Streaming SIMD extensions)
+# 		SSE2 (Streaming SIMD extensions 2)
+# 		HTT (Multi-threading)
+# 	Version: AMD EPYC 7542 32-Core Processor                
+# 	Voltage: 1.1 V
+# 	External Clock: 16000 MHz
+# 	Max Speed: 3200 MHz
+# 	Current Speed: 2900 MHz
+# 	Status: Populated, Enabled
+# 	Upgrade: Socket SP3
+# 	L1 Cache Handle: 0x0700
+# 	L2 Cache Handle: 0x0701
+# 	L3 Cache Handle: 0x0702
+# 	Serial Number: Not Specified
+# 	Asset Tag: Not Specified
+# 	Part Number: Not Specified
+# 	Core Count: 32
+# 	Core Enabled: 32
+# 	Thread Count: 64
+# 	Characteristics:
+# 		64-bit capable
+# 		Multi-Core
+# 		Hardware Thread
+# 		Execute Protection
+# 		Enhanced Virtualization
+# 
+# Handle 0x0401, DMI type 4, 48 bytes
+# Processor Information
+# 	Socket Designation: CPU2
+# 	Type: Central Processor
+# 	Family: Zen
+# 	Manufacturer: AMD
+# 	ID: 10 0F 83 00 FF FB 8B 17
+# 	Signature: Family 23, Model 49, Stepping 0
+# 	Flags:
+# 		FPU (Floating-point unit on-chip)
+# 		VME (Virtual mode extension)
+# 		DE (Debugging extension)
+# 		PSE (Page size extension)
+# 		TSC (Time stamp counter)
+# 		MSR (Model specific registers)
+# 		PAE (Physical address extension)
+# 		MCE (Machine check exception)
+# 		CX8 (CMPXCHG8 instruction supported)
+# 		APIC (On-chip APIC hardware supported)
+# 		SEP (Fast system call)
+# 		MTRR (Memory type range registers)
+# 		PGE (Page global enable)
+# 		MCA (Machine check architecture)
+# 		CMOV (Conditional move instruction supported)
+# 		PAT (Page attribute table)
+# 		PSE-36 (36-bit page size extension)
+# 		CLFSH (CLFLUSH instruction supported)
+# 		MMX (MMX technology supported)
+# 		FXSR (FXSAVE and FXSTOR instructions supported)
+# 		SSE (Streaming SIMD extensions)
+# 		SSE2 (Streaming SIMD extensions 2)
+# 		HTT (Multi-threading)
+# 	Version: AMD EPYC 7542 32-Core Processor                
+# 	Voltage: 1.1 V
+# 	External Clock: 16000 MHz
+# 	Max Speed: 3200 MHz
+# 	Current Speed: 2900 MHz
+# 	Status: Populated, Enabled
+# 	Upgrade: Socket SP3
+# 	L1 Cache Handle: 0x0703
+# 	L2 Cache Handle: 0x0704
+# 	L3 Cache Handle: 0x0705
+# 	Serial Number: Not Specified
+# 	Asset Tag: Not Specified
+# 	Part Number: Not Specified
+# 	Core Count: 32
+# 	Core Enabled: 32
+# 	Thread Count: 64
+# 	Characteristics:
+# 		64-bit capable
+# 		Multi-Core
+# 		Hardware Thread
+# 		Execute Protection
+# 		Enhanced Virtualization
+# ========================================
+#
+# Memory Information
+# ========================================
+# Node 0 MemTotal:       263817680 kB
+# Node 1 MemTotal:       264199032 kB
+# ========================================
+#
+# System Information
+# ========================================
+# Linux node-0.bluefield2.ucsc-cmps107-pg0.clemson.cloudlab.us 5.4.0-51-generic #56-Ubuntu SMP Mon Oct 5 14:28:49 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux
+# ========================================
+#
+# Start of test: 2021-03-04T15:04:22,383068821-05:00
+
+"DELAY (ns)"	THREADS	CLONE_SKB	BURST	"THROUGHPUT (Mb/sec)"	STD
+0	1	0	25	48655.00	173.21
+0	2	0	25	72246.67	2151.66
+0	3	0	25	96303.33	12.26
+0	4	0	25	94914.00	72.76
+0	5	0	25	97209.00	39.00
+0	6	0	25	97191.33	0.94
+0	7	0	25	97211.67	27.81
+0	8	0	25	97192.33	1.25
+125	1	0	25	47701.33	123.18
+125	2	0	25	73575.67	41.49
+125	3	0	25	96312.00	25.66
+125	4	0	25	95566.33	740.29
+125	5	0	25	97193.00	2.83
+125	6	0	25	97197.33	9.74
+125	7	0	25	97194.33	3.40
+125	8	0	25	97204.00	18.38
+250	1	0	25	47903.67	207.31
+250	2	0	25	73575.67	26.23
+250	3	0	25	96242.00	66.73
+250	4	0	25	95341.00	820.96
+250	5	0	25	97182.33	5.56
+250	6	0	25	97197.00	9.27
+250	7	0	25	97190.67	2.05
+250	8	0	25	97196.33	6.85
+500	1	0	25	47847.33	116.75
+500	2	0	25	73500.00	15.12
+500	3	0	25	94336.33	2739.57
+500	4	0	25	94908.00	918.91
+500	5	0	25	97195.33	9.74
+500	6	0	25	97190.67	2.87
+500	7	0	25	97193.67	1.70
+500	8	0	25	97206.67	22.16
+1000	1	0	25	43710.00	6010.66
+1000	2	0	25	73523.67	8.50
+1000	3	0	25	96290.00	18.99
+1000	4	0	25	94887.67	329.11
+1000	5	0	25	97176.33	29.78
+1000	6	0	25	97201.33	13.20
+1000	7	0	25	97201.00	12.73
+1000	8	0	25	97198.67	10.14
+2000	1	0	25	47826.67	104.86
+2000	2	0	25	73552.00	15.64
+2000	3	0	25	96300.33	13.82
+2000	4	0	25	95145.67	877.40
+2000	5	0	25	97190.33	0.47
+2000	6	0	25	97196.00	7.79
+2000	7	0	25	97196.00	5.10
+2000	8	0	25	97202.67	16.50
+4000	1	0	25	35772.00	1181.09
+4000	2	0	25	73523.00	10.20
+4000	3	0	25	96283.67	13.22
+4000	4	0	25	95790.33	507.70
+4000	5	0	25	97196.67	8.73
+4000	6	0	25	97200.00	11.34
+4000	7	0	25	97192.33	1.89
+4000	8	0	25	97199.67	12.97
+8000	1	0	25	20800.00	0.00
+8000	2	0	25	41600.00	0.00
+8000	3	0	25	62399.33	0.94
+8000	4	0	25	82983.33	16.58
+8000	5	0	25	97145.33	80.84
+8000	6	0	25	97193.67	3.09
+8000	7	0	25	97196.67	7.32
+8000	8	0	25	97193.33	2.62
+16000	1	0	25	10400.00	0.00
+16000	2	0	25	20800.00	0.00
+16000	3	0	25	31200.00	0.00
+16000	4	0	25	41600.00	0.00
+16000	5	0	25	52000.00	0.00
+16000	6	0	25	62400.00	0.00
+16000	7	0	25	72800.00	0.00
+16000	8	0	25	83200.00	0.00
+
+# End of test: 2021-03-04T16:20:30,959799611-05:00
