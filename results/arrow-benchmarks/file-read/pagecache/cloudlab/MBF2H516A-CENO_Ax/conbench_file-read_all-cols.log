@@ -1,0 +1,513 @@
++ conbench file-read nyctaxi_2010-01 --iterations=5 --all=true --drop-caches=false
+
+Benchmark result:
+{
+    "batch_id": "bc93b0049cd649f6866ac82678c2ecec",
+    "context": {
+        "arrow_compiler_flags": " -fdiagnostics-color=always -O3 -DNDEBUG",
+        "arrow_compiler_id": "GNU",
+        "arrow_compiler_version": "9.3.1",
+        "arrow_version": "5.0.0",
+        "benchmark_language": "Python",
+        "benchmark_language_version": "Python 3.8.10"
+    },
+    "github": {
+        "commit": "4591d76fce2846a29dac33bf01e9ba0337b118e9",
+        "repository": "https://github.com/apache/arrow"
+    },
+    "machine_info": {
+        "architecture_name": "aarch64",
+        "cpu_core_count": "8",
+        "cpu_frequency_max_hz": "0",
+        "cpu_l1d_cache_bytes": "262144",
+        "cpu_l1i_cache_bytes": "393216",
+        "cpu_l2_cache_bytes": "4194304",
+        "cpu_l3_cache_bytes": "6291456",
+        "cpu_model_name": "Cortex-A72",
+        "cpu_thread_count": "8",
+        "kernel_name": "5.4.0-1013-bluefield",
+        "memory_bytes": "16106127360",
+        "name": "localhost",
+        "os_name": "Linux",
+        "os_version": "5.4.0-1013-bluefield-aarch64-with-glibc2.29"
+    },
+    "run_id": "bc93b0049cd649f6866ac82678c2ecec",
+    "stats": {
+        "data": [
+            "1.961974",
+            "2.023410",
+            "2.046556",
+            "2.007982",
+            "2.042492"
+        ],
+        "iqr": "0.034511",
+        "iterations": 5,
+        "max": "2.046556",
+        "mean": "2.016483",
+        "median": "2.023410",
+        "min": "1.961974",
+        "q1": "2.007982",
+        "q3": "2.042492",
+        "stdev": "0.034177",
+        "time_unit": "s",
+        "times": [],
+        "unit": "s"
+    },
+    "tags": {
+        "compression": "uncompressed",
+        "cpu_count": null,
+        "dataset": "nyctaxi_2010-01",
+        "file_type": "parquet",
+        "name": "file-read",
+        "output_type": "table"
+    },
+    "timestamp": "2021-09-02T19:52:27.400988+00:00"
+}
+
+Benchmark result:
+{
+    "batch_id": "bc93b0049cd649f6866ac82678c2ecec",
+    "context": {
+        "arrow_compiler_flags": " -fdiagnostics-color=always -O3 -DNDEBUG",
+        "arrow_compiler_id": "GNU",
+        "arrow_compiler_version": "9.3.1",
+        "arrow_version": "5.0.0",
+        "benchmark_language": "Python",
+        "benchmark_language_version": "Python 3.8.10"
+    },
+    "github": {
+        "commit": "4591d76fce2846a29dac33bf01e9ba0337b118e9",
+        "repository": "https://github.com/apache/arrow"
+    },
+    "machine_info": {
+        "architecture_name": "aarch64",
+        "cpu_core_count": "8",
+        "cpu_frequency_max_hz": "0",
+        "cpu_l1d_cache_bytes": "262144",
+        "cpu_l1i_cache_bytes": "393216",
+        "cpu_l2_cache_bytes": "4194304",
+        "cpu_l3_cache_bytes": "6291456",
+        "cpu_model_name": "Cortex-A72",
+        "cpu_thread_count": "8",
+        "kernel_name": "5.4.0-1013-bluefield",
+        "memory_bytes": "16106127360",
+        "name": "localhost",
+        "os_name": "Linux",
+        "os_version": "5.4.0-1013-bluefield-aarch64-with-glibc2.29"
+    },
+    "run_id": "bc93b0049cd649f6866ac82678c2ecec",
+    "stats": {
+        "data": [
+            "38.613429",
+            "38.459674",
+            "38.694553",
+            "38.475773",
+            "38.537092"
+        ],
+        "iqr": "0.137656",
+        "iterations": 5,
+        "max": "38.694553",
+        "mean": "38.556104",
+        "median": "38.537092",
+        "min": "38.459674",
+        "q1": "38.475773",
+        "q3": "38.613429",
+        "stdev": "0.098193",
+        "time_unit": "s",
+        "times": [],
+        "unit": "s"
+    },
+    "tags": {
+        "compression": "uncompressed",
+        "cpu_count": null,
+        "dataset": "nyctaxi_2010-01",
+        "file_type": "parquet",
+        "name": "file-read",
+        "output_type": "dataframe"
+    },
+    "timestamp": "2021-09-02T19:55:59.039374+00:00"
+}
+
+Benchmark result:
+{
+    "batch_id": "bc93b0049cd649f6866ac82678c2ecec",
+    "context": {
+        "arrow_compiler_flags": " -fdiagnostics-color=always -O3 -DNDEBUG",
+        "arrow_compiler_id": "GNU",
+        "arrow_compiler_version": "9.3.1",
+        "arrow_version": "5.0.0",
+        "benchmark_language": "Python",
+        "benchmark_language_version": "Python 3.8.10"
+    },
+    "github": {
+        "commit": "4591d76fce2846a29dac33bf01e9ba0337b118e9",
+        "repository": "https://github.com/apache/arrow"
+    },
+    "machine_info": {
+        "architecture_name": "aarch64",
+        "cpu_core_count": "8",
+        "cpu_frequency_max_hz": "0",
+        "cpu_l1d_cache_bytes": "262144",
+        "cpu_l1i_cache_bytes": "393216",
+        "cpu_l2_cache_bytes": "4194304",
+        "cpu_l3_cache_bytes": "6291456",
+        "cpu_model_name": "Cortex-A72",
+        "cpu_thread_count": "8",
+        "kernel_name": "5.4.0-1013-bluefield",
+        "memory_bytes": "16106127360",
+        "name": "localhost",
+        "os_name": "Linux",
+        "os_version": "5.4.0-1013-bluefield-aarch64-with-glibc2.29"
+    },
+    "run_id": "bc93b0049cd649f6866ac82678c2ecec",
+    "stats": {
+        "data": [
+            "2.220329",
+            "2.161806",
+            "2.161724",
+            "2.153959",
+            "2.200811"
+        ],
+        "iqr": "0.039087",
+        "iterations": 5,
+        "max": "2.220329",
+        "mean": "2.179726",
+        "median": "2.161806",
+        "min": "2.153959",
+        "q1": "2.161724",
+        "q3": "2.200811",
+        "stdev": "0.029165",
+        "time_unit": "s",
+        "times": [],
+        "unit": "s"
+    },
+    "tags": {
+        "compression": "snappy",
+        "cpu_count": null,
+        "dataset": "nyctaxi_2010-01",
+        "file_type": "parquet",
+        "name": "file-read",
+        "output_type": "table"
+    },
+    "timestamp": "2021-09-02T19:56:13.193688+00:00"
+}
+
+Benchmark result:
+{
+    "batch_id": "bc93b0049cd649f6866ac82678c2ecec",
+    "context": {
+        "arrow_compiler_flags": " -fdiagnostics-color=always -O3 -DNDEBUG",
+        "arrow_compiler_id": "GNU",
+        "arrow_compiler_version": "9.3.1",
+        "arrow_version": "5.0.0",
+        "benchmark_language": "Python",
+        "benchmark_language_version": "Python 3.8.10"
+    },
+    "github": {
+        "commit": "4591d76fce2846a29dac33bf01e9ba0337b118e9",
+        "repository": "https://github.com/apache/arrow"
+    },
+    "machine_info": {
+        "architecture_name": "aarch64",
+        "cpu_core_count": "8",
+        "cpu_frequency_max_hz": "0",
+        "cpu_l1d_cache_bytes": "262144",
+        "cpu_l1i_cache_bytes": "393216",
+        "cpu_l2_cache_bytes": "4194304",
+        "cpu_l3_cache_bytes": "6291456",
+        "cpu_model_name": "Cortex-A72",
+        "cpu_thread_count": "8",
+        "kernel_name": "5.4.0-1013-bluefield",
+        "memory_bytes": "16106127360",
+        "name": "localhost",
+        "os_name": "Linux",
+        "os_version": "5.4.0-1013-bluefield-aarch64-with-glibc2.29"
+    },
+    "run_id": "bc93b0049cd649f6866ac82678c2ecec",
+    "stats": {
+        "data": [
+            "38.642420",
+            "38.597912",
+            "38.574394",
+            "38.826720",
+            "38.849556"
+        ],
+        "iqr": "0.228808",
+        "iterations": 5,
+        "max": "38.849556",
+        "mean": "38.698200",
+        "median": "38.642420",
+        "min": "38.574394",
+        "q1": "38.597912",
+        "q3": "38.826720",
+        "stdev": "0.130310",
+        "time_unit": "s",
+        "times": [],
+        "unit": "s"
+    },
+    "tags": {
+        "compression": "snappy",
+        "cpu_count": null,
+        "dataset": "nyctaxi_2010-01",
+        "file_type": "parquet",
+        "name": "file-read",
+        "output_type": "dataframe"
+    },
+    "timestamp": "2021-09-02T19:59:38.854172+00:00"
+}
+
+Benchmark result:
+{
+    "batch_id": "bc93b0049cd649f6866ac82678c2ecec",
+    "context": {
+        "arrow_compiler_flags": " -fdiagnostics-color=always -O3 -DNDEBUG",
+        "arrow_compiler_id": "GNU",
+        "arrow_compiler_version": "9.3.1",
+        "arrow_version": "5.0.0",
+        "benchmark_language": "Python",
+        "benchmark_language_version": "Python 3.8.10"
+    },
+    "github": {
+        "commit": "4591d76fce2846a29dac33bf01e9ba0337b118e9",
+        "repository": "https://github.com/apache/arrow"
+    },
+    "machine_info": {
+        "architecture_name": "aarch64",
+        "cpu_core_count": "8",
+        "cpu_frequency_max_hz": "0",
+        "cpu_l1d_cache_bytes": "262144",
+        "cpu_l1i_cache_bytes": "393216",
+        "cpu_l2_cache_bytes": "4194304",
+        "cpu_l3_cache_bytes": "6291456",
+        "cpu_model_name": "Cortex-A72",
+        "cpu_thread_count": "8",
+        "kernel_name": "5.4.0-1013-bluefield",
+        "memory_bytes": "16106127360",
+        "name": "localhost",
+        "os_name": "Linux",
+        "os_version": "5.4.0-1013-bluefield-aarch64-with-glibc2.29"
+    },
+    "run_id": "bc93b0049cd649f6866ac82678c2ecec",
+    "stats": {
+        "data": [
+            "3.220238",
+            "1.892946",
+            "2.132716",
+            "1.996690",
+            "1.886994"
+        ],
+        "iqr": "0.239771",
+        "iterations": 5,
+        "max": "3.220238",
+        "mean": "2.225917",
+        "median": "1.996690",
+        "min": "1.886994",
+        "q1": "1.892946",
+        "q3": "2.132716",
+        "stdev": "0.564722",
+        "time_unit": "s",
+        "times": [],
+        "unit": "s"
+    },
+    "tags": {
+        "compression": "uncompressed",
+        "cpu_count": null,
+        "dataset": "nyctaxi_2010-01",
+        "file_type": "feather",
+        "name": "file-read",
+        "output_type": "table"
+    },
+    "timestamp": "2021-09-02T19:59:53.253045+00:00"
+}
+
+Benchmark result:
+{
+    "batch_id": "bc93b0049cd649f6866ac82678c2ecec",
+    "context": {
+        "arrow_compiler_flags": " -fdiagnostics-color=always -O3 -DNDEBUG",
+        "arrow_compiler_id": "GNU",
+        "arrow_compiler_version": "9.3.1",
+        "arrow_version": "5.0.0",
+        "benchmark_language": "Python",
+        "benchmark_language_version": "Python 3.8.10"
+    },
+    "github": {
+        "commit": "4591d76fce2846a29dac33bf01e9ba0337b118e9",
+        "repository": "https://github.com/apache/arrow"
+    },
+    "machine_info": {
+        "architecture_name": "aarch64",
+        "cpu_core_count": "8",
+        "cpu_frequency_max_hz": "0",
+        "cpu_l1d_cache_bytes": "262144",
+        "cpu_l1i_cache_bytes": "393216",
+        "cpu_l2_cache_bytes": "4194304",
+        "cpu_l3_cache_bytes": "6291456",
+        "cpu_model_name": "Cortex-A72",
+        "cpu_thread_count": "8",
+        "kernel_name": "5.4.0-1013-bluefield",
+        "memory_bytes": "16106127360",
+        "name": "localhost",
+        "os_name": "Linux",
+        "os_version": "5.4.0-1013-bluefield-aarch64-with-glibc2.29"
+    },
+    "run_id": "bc93b0049cd649f6866ac82678c2ecec",
+    "stats": {
+        "data": [
+            "38.352813",
+            "39.661696",
+            "39.485739",
+            "39.279021",
+            "39.449957"
+        ],
+        "iqr": "0.206719",
+        "iterations": 5,
+        "max": "39.661696",
+        "mean": "39.245845",
+        "median": "39.449957",
+        "min": "38.352813",
+        "q1": "39.279021",
+        "q3": "39.485739",
+        "stdev": "0.517386",
+        "time_unit": "s",
+        "times": [],
+        "unit": "s"
+    },
+    "tags": {
+        "compression": "uncompressed",
+        "cpu_count": null,
+        "dataset": "nyctaxi_2010-01",
+        "file_type": "feather",
+        "name": "file-read",
+        "output_type": "dataframe"
+    },
+    "timestamp": "2021-09-02T20:03:21.854253+00:00"
+}
+
+Benchmark result:
+{
+    "batch_id": "bc93b0049cd649f6866ac82678c2ecec",
+    "context": {
+        "arrow_compiler_flags": " -fdiagnostics-color=always -O3 -DNDEBUG",
+        "arrow_compiler_id": "GNU",
+        "arrow_compiler_version": "9.3.1",
+        "arrow_version": "5.0.0",
+        "benchmark_language": "Python",
+        "benchmark_language_version": "Python 3.8.10"
+    },
+    "github": {
+        "commit": "4591d76fce2846a29dac33bf01e9ba0337b118e9",
+        "repository": "https://github.com/apache/arrow"
+    },
+    "machine_info": {
+        "architecture_name": "aarch64",
+        "cpu_core_count": "8",
+        "cpu_frequency_max_hz": "0",
+        "cpu_l1d_cache_bytes": "262144",
+        "cpu_l1i_cache_bytes": "393216",
+        "cpu_l2_cache_bytes": "4194304",
+        "cpu_l3_cache_bytes": "6291456",
+        "cpu_model_name": "Cortex-A72",
+        "cpu_thread_count": "8",
+        "kernel_name": "5.4.0-1013-bluefield",
+        "memory_bytes": "16106127360",
+        "name": "localhost",
+        "os_name": "Linux",
+        "os_version": "5.4.0-1013-bluefield-aarch64-with-glibc2.29"
+    },
+    "run_id": "bc93b0049cd649f6866ac82678c2ecec",
+    "stats": {
+        "data": [
+            "1.653482",
+            "1.610686",
+            "1.518969",
+            "1.485623",
+            "1.481718"
+        ],
+        "iqr": "0.125063",
+        "iterations": 5,
+        "max": "1.653482",
+        "mean": "1.550096",
+        "median": "1.518969",
+        "min": "1.481718",
+        "q1": "1.485623",
+        "q3": "1.610686",
+        "stdev": "0.077719",
+        "time_unit": "s",
+        "times": [],
+        "unit": "s"
+    },
+    "tags": {
+        "compression": "lz4",
+        "cpu_count": null,
+        "dataset": "nyctaxi_2010-01",
+        "file_type": "feather",
+        "name": "file-read",
+        "output_type": "table"
+    },
+    "timestamp": "2021-09-02T20:03:32.942729+00:00"
+}
+
+Benchmark result:
+{
+    "batch_id": "bc93b0049cd649f6866ac82678c2ecec",
+    "context": {
+        "arrow_compiler_flags": " -fdiagnostics-color=always -O3 -DNDEBUG",
+        "arrow_compiler_id": "GNU",
+        "arrow_compiler_version": "9.3.1",
+        "arrow_version": "5.0.0",
+        "benchmark_language": "Python",
+        "benchmark_language_version": "Python 3.8.10"
+    },
+    "github": {
+        "commit": "4591d76fce2846a29dac33bf01e9ba0337b118e9",
+        "repository": "https://github.com/apache/arrow"
+    },
+    "machine_info": {
+        "architecture_name": "aarch64",
+        "cpu_core_count": "8",
+        "cpu_frequency_max_hz": "0",
+        "cpu_l1d_cache_bytes": "262144",
+        "cpu_l1i_cache_bytes": "393216",
+        "cpu_l2_cache_bytes": "4194304",
+        "cpu_l3_cache_bytes": "6291456",
+        "cpu_model_name": "Cortex-A72",
+        "cpu_thread_count": "8",
+        "kernel_name": "5.4.0-1013-bluefield",
+        "memory_bytes": "16106127360",
+        "name": "localhost",
+        "os_name": "Linux",
+        "os_version": "5.4.0-1013-bluefield-aarch64-with-glibc2.29"
+    },
+    "run_id": "bc93b0049cd649f6866ac82678c2ecec",
+    "stats": {
+        "data": [
+            "38.781802",
+            "38.243980",
+            "38.597902",
+            "38.212392",
+            "37.831777"
+        ],
+        "iqr": "0.385510",
+        "iterations": 5,
+        "max": "38.781802",
+        "mean": "38.333571",
+        "median": "38.243980",
+        "min": "37.831777",
+        "q1": "38.212392",
+        "q3": "38.597902",
+        "stdev": "0.369219",
+        "time_unit": "s",
+        "times": [],
+        "unit": "s"
+    },
+    "tags": {
+        "compression": "lz4",
+        "cpu_count": null,
+        "dataset": "nyctaxi_2010-01",
+        "file_type": "feather",
+        "name": "file-read",
+        "output_type": "dataframe"
+    },
+    "timestamp": "2021-09-02T20:06:57.137396+00:00"
+}
