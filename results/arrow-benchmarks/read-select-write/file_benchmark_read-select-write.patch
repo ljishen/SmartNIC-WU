@@ -1,0 +1,68 @@
+diff --git a/benchmarks/file_benchmark.py b/benchmarks/file_benchmark.py
+index 9d55846..bd24cfb 100644
+--- a/benchmarks/file_benchmark.py
++++ b/benchmarks/file_benchmark.py
+@@ -2,6 +2,7 @@ import time
+ 
+ import conbench.runner
+ import pyarrow
++import pyarrow.dataset as ds
+ import pyarrow.feather as feather
+ import pyarrow.parquet as parquet
+ 
+@@ -122,3 +123,55 @@ class FileWriteBenchmark(FileBenchmark):
+         return pyarrow.Table.from_pandas(
+             dataframe, preserve_index=False
+         ).replace_schema_metadata(None)
++
++
++@conbench.runner.register_benchmark
++class ReadSelectWriteBenchmark(FileBenchmark):
++    """Read page-cached feather file to record batches,
++    perform row selection, and finally write resulting
++    record batches to stream buffers"""
++
++    name, r_name = "read-select-write", "read_select_write"
++    valid_cases = (["selectivity"], ["1%"], ["10%"], ["100%"])
++    arguments = ["source"]
++    sources = ["nyctaxi_2010-01"]
++    sources_test = ["fanniemae_sample", "nyctaxi_sample"]
++
++    def _get_benchmark_function(self, source, case):
++        (selectivity,) = case
++        path = source.create_if_not_exists("feather", "uncompressed")
++
++        filters = {
++            "1%": ds.field("pickup_longitude") < -74.013583,  # 148634
++            "10%": ds.field("pickup_longitude") < -74.002252,  # 1486378
++            "100%": None,  # 14863778
++        }
++        return lambda: self._read_select_write(path, filters[selectivity])
++
++    def _read_select_write(self, path, selectivity):
++        start = time.time()
++        table = feather.read_table(path, memory_map=True)
++        read_end = time.time()
++        read_time = read_end - start
++
++        dataset = ds.dataset([table])
++        res_table = dataset.to_table(filter=selectivity)
++        batches = res_table.to_batches(max_chunksize=1 << 16)
++        select_end = time.time()
++        select_time = select_end - read_end
++
++        for batch in batches:
++            sink = pyarrow.BufferOutputStream()
++            stream_writer = pyarrow.RecordBatchStreamWriter(sink, batches[0].schema)
++            stream_writer.write_batch(batch)
++        write_end = time.time()
++        write_time = write_end - select_end
++
++        print(
++            {
++                "num_rows": res_table.num_rows,
++                "read_time": read_time,
++                "select_time": select_time,
++                "write_time": write_time,
++            }
++        )
