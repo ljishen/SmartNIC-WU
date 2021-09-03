@@ -1,0 +1,44 @@
+diff --git a/benchmarks/file_benchmark.py b/benchmarks/file_benchmark.py
+index 9d55846..0ee9c9e 100644
+--- a/benchmarks/file_benchmark.py
++++ b/benchmarks/file_benchmark.py
+@@ -122,3 +122,39 @@ class FileWriteBenchmark(FileBenchmark):
+         return pyarrow.Table.from_pandas(
+             dataframe, preserve_index=False
+         ).replace_schema_metadata(None)
++
++
++@conbench.runner.register_benchmark
++class BufferWriteBenchmark(FileBenchmark):
++    """Write arrow record batches to stream buffers."""
++
++    name, r_name = "buffer-write", "write_buffer"
++    valid_cases = (["compression"], ["zstd"], ["lz4"], ["uncompressed"])
++    arguments = ["source"]
++    sources = ["fanniemae_2016Q4", "nyctaxi_2010-01"]
++    sources_test = ["fanniemae_sample", "nyctaxi_sample"]
++
++    def _get_benchmark_function(self, source, case):
++        (compression,) = case
++        options = (
++            None
++            if compression == "uncompressed"
++            else pyarrow.ipc.IpcWriteOptions(compression=compression)
++        )
++
++        # Create outside benchmark function because creating the table
++        # is expensive and should be excluded from the timing because
++        # it is benchmark setup.
++        start = time.time()
++        batches = source.table.to_batches(max_chunksize=1 << 16)
++        print(f"Time to create {len(batches)} record barches {time.time() - start}")
++
++        return lambda: self._serialize_batches(batches, options)
++
++    def _serialize_batches(self, batches, options):
++        for batch in batches:
++            sink = pyarrow.BufferOutputStream()
++            stream_writer = pyarrow.RecordBatchStreamWriter(
++                sink, batches[0].schema, options=options
++            )
++            stream_writer.write_batch(batch)
