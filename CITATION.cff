@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you refer to the benchmark results in this repository, please cite it as below."
+authors:
+- family-names: "Liu"
+  given-names: "Jianshen"
+title: "SmartNIC-WU"
+version: v1.0
+doi: 10.5281/zenodo.5876155
+date-released: 2022-01-18
+url: "https://github.com/ljishen/SmartNIC-WU"
