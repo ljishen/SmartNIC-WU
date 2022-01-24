@@ -3,7 +3,7 @@ message: "If you refer to the benchmark results in this repository, please cite 
 authors:
 - family-names: "Liu"
   given-names: "Jianshen"
-title: "SmartNIC-WU"
+title: "ljishen/SmartNIC-WU: benchmark results"
 version: v1.0
 doi: 10.5281/zenodo.5876155
 date-released: 2022-01-18
